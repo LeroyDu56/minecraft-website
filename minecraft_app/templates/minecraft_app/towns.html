@@ -1,0 +1,289 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Towns - GeoMC Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/towns.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Towns Directory</h1>
+</section>
+
+<!-- Towns List -->
+<section class="towns-section">
+    <div class="container">
+        <div class="towns-filter">
+            <div class="search-box">
+                <input type="text" id="town-search" placeholder="Search towns...">
+                <button type="button"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="filter-options">
+                <select id="nation-filter">
+                    <option value="">All Nations</option>
+                    <option value="britannia">Britannia</option>
+                    <option value="nova-roma">Nova Roma</option>
+                    <option value="nippon">Nippon</option>
+                    <option value="no-nation">No Nation</option>
+                </select>
+                
+                <select id="sort-by">
+                    <option value="residents">Sort by Residents</option>
+                    <option value="name">Sort by Name</option>
+                    <option value="founded">Sort by Founded Date</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="towns-grid">
+            {% for town in towns %}
+                <div class="town-card">
+                    <div class="town-header">
+                        <h3 class="town-name">{{ town.name }}</h3>
+                        {% if town.nation %}
+                            <span class="town-nation">{{ town.nation.name }}</span>
+                        {% else %}
+                            <span class="town-nation town-independent">Independent</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="town-content">
+                        <div class="town-info">
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-user"></i> Mayor:</span>
+                                <span class="info-value">{{ town.mayor }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-users"></i> Residents:</span>
+                                <span class="info-value">{{ town.residents_count }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-calendar-alt"></i> Founded:</span>
+                                <span class="info-value">{{ town.founded_date|date:"M d, Y" }}</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-map-marker-alt"></i> Location:</span>
+                                <span class="info-value">{{ town.location_x }}, {{ town.location_z }}</span>
+                            </div>
+                            
+                            {% if town.real_world_location %}
+                                <div class="info-item">
+                                    <span class="info-label"><i class="fas fa-globe"></i> Real Location:</span>
+                                    <span class="info-value">{{ town.real_world_location }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if town.description %}
+                            <div class="town-description">
+                                <p>{{ town.description|truncatechars:150 }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="town-footer">
+                        <a href="{% url 'town_detail' town.id %}" class="btn">View Details</a>
+                        <a href="{% url 'dynmap' %}?x={{ town.location_x }}&z={{ town.location_z }}" class="btn btn-secondary"><i class="fas fa-map"></i> Show on Map</a>
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Sample towns if no data available -->
+                <div class="town-card">
+                    <div class="town-header">
+                        <h3 class="town-name">London</h3>
+                        <span class="town-nation">Britannia</span>
+                    </div>
+                    
+                    <div class="town-content">
+                        <div class="town-info">
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-user"></i> Mayor:</span>
+                                <span class="info-value">KingArthur</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-users"></i> Residents:</span>
+                                <span class="info-value">23</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-calendar-alt"></i> Founded:</span>
+                                <span class="info-value">Jan 15, 2025</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-map-marker-alt"></i> Location:</span>
+                                <span class="info-value">-5430, 2180</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-globe"></i> Real Location:</span>
+                                <span class="info-value">London, United Kingdom</span>
+                            </div>
+                        </div>
+                        
+                        <div class="town-description">
+                            <p>The capital of Britannia and one of the server's oldest towns. Known for its impressive architecture and strong economy.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="town-footer">
+                        <a href="#" class="btn">View Details</a>
+                        <a href="#" class="btn btn-secondary"><i class="fas fa-map"></i> Show on Map</a>
+                    </div>
+                </div>
+                
+                <div class="town-card">
+                    <div class="town-header">
+                        <h3 class="town-name">Roma</h3>
+                        <span class="town-nation">Nova Roma</span>
+                    </div>
+                    
+                    <div class="town-content">
+                        <div class="town-info">
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-user"></i> Mayor:</span>
+                                <span class="info-value">Caesar_Augustus</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-users"></i> Residents:</span>
+                                <span class="info-value">19</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-calendar-alt"></i> Founded:</span>
+                                <span class="info-value">Jan 23, 2025</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-map-marker-alt"></i> Location:</span>
+                                <span class="info-value">-4210, 1950</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-globe"></i> Real Location:</span>
+                                <span class="info-value">Rome, Italy</span>
+                            </div>
+                        </div>
+                        
+                        <div class="town-description">
+                            <p>Capital of Nova Roma, known for its impressive colosseum and forum. A center of culture and trade in the Mediterranean region.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="town-footer">
+                        <a href="#" class="btn">View Details</a>
+                        <a href="#" class="btn btn-secondary"><i class="fas fa-map"></i> Show on Map</a>
+                    </div>
+                </div>
+                
+                <div class="town-card">
+                    <div class="town-header">
+                        <h3 class="town-name">New Atlantis</h3>
+                        <span class="town-nation town-independent">Independent</span>
+                    </div>
+                    
+                    <div class="town-content">
+                        <div class="town-info">
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-user"></i> Mayor:</span>
+                                <span class="info-value">OceanExplorer</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-users"></i> Residents:</span>
+                                <span class="info-value">7</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-calendar-alt"></i> Founded:</span>
+                                <span class="info-value">Mar 18, 2025</span>
+                            </div>
+                            
+                            <div class="info-item">
+                                <span class="info-label"><i class="fas fa-map-marker-alt"></i> Location:</span>
+                                <span class="info-value">-3620, 1540</span>
+                            </div>
+                        </div>
+                        
+                        <div class="town-description">
+                            <p>A new underwater city built in the Mediterranean Sea. Known for its unique architecture and ambitious building projects.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="town-footer">
+                        <a href="#" class="btn">View Details</a>
+                        <a href="#" class="btn btn-secondary"><i class="fas fa-map"></i> Show on Map</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination">
+            <a href="#" class="page-nav disabled"><i class="fas fa-chevron-left"></i> Previous</a>
+            <div class="page-numbers">
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <span>...</span>
+                <a href="#">8</a>
+            </div>
+            <a href="#" class="page-nav">Next <i class="fas fa-chevron-right"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- How to Join a Town -->
+<section class="join-town-section">
+    <div class="container">
+        <h2 class="section-title">How to Join a Town</h2>
+        
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Find a Town</h3>
+                    <p>Browse the towns list or explore the map to find a town you'd like to join.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Contact the Mayor</h3>
+                    <p>In-game, use <code>/msg [Mayor Name]</code> to contact the town mayor and request to join.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Get Invited</h3>
+                    <p>If accepted, the mayor will send you an invitation that you can accept with <code>/town accept</code>.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Create Your Own</h3>
+                    <p>Alternatively, collect enough money and use <code>/town new [Town Name]</code> to create your own town.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/towns.js' %}"></script>
+{% endblock %}

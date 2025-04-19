@@ -1,46 +1,249 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Minecraft Servers</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #333;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #5cb85c;
-            text-align: center;
-        }
-        .server {
-            background-color: #444;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        .no-servers {
-            text-align: center;
-            font-size: 18px;
-            margin-top: 50px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Minecraft Servers List</h1>
-    
-    {% if servers %}
-        {% for server in servers %}
-            <div class="server">
-                <h2>{{ server.name }}</h2>
-                <p><strong>IP:</strong> {{ server.ip_address }}</p>
-                <p>{{ server.description }}</p>
-                <p><em>Added on: {{ server.created_at }}</em></p>
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>GeoMC</h1>
+        <p class="hero-subtitle">Towny Minecraft Server on an Earth Map</p>
+        <p class="hero-description">Create your town, join a nation, and shape the history of the world your way.</p>
+        <div class="hero-buttons">
+            <a href="#join" class="btn btn-accent">Play Now</a>
+            <a href="{% url 'dynmap' %}" class="btn">View Map</a>
+        </div>
+    </div>
+</section>
+
+<!-- Server Join Section -->
+<section class="join-section" id="join">
+    <div class="container">
+        <h2 class="section-title">Join the Adventure</h2>
+        <p class="section-subtitle">Connect now and start your story</p>
+        
+        <div class="server-info-card">
+            <div class="server-info-header">
+                <div class="server-name">{{ server.name }}</div>
+                <div class="server-status">
+                    <span class="status-indicator {% if server.status %}status-online{% else %}status-offline{% endif %}"></span>
+                    <span>{% if server.status %}Online{% else %}Offline{% endif %}</span>
+                    <span class="player-count">{{ server.player_count }}/{{ server.max_players }} players</span>
+                </div>
             </div>
-        {% endfor %}
-    {% else %}
-        <p class="no-servers">No servers available yet. Add them in the admin panel.</p>
-    {% endif %}
-</body>
-</html>
+            
+            <div class="server-content">
+                <p class="server-description">{{ server.description }}</p>
+                
+                <div class="server-details">
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-server"></i></div>
+                        <div class="detail-label">Version</div>
+                        <div class="detail-value">{{ server.version }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-flag"></i></div>
+                        <div class="detail-label">Nations</div>
+                        <div class="detail-value">{{ nations_count }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-building"></i></div>
+                        <div class="detail-label">Towns</div>
+                        <div class="detail-value">{{ towns_count }}</div>
+                    </div>
+                </div>
+                
+                <div class="server-ip">play.geomc.fr</div>
+                
+                <div class="join-now">
+                    <a href="minecraft://connect/play.geomc.fr" class="btn btn-accent">Launch Minecraft</a>
+                    <p>or copy the IP address and paste it into your Minecraft server list</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Discover Our Features</h2>
+        <p class="section-subtitle">What makes GeoMC unique</p>
+        
+        <div class="grid-3">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-globe"></i></div>
+                <h3 class="feature-title">Earth Map</h3>
+                <p class="feature-description">Play on a realistic 1:1000 scale map of Earth. Settle in real-world locations and claim your homeland.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-landmark"></i></div>
+                <h3 class="feature-title">Towny System</h3>
+                <p class="feature-description">Create towns, form nations, and engage in diplomacy, trade or warfare with other players.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3 class="feature-title">Active Community</h3>
+                <p class="feature-description">Join our friendly community of players working together to recreate history or forge a new path.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-balance-scale"></i></div>
+                <h3 class="feature-title">Balanced Economy</h3>
+                <p class="feature-description">Engage in player-driven economy with shops, jobs, and various ways to earn money.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 class="feature-title">Land Protection</h3>
+                <p class="feature-description">Your claims are fully protected against griefing while still allowing for strategic gameplay.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-cogs"></i></div>
+                <h3 class="feature-title">Custom Plugins</h3>
+                <p class="feature-description">Experience unique gameplay features with our custom plugins designed to enhance the Towny experience.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Top Nations Section -->
+<section class="nations-section">
+    <div class="container">
+        <h2 class="section-title">Featured Nations</h2>
+        <p class="section-subtitle">The most powerful nations on our server</p>
+        
+        <div class="grid-4">
+            {% for nation in nations %}
+                <div class="nation-card">
+                    <div class="nation-flag">
+                        <img src="{{ nation.flag_image|default:'../images/default-flag.jpg' }}" alt="{{ nation.name }} Flag">
+                    </div>
+                    <h3 class="nation-name">{{ nation.name }}</h3>
+                    <p class="nation-details">Capital: {{ nation.capital }}</p>
+                    <p class="nation-details">Leader: {{ nation.leader }}</p>
+                    <p class="nation-details">Towns: {{ nation.towns_count }}</p>
+                    <a href="{% url 'nation_detail' nation.id %}" class="btn">View Nation</a>
+                </div>
+            {% empty %}
+                <!-- Sample nations if no data available -->
+                <div class="nation-card">
+                    <div class="nation-flag">
+                        <img src="{% static 'images/default-flag.jpg' %}" alt="Nation Flag">
+                    </div>
+                    <h3 class="nation-name">Britannia</h3>
+                    <p class="nation-details">Capital: London</p>
+                    <p class="nation-details">Leader: KingArthur</p>
+                    <p class="nation-details">Towns: 7</p>
+                    <a href="#" class="btn">View Nation</a>
+                </div>
+                
+                <div class="nation-card">
+                    <div class="nation-flag">
+                        <img src="{% static 'images/default-flag.jpg' %}" alt="Nation Flag">
+                    </div>
+                    <h3 class="nation-name">Nova Roma</h3>
+                    <p class="nation-details">Capital: Roma</p>
+                    <p class="nation-details">Leader: Caesar_Augustus</p>
+                    <p class="nation-details">Towns: 5</p>
+                    <a href="#" class="btn">View Nation</a>
+                </div>
+                
+                <div class="nation-card">
+                    <div class="nation-flag">
+                        <img src="{% static 'images/default-flag.jpg' %}" alt="Nation Flag">
+                    </div>
+                    <h3 class="nation-name">Nippon</h3>
+                    <p class="nation-details">Capital: Tokyo</p>
+                    <p class="nation-details">Leader: ShogunTakeda</p>
+                    <p class="nation-details">Towns: 4</p>
+                    <a href="#" class="btn">View Nation</a>
+                </div>
+                
+                <div class="nation-card">
+                    <div class="nation-flag">
+                        <img src="{% static 'images/default-flag.jpg' %}" alt="Nation Flag">
+                    </div>
+                    <h3 class="nation-name">Atlantis</h3>
+                    <p class="nation-details">Capital: Poseidonia</p>
+                    <p class="nation-details">Leader: OceanKing</p>
+                    <p class="nation-details">Towns: 3</p>
+                    <a href="#" class="btn">View Nation</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Latest News Section -->
+<section class="news-section">
+    <div class="container">
+        <h2 class="section-title">Latest News</h2>
+        <p class="section-subtitle">Updates and events from our server</p>
+        
+        <div class="grid-3">
+            {% for post in latest_news %}
+                <div class="card news-card">
+                    <div class="card-content">
+                        <p class="news-date">{{ post.created_at|date:"F j, Y" }}</p>
+                        <h3 class="card-title">{{ post.title }}</h3>
+                        <p class="card-text">{{ post.content|truncatewords:25 }}</p>
+                        <a href="{% url 'news_detail' post.id %}" class="btn">Read More</a>
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Sample news if no data available -->
+                <div class="card news-card">
+                    <div class="card-content">
+                        <p class="news-date">April 15, 2025</p>
+                        <h3 class="card-title">Server Update v2.5</h3>
+                        <p class="card-text">We've updated the server with new features and performance improvements. Explore new custom plugins and more efficient town management tools.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+                
+                <div class="card news-card">
+                    <div class="card-content">
+                        <p class="news-date">April 10, 2025</p>
+                        <h3 class="card-title">Spring Festival Event</h3>
+                        <p class="card-text">Join our Spring Festival with special quests, limited rewards, and fun activities for everyone. The event starts this weekend.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+                
+                <div class="card news-card">
+                    <div class="card-content">
+                        <p class="news-date">April 5, 2025</p>
+                        <h3 class="card-title">Nation Wars Results</h3>
+                        <p class="card-text">The first Nation Wars tournament has ended with Britannia claiming victory. See the full results and highlights from the battles.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Start Your Adventure?</h2>
+            <p class="cta-text">Join our Discord community to connect with other players, get help, and stay updated on server events.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn discord-btn"><i class="fab fa-discord"></i> Join Our Discord</a>
+                <a href="{% url 'rules' %}" class="btn">Read the Rules</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

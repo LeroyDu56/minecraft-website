@@ -1,0 +1,297 @@
+/* Towns Filter */
+.towns-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.search-box {
+    display: flex;
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-box input {
+    background-color: var(--darker);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px 0 0 5px;
+    padding: 10px 15px;
+    color: var(--light);
+    width: 100%;
+}
+
+.search-box button {
+    background-color: var(--primary);
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.filter-options {
+    display: flex;
+    gap: 15px;
+}
+
+.filter-options select {
+    background-color: var(--darker);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 10px 15px;
+    color: var(--light);
+    min-width: 150px;
+}
+
+/* Towns Grid */
+.towns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.town-card {
+    background-color: var(--darker);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.town-card:hover {
+    transform: translateY(-5px);
+}
+
+.town-header {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.town-name {
+    font-size: 1.5rem;
+    color: var(--light);
+    margin: 0;
+}
+
+.town-nation {
+    background-color: var(--primary);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.town-independent {
+    background-color: var(--darker);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.town-content {
+    padding: 20px;
+}
+
+.town-info {
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.info-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.info-label i {
+    margin-right: 5px;
+    width: 20px;
+    text-align: center;
+}
+
+.info-value {
+    font-weight: 500;
+}
+
+.town-description {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 15px;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+}
+
+.town-footer {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.page-numbers {
+    display: flex;
+    align-items: center;
+    margin: 0 15px;
+}
+
+.page-numbers a, .page-numbers span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    border-radius: 5px;
+    background-color: var(--darker);
+    color: var(--light);
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.page-numbers a:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.page-numbers a.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.page-nav {
+    padding: 10px 15px;
+    background-color: var(--darker);
+    color: var(--light);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.page-nav:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+.page-nav.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-nav.disabled:hover {
+    background-color: var(--darker);
+    color: var(--light);
+}
+
+.page-nav i {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* Join Town Section */
+.join-town-section {
+    padding: 80px 0;
+    background-color: var(--darker);
+}
+
+.steps-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50px;
+    left: 25px;
+    height: calc(100% - 25px);
+    width: 2px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.step-number {
+    background-color: var(--primary);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 20px;
+    z-index: 1;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+code {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .towns-filter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-box, .filter-options {
+        width: 100%;
+    }
+    
+    .filter-options {
+        flex-direction: column;
+    }
+    
+    .towns-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 20px;
+    }
+}

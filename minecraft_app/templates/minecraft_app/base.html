@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GeoMC - Towny Earth Minecraft Server{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">GeoMC</div>
+                <ul class="nav-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'nations' %}">Nations</a></li>
+                    <li><a href="{% url 'towns' %}">Towns</a></li>
+                    <li><a href="{% url 'dynmap' %}">Map</a></li>
+                    <li><a href="{% url 'ranks' %}">Ranks</a></li>
+                    <li><a href="{% url 'news' %}">News</a></li>
+                </ul>
+                <a href="#join" class="btn">Play Now</a>
+            </nav>
+        </div>
+    </header>
+    
+    {% block content %}{% endblock %}
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>GeoMC</h3>
+                    <p>Towny Minecraft server on a 1:1000 scale Earth map. Create your town, join a nation, and shape the history of the world.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'nations' %}">Nations</a></li>
+                        <li><a href="{% url 'towns' %}">Towns</a></li>
+                        <li><a href="{% url 'dynmap' %}">Map</a></li>
+                        <li><a href="{% url 'ranks' %}">Ranks</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Information</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'rules' %}">Rules</a></li>
+                        <li><a href="{% url 'staff' %}">Staff</a></li>
+                        <li><a href="{% url 'faq' %}">FAQ</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Join Us</h3>
+                    <div class="server-status">
+                        <span class="status-indicator {% if server.status %}status-online{% else %}status-offline{% endif %}"></span>
+                        <span>{% if server.status %}Online{% else %}Offline{% endif %}</span>
+                        <span class="player-count">{{ server.player_count }}/{{ server.max_players }}</span>
+                    </div>
+                    <div class="server-ip">play.geomc.fr</div>
+                    <div class="social-links">
+                        <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2025 GeoMC. All rights reserved. Minecraft is a registered trademark of Mojang AB.</p>
+        </div>
+    </footer>
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
