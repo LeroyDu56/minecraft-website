@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minecraft Servers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #5cb85c;
+            text-align: center;
+        }
+        .server {
+            background-color: #444;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .no-servers {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minecraft Servers List</h1>
+    
+    {% if servers %}
+        {% for server in servers %}
+            <div class="server">
+                <h2>{{ server.name }}</h2>
+                <p><strong>IP:</strong> {{ server.ip_address }}</p>
+                <p>{{ server.description }}</p>
+                <p><em>Added on: {{ server.created_at }}</em></p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-servers">No servers available yet. Add them in the admin panel.</p>
+    {% endif %}
+</body>
+</html>

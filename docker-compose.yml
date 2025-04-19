@@ -13,6 +13,8 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     depends_on:
       - db
+    restart: always
+
   db:
     image: postgres:13
     environment:
@@ -21,6 +23,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
 
 volumes:
   postgres_data:
