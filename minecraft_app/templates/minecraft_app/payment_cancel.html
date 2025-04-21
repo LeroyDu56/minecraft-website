@@ -1,0 +1,34 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Payment Cancelled - GeoMC Towny Earth Server{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Payment Cancelled</h1>
+</section>
+
+<!-- Cancelled Section -->
+<section class="section">
+    <div class="container">
+        <div class="auth-form-container">
+            <h2 class="auth-form-title">Payment Cancelled</h2>
+            
+            <div class="payment-cancelled-content" style="text-align: center; padding: 20px;">
+                <div class="cancelled-icon">
+                    <i class="fas fa-times-circle" style="font-size: 4rem; color: var(--danger); margin-bottom: 20px;"></i>
+                </div>
+                
+                <p>Your payment has been cancelled. No money has been charged from your account.</p>
+                
+                <p class="mt-4">If you experienced any issues or have questions about our ranks, please contact our support team on Discord.</p>
+                
+                <div class="mt-4">
+                    <a href="{% url 'store' %}" class="btn">Return to Store</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

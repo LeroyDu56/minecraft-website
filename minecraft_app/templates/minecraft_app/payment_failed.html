@@ -1,0 +1,39 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed - GeoMC Towny Earth Server{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Payment Failed</h1>
+</section>
+
+<!-- Failed Section -->
+<section class="section">
+    <div class="container">
+        <div class="auth-form-container">
+            <h2 class="auth-form-title">Payment Failed</h2>
+            
+            <div class="payment-failed-content" style="text-align: center; padding: 20px;">
+                <div class="failed-icon">
+                    <i class="fas fa-exclamation-circle" style="font-size: 4rem; color: var(--warning); margin-bottom: 20px;"></i>
+                </div>
+                
+                <p>Your payment could not be processed. This could be due to:</p>
+                <ul style="text-align: left; margin: 20px 0; list-style-type: none;">
+                    <li><i class="fas fa-dot-circle" style="color: var(--primary); margin-right: 10px;"></i> Insufficient funds</li>
+                    <li><i class="fas fa-dot-circle" style="color: var(--primary); margin-right: 10px;"></i> Card declined by your bank</li>
+                    <li><i class="fas fa-dot-circle" style="color: var(--primary); margin-right: 10px;"></i> Technical issues with the payment provider</li>
+                </ul>
+                
+                <p>No money has been charged from your account. You can try again with a different payment method.</p>
+                
+                <div class="mt-4">
+                    <a href="{% url 'store' %}" class="btn">Return to Store</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

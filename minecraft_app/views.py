@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, Rank, UserPurchase
+from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, UserProfile, UserPurchase
 from django.db.models import Count, Sum
 from django.urls import reverse
 from django.http import HttpResponse
@@ -11,7 +11,6 @@ from django.contrib import messages
 from django import forms
 from django.conf import settings
 from django.shortcuts import redirect, render
-from .models import UserProfile
 from .services import fetch_minecraft_uuid, format_uuid_with_dashes
 from django.views.decorators.csrf import csrf_exempt
 import requests
@@ -27,23 +26,23 @@ def home(request):
     nations_count = Nation.objects.count()
     towns_count = Town.objects.count()
     
-    # Récupérer les 3 premières nations pour l'affichage en page d'accueil
+    # Get the top 3 nations for the home page display
     top_nations = Nation.objects.annotate(towns_count=Count('towns')).order_by('-towns_count')[:3]
     
     context = {
         'server': server,
         'nations_count': nations_count,
         'towns_count': towns_count,
-        'nations': top_nations,  # Ajout des nations pour la page d'accueil
+        'nations': top_nations,  # Add nations for the home page
     }
     
     return render(request, 'minecraft_app/home.html', context)
 
 def nations(request):
-    # Récupérer seulement les 3 premières nations par nombre de villes (top nations)
+    # Get only the top 3 nations by number of towns
     nations_list = Nation.objects.annotate(towns_count=Count('towns')).order_by('-towns_count')[:3]
     
-    # Calculer des statistiques supplémentaires pour la page nations
+    # Calculate additional statistics for the nations page
     total_towns = Town.objects.count()
     total_residents = Town.objects.aggregate(total=Sum('residents_count'))['total'] or 0
     
@@ -79,9 +78,7 @@ def dynmap(request):
     
     return render(request, 'minecraft_app/dynmap.html', context)
 
-
-
-def store(request):  # Remplace ranks
+def store(request):  # Replace ranks
     ranks_list = Rank.objects.all().order_by('price')
     
     context = {
@@ -151,16 +148,16 @@ def staff(request):
     
     return render(request, 'minecraft_app/staff.html', context)
 
-# Formulaire d'inscription personnalisé
+# Custom registration form
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
-    minecraft_username = forms.CharField(max_length=100, required=False, help_text="Votre pseudo Minecraft")
+    minecraft_username = forms.CharField(max_length=100, required=False, help_text="Your Minecraft username")
     
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2', 'minecraft_username']
 
-# Modifiez la vue register_view pour récupérer l'UUID
+# Modify register_view to retrieve UUID
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -168,110 +165,29 @@ def register_view(request):
             user = form.save()
             minecraft_username = form.cleaned_data.get('minecraft_username')
             
-            # Créer le profil utilisateur
+            # Create user profile
             profile = UserProfile.objects.create(
                 user=user,
                 minecraft_username=minecraft_username
             )
             
-            # Si un nom d'utilisateur Minecraft est fourni, essayer de récupérer l'UUID
+            # If a Minecraft username is provided, try to retrieve the UUID
             if minecraft_username:
                 uuid = fetch_minecraft_uuid(minecraft_username)
                 if uuid:
                     profile.minecraft_uuid = uuid
                     profile.save()
                 
-            # Connecter l'utilisateur
+            # Log in the user
             login(request, user)
-            messages.success(request, "Compte créé avec succès! Bienvenue sur GeoMC!")
+            messages.success(request, "Account created successfully! Welcome to GeoMC!")
             return redirect('home')
     else:
         form = RegisterForm()
     
     return render(request, 'minecraft_app/register.html', {'form': form})
 
-# Vue de connexion
-@login_required
-def profile_view(request):
-    user = request.user
-    try:
-        profile = user.profile
-    except UserProfile.DoesNotExist:
-        profile = UserProfile.objects.create(user=user)
-    
-    # Récupérer le serveur pour le contexte global
-    server = TownyServer.objects.first()
-    
-    if request.method == 'POST':
-        # Formulaire de mise à jour du profil
-        minecraft_username = request.POST.get('minecraft_username')
-        discord_username = request.POST.get('discord_username')
-        bio = request.POST.get('bio')
-        
-        # Mettre à jour le profil
-        old_minecraft_username = profile.minecraft_username
-        
-        profile.minecraft_username = minecraft_username
-        profile.discord_username = discord_username
-        profile.bio = bio
-        
-        # Si le nom d'utilisateur Minecraft a changé, mettre à jour l'UUID
-        if minecraft_username != old_minecraft_username:
-            if minecraft_username:
-                uuid = fetch_minecraft_uuid(minecraft_username)
-                if uuid:
-                    profile.minecraft_uuid = uuid
-                else:
-                    # Si l'UUID ne peut pas être récupéré, effacer l'ancien
-                    profile.minecraft_uuid = ''
-            else:
-                # Si le nom d'utilisateur est vide, effacer l'UUID
-                profile.minecraft_uuid = ''
-        
-        profile.save()
-        
-        messages.success(request, "Profil mis à jour avec succès!")
-        return redirect('profile')
-    
-    context = {
-        'profile': profile,
-        'server': server
-    }
-        
-    return render(request, 'minecraft_app/profile.html', context)
-
-# Vue de déconnexion
-def logout_view(request):
-    logout(request)
-    messages.info(request, "Vous avez été déconnecté.")
-    return redirect('home')
-
-# Vue de profil
-@login_required
-def profile_view(request):
-    user = request.user
-    try:
-        profile = user.profile
-    except UserProfile.DoesNotExist:
-        profile = UserProfile.objects.create(user=user)
-        
-    if request.method == 'POST':
-        # Formulaire de mise à jour du profil (à compléter)
-        minecraft_username = request.POST.get('minecraft_username')
-        discord_username = request.POST.get('discord_username')
-        bio = request.POST.get('bio')
-        
-        # Mettre à jour le profil
-        profile.minecraft_username = minecraft_username
-        profile.discord_username = discord_username
-        profile.bio = bio
-        profile.save()
-        
-        messages.success(request, "Profil mis à jour avec succès!")
-        return redirect('profile')
-        
-    return render(request, 'minecraft_app/profile.html', {'profile': profile})
-
+# Login view
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -281,18 +197,78 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.info(request, f"Vous êtes maintenant connecté en tant que {username}.")
+                messages.info(request, f"You are now logged in as {username}.")
                 return redirect('home')
             else:
-                messages.error(request, "Nom d'utilisateur ou mot de passe invalide.")
+                messages.error(request, "Invalid username or password.")
         else:
-            messages.error(request, "Nom d'utilisateur ou mot de passe invalide.")
+            messages.error(request, "Invalid username or password.")
     else:
         form = AuthenticationForm()
     
     return render(request, 'minecraft_app/login.html', {'form': form})
 
-@login_required  # Assure que l'utilisateur est connecté
+# Logout view
+def logout_view(request):
+    logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect('home')
+
+# Profile view
+@login_required
+def profile_view(request):
+    user = request.user
+    try:
+        profile = user.profile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=user)
+    
+    # Get user purchases for display
+    purchases = UserPurchase.objects.filter(user=user).select_related('rank')
+    
+    # Get the server for global context
+    server = TownyServer.objects.first()
+    
+    if request.method == 'POST':
+        # Profile update form
+        minecraft_username = request.POST.get('minecraft_username')
+        discord_username = request.POST.get('discord_username')
+        bio = request.POST.get('bio')
+        
+        # Update profile
+        old_minecraft_username = profile.minecraft_username
+        
+        profile.minecraft_username = minecraft_username
+        profile.discord_username = discord_username
+        profile.bio = bio
+        
+        # If Minecraft username changed, update UUID
+        if minecraft_username != old_minecraft_username:
+            if minecraft_username:
+                uuid = fetch_minecraft_uuid(minecraft_username)
+                if uuid:
+                    profile.minecraft_uuid = uuid
+                else:
+                    # If UUID can't be retrieved, clear the old one
+                    profile.minecraft_uuid = ''
+            else:
+                # If username is empty, clear UUID
+                profile.minecraft_uuid = ''
+        
+        profile.save()
+        
+        messages.success(request, "Profile updated successfully!")
+        return redirect('profile')
+    
+    context = {
+        'profile': profile,
+        'server': server,
+        'purchases': purchases
+    }
+        
+    return render(request, 'minecraft_app/profile.html', context)
+
+@login_required
 def checkout(request, rank_id):
     rank = get_object_or_404(Rank, id=rank_id)
     user = request.user
@@ -325,7 +301,8 @@ def checkout(request, rank_id):
         )
         return redirect(checkout_session.url, code=303)
     except Exception as e:
-        messages.error(request, f"Erreur lors de la création du paiement: {str(e)}")
+        logging.error(f"Error creating Stripe checkout session: {str(e)}")
+        messages.error(request, f"Error creating payment: {str(e)}")
         return redirect('store')
 
 def payment_success(request):
@@ -340,7 +317,7 @@ def payment_success(request):
         except UserPurchase.DoesNotExist:
             pass
     
-    # Fallback si l'achat n'est pas trouvé (peut arriver si le webhook n'a pas encore traité)
+    # Fallback if purchase not found (can happen if webhook hasn't processed yet)
     return render(request, 'minecraft_app/payment_success.html', {
         'server': TownyServer.objects.first()
     })
@@ -348,7 +325,7 @@ def payment_success(request):
 def payment_cancel(request):
       return render(request, 'minecraft_app/payment_cancel.html')
 
-@csrf_exempt  # Important pour les webhooks Stripe
+@csrf_exempt
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
@@ -363,38 +340,88 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError:
         return HttpResponse(status=400)
 
+    # Handle different event types
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        
-        # Récupérer les informations depuis les métadonnées
-        user_id = session.get('metadata', {}).get('user_id')
-        rank_id = session.get('metadata', {}).get('rank_id')
-        
-        if user_id and rank_id:
-            try:
-                user = User.objects.get(id=user_id)
-                rank = Rank.objects.get(id=rank_id)
-                
-                # Enregistrer l'achat
-                UserPurchase.objects.create(
-                    user=user,
-                    rank=rank,
-                    amount=rank.price,
-                    payment_id=session.id,
-                    payment_status='completed'
-                )
-                
-                # Vous pourriez ajouter ici la logique pour attribuer le rang dans le jeu
-                # Par exemple, si vous avez un champ pour stocker le rang de l'utilisateur:
-                # user.profile.minecraft_rank = rank.name
-                # user.profile.save()
-                
-                logging.info(f"Paiement réussi pour {rank.name} par {user.username}")
-            except User.DoesNotExist:
-                logging.error(f"Utilisateur avec ID {user_id} non trouvé")
-            except Rank.DoesNotExist:
-                logging.error(f"Rang avec ID {rank_id} non trouvé")
-        else:
-            logging.error("Métadonnées utilisateur ou rang manquantes dans la session Stripe")
+        process_successful_payment(session)
+    elif event['type'] == 'payment_intent.payment_failed':
+        session = event['data']['object']
+        process_failed_payment(session)
+    elif event['type'] == 'checkout.session.expired':
+        session = event['data']['object']
+        process_expired_session(session)
 
     return HttpResponse(status=200)
+
+def process_successful_payment(session):
+    # Get information from metadata
+    user_id = session.get('metadata', {}).get('user_id')
+    rank_id = session.get('metadata', {}).get('rank_id')
+    
+    if user_id and rank_id:
+        try:
+            user = User.objects.get(id=user_id)
+            rank = Rank.objects.get(id=rank_id)
+            
+            # Record the purchase
+            UserPurchase.objects.create(
+                user=user,
+                rank=rank,
+                amount=rank.price,
+                payment_id=session.id,
+                payment_status='completed'
+            )
+            
+            logging.info(f"Payment successful for {rank.name} by {user.username}")
+        except User.DoesNotExist:
+            logging.error(f"User with ID {user_id} not found")
+        except Rank.DoesNotExist:
+            logging.error(f"Rank with ID {rank_id} not found")
+    else:
+        logging.error("User or rank metadata missing in Stripe session")
+
+def process_failed_payment(session):
+    # Log failed payment
+    user_id = session.get('metadata', {}).get('user_id')
+    rank_id = session.get('metadata', {}).get('rank_id')
+    
+    if user_id and rank_id:
+        try:
+            user = User.objects.get(id=user_id)
+            rank = Rank.objects.get(id=rank_id)
+            
+            # Record the failed purchase for tracking
+            UserPurchase.objects.create(
+                user=user,
+                rank=rank,
+                amount=rank.price,
+                payment_id=session.id,
+                payment_status='failed'
+            )
+            
+            logging.warning(f"Payment failed for {rank.name} by {user.username}")
+        except (User.DoesNotExist, Rank.DoesNotExist):
+            logging.error(f"User or Rank not found for failed payment. User ID: {user_id}, Rank ID: {rank_id}")
+    else:
+        logging.error("User or rank metadata missing in failed payment")
+
+def process_expired_session(session):
+    # Log expired session
+    user_id = session.get('metadata', {}).get('user_id')
+    
+    if user_id:
+        try:
+            user = User.objects.get(id=user_id)
+            logging.info(f"Checkout session expired for user {user.username}")
+        except User.DoesNotExist:
+            logging.error(f"User with ID {user_id} not found for expired session")
+    else:
+        logging.error("User metadata missing in expired session")
+
+def payment_cancel(request):
+    messages.warning(request, "Your payment has been cancelled. No money has been charged.")
+    return render(request, 'minecraft_app/payment_cancel.html')
+
+def payment_failed(request):
+    messages.error(request, "Your payment could not be processed. Please try again or use a different payment method.")
+    return render(request, 'minecraft_app/payment_failed.html')
