@@ -3,15 +3,24 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Ajoutons un script de débogage pour voir si le document est bien chargé
+    console.log('DOM chargé - Script initialisé');
+    
     // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navbar = document.querySelector('.navbar');
     
     if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', function() {
-            console.log('Hamburger clicked'); // Pour le débogage
+        console.log('Bouton hamburger trouvé');
+        
+        // Solution directe et simple pour la gestion du clic
+        mobileMenuToggle.onclick = function() {
+            console.log('Clic sur hamburger détecté');
             navbar.classList.toggle('mobile-open');
-        });
+            console.log('État de la classe mobile-open:', navbar.classList.contains('mobile-open'));
+        };
+    } else {
+        console.error('Bouton hamburger non trouvé!');
     }
     
     // Close mobile menu when clicking on links
@@ -19,9 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
             navbar.classList.remove('mobile-open');
-            if (mobileMenuToggle) {
-                mobileMenuToggle.setAttribute('aria-expanded', 'false');
-            }
         });
     });
     
