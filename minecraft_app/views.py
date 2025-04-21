@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import TownyServer, Nation, Town, NewsPost, StaffMember, Rank, ServerRule, DynamicMapPoint
-from django.db.models import Count
+from django.db.models import Count, Sum
 
 def home(request):
     server = TownyServer.objects.first()
@@ -8,20 +8,31 @@ def home(request):
     nations_count = Nation.objects.count()
     towns_count = Town.objects.count()
     
+    # Récupérer les 3 premières nations pour l'affichage en page d'accueil
+    top_nations = Nation.objects.annotate(towns_count=Count('towns')).order_by('-towns_count')[:3]
+    
     context = {
         'server': server,
         'latest_news': latest_news,
         'nations_count': nations_count,
         'towns_count': towns_count,
+        'nations': top_nations,  # Ajout des nations pour la page d'accueil
     }
     
     return render(request, 'minecraft_app/home.html', context)
 
 def nations(request):
-    nations_list = Nation.objects.annotate(towns_count=Count('towns')).order_by('-towns_count')
+    # Récupérer seulement les 3 premières nations par nombre de villes (top nations)
+    nations_list = Nation.objects.annotate(towns_count=Count('towns')).order_by('-towns_count')[:3]
+    
+    # Calculer des statistiques supplémentaires pour la page nations
+    total_towns = Town.objects.count()
+    total_residents = Town.objects.aggregate(total=Sum('residents_count'))['total'] or 0
     
     context = {
         'nations': nations_list,
+        'total_towns': total_towns,
+        'total_residents': total_residents,
     }
     
     return render(request, 'minecraft_app/nations.html', context)
@@ -36,24 +47,6 @@ def nation_detail(request, nation_id):
     }
     
     return render(request, 'minecraft_app/nation_detail.html', context)
-
-def towns(request):
-    towns_list = Town.objects.all().order_by('-residents_count')
-    
-    context = {
-        'towns': towns_list,
-    }
-    
-    return render(request, 'minecraft_app/towns.html', context)
-
-def town_detail(request, town_id):
-    town = get_object_or_404(Town, id=town_id)
-    
-    context = {
-        'town': town,
-    }
-    
-    return render(request, 'minecraft_app/town_detail.html', context)
 
 def dynmap(request):
     map_points = DynamicMapPoint.objects.all()
@@ -101,14 +94,14 @@ def staff(request):
     
     return render(request, 'minecraft_app/staff.html', context)
 
-def ranks(request):
+def store(request):  # Remplace ranks
     ranks_list = Rank.objects.all().order_by('price')
     
     context = {
         'ranks': ranks_list,
     }
     
-    return render(request, 'minecraft_app/ranks.html', context)
+    return render(request, 'minecraft_app/store.html', context)
 
 def rules(request):
     rules_list = ServerRule.objects.all()

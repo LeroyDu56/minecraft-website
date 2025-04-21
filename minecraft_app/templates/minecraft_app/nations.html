@@ -1,7 +1,7 @@
 {% extends 'minecraft_app/base.html' %}
 {% load static %}
 
-{% block title %}Nations - GeoMC Towny Earth Server{% endblock %}
+{% block title %}Top Nations - GeoMC Towny Earth Server{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/nations.css' %}">
@@ -10,7 +10,7 @@
 {% block content %}
 <!-- Page Header -->
 <section class="page-header">
-    <h1>Nations Directory</h1>
+    <h1>Top Nations Leaderboard</h1>
 </section>
 
 <!-- Nations List -->
@@ -20,7 +20,7 @@
             <div class="stats-container">
                 <div class="stat-item">
                     <div class="stat-value">{{ nations|length }}</div>
-                    <div class="stat-label">Nations</div>
+                    <div class="stat-label">Top Nations</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">{{ total_towns }}</div>
@@ -228,56 +228,5 @@
     </div>
 </section>
 
-<!-- How to Create a Nation -->
-<section class="create-nation-section">
-    <div class="container">
-        <h2 class="section-title">How to Create a Nation</h2>
-        
-        <div class="requirements-container">
-            <div class="requirement-card">
-                <div class="requirement-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <h3>Own a Town</h3>
-                <p>You must be a mayor of a town to create a nation.</p>
-            </div>
-            
-            <div class="requirement-card">
-                <div class="requirement-icon">
-                    <i class="fas fa-coins"></i>
-                </div>
-                <h3>1000 Money</h3>
-                <p>You need 1000 coins to form a new nation.</p>
-            </div>
-            
-            <div class="requirement-card">
-                <div class="requirement-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3>5 Residents</h3>
-                <p>Your town must have at least 5 residents.</p>
-            </div>
-            
-            <div class="requirement-card">
-                <div class="requirement-icon">
-                    <i class="fas fa-terminal"></i>
-                </div>
-                <h3>Command</h3>
-                <p>Use <code>/nation new [Nation Name]</code> to create your nation.</p>
-            </div>
-        </div>
-        
-        <div class="nation-benefits">
-            <h3>Benefits of Creating a Nation</h3>
-            <ul>
-                <li><i class="fas fa-check-circle"></i> Create alliances with other nations</li>
-                <li><i class="fas fa-check-circle"></i> Declare wars and participate in nation battles</li>
-                <li><i class="fas fa-check-circle"></i> Manage taxes and create a national bank</li>
-                <li><i class="fas fa-check-circle"></i> Set nation ranks and manage permissions</li>
-                <li><i class="fas fa-check-circle"></i> Claim bonus chunks for your nation's towns</li>
-                <li><i class="fas fa-check-circle"></i> Appear on the server's nations leaderboard</li>
-            </ul>
-        </div>
-    </div>
-</section>
+<!-- How to Create a Nation (conserver cette section) -->
 {% endblock %}

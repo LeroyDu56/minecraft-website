@@ -1,0 +1,269 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}News - GeoMC Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/news.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>News & Updates</h1>
+</section>
+
+<!-- News Section -->
+<section class="section">
+    <div class="container">
+        <div class="news-container">
+            <!-- Featured News -->
+            <div class="featured-news">
+                {% if news_posts.0 %}
+                <div class="featured-news-item">
+                    <div class="featured-news-image">
+                        <img src="{{ news_posts.0.image|default:'../images/default-news.jpg' }}" alt="{{ news_posts.0.title }}">
+                    </div>
+                    <div class="featured-news-content">
+                        <span class="featured-news-badge">Latest Update</span>
+                        <h2 class="featured-news-title">{{ news_posts.0.title }}</h2>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>{{ news_posts.0.created_at|date:"F j, Y" }}</span>
+                            </div>
+                            <div class="news-author">
+                                <i class="fas fa-user"></i>
+                                <span>{{ news_posts.0.author.username }}</span>
+                            </div>
+                        </div>
+                        <p class="featured-news-excerpt">{{ news_posts.0.content|truncatewords:50 }}</p>
+                        <a href="{% url 'news_detail' news_posts.0.id %}" class="btn">Read More</a>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Example featured news if none available in database -->
+                <div class="featured-news-item">
+                    <div class="featured-news-image">
+                        <img src="{% static 'images/default-news.jpg' %}" alt="Featured News">
+                    </div>
+                    <div class="featured-news-content">
+                        <span class="featured-news-badge">Latest Update</span>
+                        <h2 class="featured-news-title">Major Update: New Towny Features Released!</h2>
+                        <div class="news-meta">
+                            <div class="news-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>April 18, 2025</span>
+                            </div>
+                            <div class="news-author">
+                                <i class="fas fa-user"></i>
+                                <span>ServerAdmin</span>
+                            </div>
+                        </div>
+                        <p class="featured-news-excerpt">We're excited to announce the release of our newest server update featuring enhanced Towny functionality, new building tools, and various performance improvements to make your gameplay smoother than ever before!</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- News Filters -->
+            <div class="news-filters">
+                <div class="news-categories">
+                    <div class="category-tag active">All</div>
+                    <div class="category-tag">Updates</div>
+                    <div class="category-tag">Events</div>
+                    <div class="category-tag">Announcements</div>
+                    <div class="category-tag">Community</div>
+                </div>
+                
+                <div class="news-search">
+                    <input type="text" placeholder="Search news...">
+                    <button type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <!-- News Grid -->
+            <div class="news-grid">
+                {% for post in news_posts %}
+                    {% if forloop.counter > 1 %}  <!-- Skip the first post (featured) -->
+                        <div class="news-item">
+                            {% if post.image %}
+                                <div class="news-item-image">
+                                    <img src="{{ post.image }}" alt="{{ post.title }}">
+                                </div>
+                            {% endif %}
+                            
+                            <div class="news-item-content">
+                                <div class="news-meta">
+                                    <div class="news-date">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>{{ post.created_at|date:"F j, Y" }}</span>
+                                    </div>
+                                    <div class="news-author">
+                                        <i class="fas fa-user"></i>
+                                        <span>{{ post.author.username }}</span>
+                                    </div>
+                                </div>
+                                
+                                <h3 class="news-title">{{ post.title }}</h3>
+                                <p class="news-excerpt">{{ post.content|truncatewords:30 }}</p>
+                                
+                                <div class="news-footer">
+                                    <span class="news-tag">Updates</span>
+                                    <a href="{% url 'news_detail' post.id %}" class="btn">Read More</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <!-- Example news if none available in database -->
+                    <div class="news-item">
+                        <div class="news-item-image">
+                            <img src="{% static 'images/default-news.jpg' %}" alt="News Image">
+                        </div>
+                        
+                        <div class="news-item-content">
+                            <div class="news-meta">
+                                <div class="news-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>April 15, 2025</span>
+                                </div>
+                                <div class="news-author">
+                                    <i class="fas fa-user"></i>
+                                    <span>ServerAdmin</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="news-title">Spring Festival Event Coming Soon!</h3>
+                            <p class="news-excerpt">Get ready for our annual Spring Festival! Join us for exciting activities, special quests, and unique limited-time rewards. Don't miss this opportunity to celebrate the season with the whole server community.</p>
+                            
+                            <div class="news-footer">
+                                <span class="news-tag">Events</span>
+                                <a href="#" class="btn">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="news-item">
+                        <div class="news-item-content">
+                            <div class="news-meta">
+                                <div class="news-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>April 10, 2025</span>
+                                </div>
+                                <div class="news-author">
+                                    <i class="fas fa-user"></i>
+                                    <span>CommunityManager</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="news-title">Community Building Contest Results</h3>
+                            <p class="news-excerpt">The results are in for our monthly community building contest! We received over 50 amazing entries across various categories. Check out the winners and their incredible builds in this post.</p>
+                            
+                            <div class="news-footer">
+                                <span class="news-tag">Community</span>
+                                <a href="#" class="btn">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="news-item">
+                        <div class="news-item-image">
+                            <img src="{% static 'images/default-news.jpg' %}" alt="News Image">
+                        </div>
+                        
+                        <div class="news-item-content">
+                            <div class="news-meta">
+                                <div class="news-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>April 5, 2025</span>
+                                </div>
+                                <div class="news-author">
+                                    <i class="fas fa-user"></i>
+                                    <span>GameMaster</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="news-title">Nation Wars Tournament Results</h3>
+                            <p class="news-excerpt">After three days of intense battles, diplomacy, and strategy, the Nation Wars Tournament has concluded. Congratulations to Britannia for their victory! Read about the highlights and most memorable moments.</p>
+                            
+                            <div class="news-footer">
+                                <span class="news-tag">Events</span>
+                                <a href="#" class="btn">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <a href="#" class="page-nav disabled"><i class="fas fa-chevron-left"></i> Previous</a>
+                <div class="page-numbers">
+                    <a href="#" class="active">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <span>...</span>
+                    <a href="#">5</a>
+                </div>
+                <a href="#" class="page-nav">Next <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Category tags
+        const categoryTags = document.querySelectorAll('.category-tag');
+        
+        categoryTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                // Remove active class from all tags
+                categoryTags.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tag
+                this.classList.add('active');
+                
+                // Here you would typically filter the news based on category
+                // For demo purposes, we're just updating the UI
+            });
+        });
+        
+        // Pagination
+        const pageLinks = document.querySelectorAll('.page-numbers a');
+        const prevPageLink = document.querySelector('.page-nav:first-child');
+        const nextPageLink = document.querySelector('.page-nav:last-child');
+        
+        pageLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all page links
+                pageLinks.forEach(pageLink => {
+                    pageLink.classList.remove('active');
+                });
+                
+                // Add active class to the clicked link
+                this.classList.add('active');
+                
+                // Update prev/next buttons state
+                if (this.textContent === '1') {
+                    prevPageLink.classList.add('disabled');
+                } else {
+                    prevPageLink.classList.remove('disabled');
+                }
+                
+                if (this.textContent === '5') { // Assuming 5 is the last page
+                    nextPageLink.classList.add('disabled');
+                } else {
+                    nextPageLink.classList.remove('disabled');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
