@@ -140,144 +140,20 @@
         <!-- Moderators -->
         <h3 class="staff-category">Moderators</h3>
         <div class="staff-grid">
-            {% for mod in mods %}
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/{{ mod.name }}/100" alt="{{ mod.name }}">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">{{ mod.name }}</h4>
-                            <span class="staff-role">{{ mod.get_role_display }}</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">{{ mod.description|default:"GeoMC server moderator. Helps maintain a pleasant and respectful gaming environment for all players." }}</p>
-                        
-                        {% if mod.discord_username %}
-                            <div class="staff-social">
-                                <div class="social-item">
-                                    <i class="fab fa-discord"></i>
-                                    <span>{{ mod.discord_username }}</span>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            {% empty %}
-                <!-- Placeholder for mods if none are in database -->
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/ModPlayer1/100" alt="ModPlayer1">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">ModPlayer1</h4>
-                            <span class="staff-role">Moderator</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">
-                            Experienced moderator, mainly active during daytime to help new players.
-                        </p>
-                        <div class="staff-social">
-                            <div class="social-item">
-                                <i class="fab fa-discord"></i>
-                                <span>ModPlayer1#1234</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/ModPlayer2/100" alt="ModPlayer2">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">ModPlayer2</h4>
-                            <span class="staff-role">Moderator</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">
-                            Moderator specialized in resolving conflicts between nations and handling grief complaints.
-                        </p>
-                        <div class="staff-social">
-                            <div class="social-item">
-                                <i class="fab fa-discord"></i>
-                                <span>ModPlayer2#5678</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+
         </div>
-        
+
         <!-- Helpers -->
-        {% if helpers %}
         <h3 class="staff-category">Helpers</h3>
         <div class="staff-grid">
-            {% for helper in helpers %}
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/{{ helper.name }}/100" alt="{{ helper.name }}">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">{{ helper.name }}</h4>
-                            <span class="staff-role">{{ helper.get_role_display }}</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">{{ helper.description|default:"Helper on the GeoMC server. Assists new players in understanding server systems and integrating into the community." }}</p>
-                        
-                        {% if helper.discord_username %}
-                            <div class="staff-social">
-                                <div class="social-item">
-                                    <i class="fab fa-discord"></i>
-                                    <span>{{ helper.discord_username }}</span>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
+
         </div>
-        {% endif %}
-        
+
         <!-- Builders -->
-        {% if builders %}
         <h3 class="staff-category">Builders</h3>
         <div class="staff-grid">
-            {% for builder in builders %}
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/{{ builder.name }}/100" alt="{{ builder.name }}">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">{{ builder.name }}</h4>
-                            <span class="staff-role">{{ builder.get_role_display }}</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">{{ builder.description|default:"Builder on the GeoMC server. Responsible for creating public structures and improving common areas." }}</p>
-                        
-                        {% if builder.discord_username %}
-                            <div class="staff-social">
-                                <div class="social-item">
-                                    <i class="fab fa-discord"></i>
-                                    <span>{{ builder.discord_username }}</span>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
+
         </div>
-        {% endif %}
-    </div>
 </section>
 
 <!-- Join Our Team Section -->
@@ -287,7 +163,7 @@
         <p class="section-subtitle">Want to help us grow GeoMC?</p>
         
         <div class="application-info">
-            <p>We regularly look for passionate new team members to help manage and develop our server. If you're interested, check the requirements and apply on our Discord.</p>
+            <p>We currently have 3 active staff positions and are looking for new team members to help manage and develop our server. If you're interested, check the requirements and apply on our Discord.</p>
             
             <div class="requirements">
                 <h4>Requirements:</h4>
