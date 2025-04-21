@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint
 from django.db.models import Count, Sum
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -269,48 +270,22 @@ def profile_view(request):
         
     return render(request, 'minecraft_app/profile.html', {'profile': profile})
 
-def fetch_minecraft_uuid(username):
-    """
-    Récupère l'UUID Minecraft d'un utilisateur à partir de son nom d'utilisateur.
-    Utilise l'API Mojang.
-    
-    Args:
-        username (str): Nom d'utilisateur Minecraft
-        
-    Returns:
-        str: UUID de l'utilisateur (sans tirets) ou None si non trouvé
-    """
-    if not username:
-        return None
-        
-    try:
-        url = f"https://api.mojang.com/users/profiles/minecraft/{username}"
-        response = requests.get(url, timeout=5)
-        
-        if response.status_code == 200:
-            data = response.json()
-            return data.get('id')  # UUID sans tirets
-        elif response.status_code == 204 or response.status_code == 404:
-            logger.warning(f"Utilisateur Minecraft non trouvé: {username}")
-            return None
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.info(request, f"Vous êtes maintenant connecté en tant que {username}.")
+                return redirect('home')
+            else:
+                messages.error(request, "Nom d'utilisateur ou mot de passe invalide.")
         else:
-            logger.error(f"Erreur lors de la récupération de l'UUID: {response.status_code}")
-            return None
-    except Exception as e:
-        logger.error(f"Exception lors de la récupération de l'UUID: {str(e)}")
-        return None
-
-def format_uuid_with_dashes(uuid):
-    """
-    Ajoute des tirets à l'UUID au format standard.
+            messages.error(request, "Nom d'utilisateur ou mot de passe invalide.")
+    else:
+        form = AuthenticationForm()
     
-    Args:
-        uuid (str): UUID sans tirets
-        
-    Returns:
-        str: UUID avec tirets au format standard
-    """
-    if not uuid or len(uuid) != 32:
-        return uuid
-        
-    return f"{uuid[0:8]}-{uuid[8:12]}-{uuid[12:16]}-{uuid[16:20]}-{uuid[20:32]}"
+    return render(request, 'minecraft_app/login.html', {'form': form})
