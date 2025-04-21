@@ -1,18 +1,22 @@
 from django.shortcuts import render, get_object_or_404
-from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint
+from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, Rank
 from django.db.models import Count, Sum
+from django.urls import reverse
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django import forms
-from django.shortcuts import redirect
+from django.conf import settings
+from django.shortcuts import redirect, render
 from .models import UserProfile
 from .services import fetch_minecraft_uuid, format_uuid_with_dashes
 import requests
 import json
 import logging
+import stripe
 
 
 def home(request):
@@ -289,3 +293,58 @@ def login_view(request):
         form = AuthenticationForm()
     
     return render(request, 'minecraft_app/login.html', {'form': form})
+
+def checkout(request, rank_id):
+      rank = Rank.objects.get(id=rank_id)
+      try:
+          checkout_session = stripe.checkout.Session.create(
+              payment_method_types=['card'],
+              line_items=[
+                  {
+                      'price_data': {
+                          'currency': 'eur',
+                          'unit_amount': int(rank.price * 100),  # Montant en centimes
+                          'product_data': {
+                              'name': rank.name,
+                              'description': rank.description,
+                          },
+                      },
+                      'quantity': 1,
+                  }
+              ],
+              mode='payment',
+              success_url=request.build_absolute_uri(reverse('payment_success')),
+              cancel_url=request.build_absolute_uri(reverse('payment_cancel')),
+          )
+          return redirect(checkout_session.url, code=303)
+      except Exception as e:
+          return render(request, 'minecraft_app/error.html', {'error': str(e)})
+
+def payment_success(request):
+      return render(request, 'minecraft_app/payment_success.html')
+
+def payment_cancel(request):
+      return render(request, 'minecraft_app/payment_cancel.html')
+
+def stripe_webhook(request):
+      payload = request.body
+      sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+      endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+      try:
+          event = stripe.Webhook.construct_event(
+              payload, sig_header, endpoint_secret
+          )
+      except ValueError:
+          return HttpResponse(status=400)
+      except stripe.error.SignatureVerificationError:
+          return HttpResponse(status=400)
+
+      if event['type'] == 'checkout.session.completed':
+          session = event['data']['object']
+          rank_name = session['line_items'][0]['description']
+          customer_email = session.get('customer_email', 'inconnu')
+          print(f"Paiement réussi pour {rank_name} par {customer_email}")
+          # TODO: Ajoute ici la logique pour appliquer le rang au joueur
+
+      return HttpResponse(status=200)

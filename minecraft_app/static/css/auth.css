@@ -1,7 +1,7 @@
 /* Auth Styles - GeoMC */
 
 /* Main Auth Section - The form container area */
-.auth-section {
+.auth-page-section {
     padding: 80px 0;
     min-height: calc(100vh - 450px);
     display: flex;

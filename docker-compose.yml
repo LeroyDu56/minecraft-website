@@ -8,19 +8,16 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=True
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    env_file:
+      - .env  # Charger les variables depuis .env
     depends_on:
       - db
     restart: always
 
   db:
     image: postgres:13
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - .env  # Charger les variables pour la base de données
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always

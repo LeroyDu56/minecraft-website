@@ -15,7 +15,7 @@
     <header>
         <div class="container">
             <nav class="navbar">
-                <div class="logo">GeoMC</div>
+                <a href="{% url 'home' %}" class="logo">GeoMC</a>
                 
                 <!-- Hamburger Menu Button -->
                 <div class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -25,7 +25,6 @@
                 </div>
                 
                 <ul class="nav-links">
-                    <li><a href="{% url 'home' %}">Home</a></li>
                     <li><a href="{% url 'nations' %}">Nations</a></li>
                     <li><a href="{% url 'dynmap' %}">Map</a></li>
                     <li><a href="{% url 'staff' %}">Staff</a></li>

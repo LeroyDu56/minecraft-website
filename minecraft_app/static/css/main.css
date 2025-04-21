@@ -71,12 +71,15 @@ header {
     padding: 15px 0;
     width: 100%;
     flex-wrap: nowrap;
+    position: relative;
 }
 
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
     color: var(--primary);
+    position: absolute;
+    left: 0;
 }
 
 .nav-links {
@@ -85,6 +88,8 @@ header {
     margin: 0;
     padding: 0;
     list-style: none;
+    justify-content: center;
+    flex-grow: 1;
 }
 
 .nav-links a {
@@ -170,11 +175,15 @@ section {
 }
 
 .grid-3 {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
 }
 
 .grid-4 {
+    display: grid;
     grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
 }
 
 /* Server Status */
@@ -311,6 +320,8 @@ footer {
     align-items: center;
     gap: 15px;
     margin-left: auto;
+    position: absolute;
+    right: 0;
 }
 
 .play-now-btn {

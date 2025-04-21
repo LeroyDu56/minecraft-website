@@ -32,23 +32,9 @@
                         <div class="profile-minecraft">{{ profile.minecraft_username }}</div>
                     {% endif %}
                     
-                    <div class="profile-stats">
-                        <div class="profile-stat">
-                            <div class="profile-stat-value">0</div>
-                            <div class="profile-stat-label">Villes</div>
-                        </div>
-                        <div class="profile-stat">
-                            <div class="profile-stat-value">0</div>
-                            <div class="profile-stat-label">Nations</div>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="profile-links">
-                    <a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profil</a>
-                    <a href="#"><i class="fas fa-city"></i> Mes Villes</a>
-                    <a href="#"><i class="fas fa-flag"></i> Mes Nations</a>
-                    <a href="#"><i class="fas fa-cog"></i> Paramètres</a>
                     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
                 </div>
             </div>

@@ -40,6 +40,10 @@
     .nation-detail-content {
         grid-template-columns: 1fr;
     }
+    
+    .features-section .grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -76,34 +80,11 @@
         margin: 10px 0;
     }
     
-    .navbar .btn {
-        display: none;
-    }
-    
-    .navbar.mobile-open .btn {
-        display: inline-block;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-    
-    /* Hero Section */
-    .hero h1 {
-        font-size: 3rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.4rem;
-    }
-    
-    .hero-buttons {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    /* Grids */
+    /* Grid layouts for mobile */
     .grid, .grid-2, .grid-3, .grid-4 {
         grid-template-columns: 1fr;
     }
+    
     
     /* Server Info */
     .server-info-header {

@@ -11,10 +11,12 @@ urlpatterns = [
     path('regles/', views.rules, name='rules'),
     path('contact/', views.contact, name='contact'),
     path('faq/', views.faq, name='faq'),
-    
-    # Routes d'authentification
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-    path('register/', views.register_view, name='register'),
-    path('profile/', views.profile_view, name='profile'),
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
+    path('register/', views.register, name='register'),
+    path('profile/', views.profile, name='profile'),
+    path('checkout/<int:rank_id>/', views.checkout, name='checkout'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'),
 ]
