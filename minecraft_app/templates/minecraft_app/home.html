@@ -42,28 +42,31 @@
                     <div class="detail-item">
                         <div class="detail-icon"><i class="fas fa-server"></i></div>
                         <div class="detail-label">Version</div>
-                        <div class="detail-value">{{ server.version }}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-flag"></i></div>
-                        <div class="detail-label">Nations</div>
-                        <div class="detail-value">{{ nations_count }}</div>
-                    </div>
-                    
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-building"></i></div>
-                        <div class="detail-label">Towns</div>
-                        <div class="detail-value">{{ towns_count }}</div>
+                        <div class="detail-value">1.21.4</div>
                     </div>
                 </div>
                 
                 <div class="server-ip">play.geomc.fr</div>
                 
                 <div class="join-now">
-                    <a href="minecraft://connect/play.geomc.fr" class="btn btn-accent">Launch Minecraft</a>
-                    <p>or copy the IP address and paste it into your Minecraft server list</p>
+                    <button id="copy-ip" class="btn btn-accent">Copy Server IP</button>
+                    <p>Copy the IP address and paste it into your Minecraft server list</p>
                 </div>
+                
+                <script>
+                    document.getElementById('copy-ip').addEventListener('click', function() {
+                        const serverIP = 'play.geomc.fr';
+                        navigator.clipboard.writeText(serverIP).then(function() {
+                            // Change button text temporarily
+                            const btn = document.getElementById('copy-ip');
+                            const originalText = btn.textContent;
+                            btn.textContent = 'IP Copied!';
+                            setTimeout(function() {
+                                btn.textContent = originalText;
+                            }, 2000);
+                        });
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -101,7 +104,6 @@
             </div>
             
             <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                 <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                 <h3 class="feature-title">Land Protection</h3>
                 <p class="feature-description">Your claims are fully protected against griefing while still allowing for strategic gameplay.</p>
@@ -184,54 +186,7 @@
     </div>
 </section>
 
-<!-- Latest News Section -->
-<section class="news-section">
-    <div class="container">
-        <h2 class="section-title">Latest News</h2>
-        <p class="section-subtitle">Updates and events from our server</p>
-        
-        <div class="grid-3">
-            {% for post in latest_news %}
-                <div class="card news-card">
-                    <div class="card-content">
-                        <p class="news-date">{{ post.created_at|date:"F j, Y" }}</p>
-                        <h3 class="card-title">{{ post.title }}</h3>
-                        <p class="card-text">{{ post.content|truncatewords:25 }}</p>
-                        <a href="{% url 'news_detail' post.id %}" class="btn">Read More</a>
-                    </div>
-                </div>
-            {% empty %}
-                <!-- Sample news if no data available -->
-                <div class="card news-card">
-                    <div class="card-content">
-                        <p class="news-date">April 15, 2025</p>
-                        <h3 class="card-title">Server Update v2.5</h3>
-                        <p class="card-text">We've updated the server with new features and performance improvements. Explore new custom plugins and more efficient town management tools.</p>
-                        <a href="#" class="btn">Read More</a>
-                    </div>
-                </div>
-                
-                <div class="card news-card">
-                    <div class="card-content">
-                        <p class="news-date">April 10, 2025</p>
-                        <h3 class="card-title">Spring Festival Event</h3>
-                        <p class="card-text">Join our Spring Festival with special quests, limited rewards, and fun activities for everyone. The event starts this weekend.</p>
-                        <a href="#" class="btn">Read More</a>
-                    </div>
-                </div>
-                
-                <div class="card news-card">
-                    <div class="card-content">
-                        <p class="news-date">April 5, 2025</p>
-                        <h3 class="card-title">Nation Wars Results</h3>
-                        <p class="card-text">The first Nation Wars tournament has ended with Britannia claiming victory. See the full results and highlights from the battles.</p>
-                        <a href="#" class="btn">Read More</a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
+
 
 <!-- Call to Action -->
 <section class="cta-section">

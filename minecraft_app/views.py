@@ -1,10 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from .models import TownyServer, Nation, Town, NewsPost, StaffMember, Rank, ServerRule, DynamicMapPoint
+from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint
 from django.db.models import Count, Sum
 
 def home(request):
     server = TownyServer.objects.first()
-    latest_news = NewsPost.objects.order_by('-created_at')[:3]
     nations_count = Nation.objects.count()
     towns_count = Town.objects.count()
     
@@ -13,7 +12,6 @@ def home(request):
     
     context = {
         'server': server,
-        'latest_news': latest_news,
         'nations_count': nations_count,
         'towns_count': towns_count,
         'nations': top_nations,  # Ajout des nations pour la page d'accueil
@@ -60,24 +58,6 @@ def dynmap(request):
     }
     
     return render(request, 'minecraft_app/dynmap.html', context)
-
-def news(request):
-    news_posts = NewsPost.objects.order_by('-created_at')
-    
-    context = {
-        'news_posts': news_posts,
-    }
-    
-    return render(request, 'minecraft_app/news.html', context)
-
-def news_detail(request, post_id):
-    post = get_object_or_404(NewsPost, id=post_id)
-    
-    context = {
-        'post': post,
-    }
-    
-    return render(request, 'minecraft_app/news_detail.html', context)
 
 def staff(request):
     admins = StaffMember.objects.filter(role='admin')
