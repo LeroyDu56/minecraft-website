@@ -22,6 +22,9 @@
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .nation-card:hover {
@@ -60,10 +63,14 @@
 
 .nation-content {
     padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .nation-info {
     margin-bottom: 20px;
+    flex-grow: 1;
 }
 
 .info-item {
@@ -74,6 +81,8 @@
 
 .info-label {
     color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
 }
 
 .info-label i {
@@ -97,6 +106,7 @@
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.2);
     text-align: center;
+    margin-top: auto;
 }
 
 /* Create Nation Section */
@@ -118,6 +128,7 @@
     padding: 25px;
     text-align: center;
     transition: transform 0.3s;
+    height: 100%;
 }
 
 .requirement-card:hover {
@@ -141,6 +152,7 @@ code {
     padding: 3px 6px;
     border-radius: 3px;
     font-family: monospace;
+    word-break: break-word;
 }
 
 .nation-benefits {
@@ -174,6 +186,7 @@ code {
 .nation-benefits li i {
     color: var(--primary);
     margin-right: 10px;
+    flex-shrink: 0;
 }
 
 /* Nation Detail Page Styles */
@@ -343,6 +356,7 @@ code {
     border-radius: 50%;
     overflow: hidden;
     margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .ally-flag img, .enemy-flag img {
@@ -353,8 +367,16 @@ code {
 
 /* Responsive */
 @media (max-width: 992px) {
+    .nations-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
     .nation-detail-content {
         grid-template-columns: 1fr;
+    }
+    
+    .nation-detail-sidebar {
+        margin-top: 30px;
     }
 }
 
@@ -368,11 +390,73 @@ code {
         text-align: center;
     }
     
+    .nation-detail-title h1 {
+        font-size: 2.2rem;
+    }
+    
     .requirements-container {
         grid-template-columns: 1fr;
     }
     
     .nation-benefits ul {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-container {
+        flex-direction: column;
+    }
+    
+    .stat-item {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto 15px;
+    }
+    
+    .town-list-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .town-list-name {
+        margin-bottom: 10px;
+    }
+    
+    .town-list-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nation-header {
+        padding: 15px;
+    }
+    
+    .nation-content,
+    .nation-detail-main,
+    .nation-detail-sidebar {
+        padding: 15px;
+    }
+    
+    .nation-flag {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .nation-name {
+        font-size: 1.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+    
+    .info-value {
+        margin-top: 5px;
+    }
+    
+    .detail-stats {
         grid-template-columns: 1fr;
     }
 }

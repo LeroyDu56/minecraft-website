@@ -12,6 +12,7 @@
 .hero-content {
     max-width: 800px;
     padding: 0 20px;
+    width: 100%;
 }
 
 .hero h1 {
@@ -119,6 +120,9 @@
 .feature-card {
     text-align: center;
     padding: 30px 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .feature-icon {
@@ -135,6 +139,7 @@
 
 .feature-description {
     opacity: 0.8;
+    flex-grow: 1;
 }
 
 /* Nations Section */
@@ -144,6 +149,9 @@
 
 .nation-card {
     text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .nation-flag {
@@ -171,26 +179,10 @@
     font-size: 0.9rem;
     color: var(--light);
     opacity: 0.8;
-}
-
-/* News Section */
-.news-section {
-    padding: 80px 0;
-    background-color: var(--darker);
-}
-
-.news-card {
-    height: 100%;
-}
-
-.news-date {
-    font-size: 0.8rem;
-    color: var(--light);
-    opacity: 0.6;
     margin-bottom: 5px;
 }
 
-.news-card .btn {
+.nation-card .btn {
     margin-top: auto;
 }
 
@@ -227,6 +219,12 @@
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+    .grid-3, .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .hero h1 {
         font-size: 3rem;
@@ -239,6 +237,8 @@
     .hero-buttons {
         flex-direction: column;
         gap: 15px;
+        width: 80%;
+        margin: 0 auto;
     }
     
     .server-info-header {
@@ -248,5 +248,49 @@
     
     .server-status {
         margin-top: 10px;
+    }
+    
+    .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .cta-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .server-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-item {
+        margin-bottom: 15px;
+    }
+    
+    .server-ip {
+        font-size: 0.9rem;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .hero-buttons {
+        width: 100%;
+    }
+    
+    .cta-container {
+        padding: 0 15px;
     }
 }
