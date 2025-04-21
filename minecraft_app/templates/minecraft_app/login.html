@@ -1,0 +1,74 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Connexion - GeoMC Towny Earth Server{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Connexion</h1>
+</section>
+
+<!-- Login Section -->
+<section class="section">
+    <div class="container">
+        <div class="auth-form-container">
+            <h2 class="auth-form-title">Connectez-vous à votre compte</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Errors -->
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p class="form-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Mot de passe</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="form-submit">Se connecter</button>
+            </form>
+            
+            <div class="auth-links">
+                Vous n'avez pas de compte? <a href="{% url 'register' %}">Inscrivez-vous</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add necessary classes to Django form elements
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+    });
+</script>
+{% endblock %}

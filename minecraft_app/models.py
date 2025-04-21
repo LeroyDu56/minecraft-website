@@ -99,3 +99,23 @@ class DynamicMapPoint(models.Model):
     
     def __str__(self):
         return f"{self.name} ({self.get_point_type_display()})"
+    
+    # Ajoutez ceci à la fin de minecraft_app/models.py
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    minecraft_username = models.CharField(max_length=100, blank=True)
+    minecraft_uuid = models.CharField(max_length=36, blank=True)
+    bio = models.TextField(blank=True)
+    discord_username = models.CharField(max_length=100, blank=True)
+    
+    def __str__(self):
+        return f"Profil de {self.user.username}"
+    
+    def get_avatar_url(self):
+        if self.minecraft_uuid:
+            return f"https://mc-heads.net/avatar/{self.minecraft_uuid}/100"
+        elif self.minecraft_username:
+            return f"https://mc-heads.net/avatar/{self.minecraft_username}/100"
+        else:
+            return "https://mc-heads.net/avatar/MHF_Steve/100"  # Avatar par défaut

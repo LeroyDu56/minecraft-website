@@ -1,0 +1,119 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Inscription - GeoMC Towny Earth Server{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Inscription</h1>
+</section>
+
+<!-- Register Section -->
+<section class="section">
+    <div class="container">
+        <div class="auth-form-container">
+            <h2 class="auth-form-title">Créer un compte</h2>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Errors -->
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p class="form-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        {% for error in form.username.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.username.help_text %}
+                        <div class="form-help-text">{{ form.username.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <!-- Minecraft Username -->
+                <div class="form-group">
+                    <label for="{{ form.minecraft_username.id_for_label }}" class="form-label">Nom d'utilisateur Minecraft (optionnel)</label>
+                    {{ form.minecraft_username }}
+                    {% if form.minecraft_username.errors %}
+                        {% for error in form.minecraft_username.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.minecraft_username.help_text %}
+                        <div class="form-help-text">{{ form.minecraft_username.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">Mot de passe</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        {% for error in form.password1.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.password1.help_text %}
+                        <div class="form-help-text">{{ form.password1.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmer le mot de passe</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        {% for error in form.password2.errors %}
+                            <div class="form-error">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.password2.help_text %}
+                        <div class="form-help-text">{{ form.password2.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="form-submit">S'inscrire</button>
+            </form>
+            
+            <div class="auth-links">
+                Vous avez déjà un compte? <a href="{% url 'login' %}">Connectez-vous</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add necessary classes to Django form elements
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.classList.add('form-control');
+        });
+    });
+</script>
+{% endblock %}

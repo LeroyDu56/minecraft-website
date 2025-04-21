@@ -1,6 +1,18 @@
 from django.shortcuts import render, get_object_or_404
 from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint
 from django.db.models import Count, Sum
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django import forms
+from django.shortcuts import redirect
+from .models import UserProfile
+from .services import fetch_minecraft_uuid, format_uuid_with_dashes
+import requests
+import json
+import logging
+
 
 def home(request):
     server = TownyServer.objects.first()
@@ -143,3 +155,162 @@ def staff(request):
     }
     
     return render(request, 'minecraft_app/staff.html', context)
+
+# Formulaire d'inscription personnalisé
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField()
+    minecraft_username = forms.CharField(max_length=100, required=False, help_text="Votre pseudo Minecraft")
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2', 'minecraft_username']
+
+# Modifiez la vue register_view pour récupérer l'UUID
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            minecraft_username = form.cleaned_data.get('minecraft_username')
+            
+            # Créer le profil utilisateur
+            profile = UserProfile.objects.create(
+                user=user,
+                minecraft_username=minecraft_username
+            )
+            
+            # Si un nom d'utilisateur Minecraft est fourni, essayer de récupérer l'UUID
+            if minecraft_username:
+                uuid = fetch_minecraft_uuid(minecraft_username)
+                if uuid:
+                    profile.minecraft_uuid = uuid
+                    profile.save()
+                
+            # Connecter l'utilisateur
+            login(request, user)
+            messages.success(request, "Compte créé avec succès! Bienvenue sur GeoMC!")
+            return redirect('home')
+    else:
+        form = RegisterForm()
+    
+    return render(request, 'minecraft_app/register.html', {'form': form})
+
+# Vue de connexion
+@login_required
+def profile_view(request):
+    user = request.user
+    try:
+        profile = user.profile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=user)
+        
+    if request.method == 'POST':
+        # Formulaire de mise à jour du profil
+        minecraft_username = request.POST.get('minecraft_username')
+        discord_username = request.POST.get('discord_username')
+        bio = request.POST.get('bio')
+        
+        # Mettre à jour le profil
+        old_minecraft_username = profile.minecraft_username
+        
+        profile.minecraft_username = minecraft_username
+        profile.discord_username = discord_username
+        profile.bio = bio
+        
+        # Si le nom d'utilisateur Minecraft a changé, mettre à jour l'UUID
+        if minecraft_username != old_minecraft_username:
+            if minecraft_username:
+                uuid = fetch_minecraft_uuid(minecraft_username)
+                if uuid:
+                    profile.minecraft_uuid = uuid
+                else:
+                    # Si l'UUID ne peut pas être récupéré, effacer l'ancien
+                    profile.minecraft_uuid = ''
+            else:
+                # Si le nom d'utilisateur est vide, effacer l'UUID
+                profile.minecraft_uuid = ''
+        
+        profile.save()
+        
+        messages.success(request, "Profil mis à jour avec succès!")
+        return redirect('profile')
+        
+    return render(request, 'minecraft_app/profile.html', {'profile': profile})
+
+# Vue de déconnexion
+def logout_view(request):
+    logout(request)
+    messages.info(request, "Vous avez été déconnecté.")
+    return redirect('home')
+
+# Vue de profil
+@login_required
+def profile_view(request):
+    user = request.user
+    try:
+        profile = user.profile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=user)
+        
+    if request.method == 'POST':
+        # Formulaire de mise à jour du profil (à compléter)
+        minecraft_username = request.POST.get('minecraft_username')
+        discord_username = request.POST.get('discord_username')
+        bio = request.POST.get('bio')
+        
+        # Mettre à jour le profil
+        profile.minecraft_username = minecraft_username
+        profile.discord_username = discord_username
+        profile.bio = bio
+        profile.save()
+        
+        messages.success(request, "Profil mis à jour avec succès!")
+        return redirect('profile')
+        
+    return render(request, 'minecraft_app/profile.html', {'profile': profile})
+
+def fetch_minecraft_uuid(username):
+    """
+    Récupère l'UUID Minecraft d'un utilisateur à partir de son nom d'utilisateur.
+    Utilise l'API Mojang.
+    
+    Args:
+        username (str): Nom d'utilisateur Minecraft
+        
+    Returns:
+        str: UUID de l'utilisateur (sans tirets) ou None si non trouvé
+    """
+    if not username:
+        return None
+        
+    try:
+        url = f"https://api.mojang.com/users/profiles/minecraft/{username}"
+        response = requests.get(url, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            return data.get('id')  # UUID sans tirets
+        elif response.status_code == 204 or response.status_code == 404:
+            logger.warning(f"Utilisateur Minecraft non trouvé: {username}")
+            return None
+        else:
+            logger.error(f"Erreur lors de la récupération de l'UUID: {response.status_code}")
+            return None
+    except Exception as e:
+        logger.error(f"Exception lors de la récupération de l'UUID: {str(e)}")
+        return None
+
+def format_uuid_with_dashes(uuid):
+    """
+    Ajoute des tirets à l'UUID au format standard.
+    
+    Args:
+        uuid (str): UUID sans tirets
+        
+    Returns:
+        str: UUID avec tirets au format standard
+    """
+    if not uuid or len(uuid) != 32:
+        return uuid
+        
+    return f"{uuid[0:8]}-{uuid[8:12]}-{uuid[12:16]}-{uuid[16:20]}-{uuid[20:32]}"

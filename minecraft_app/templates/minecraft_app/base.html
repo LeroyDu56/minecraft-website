@@ -31,10 +31,72 @@
                     <li><a href="{% url 'staff' %}">Staff</a></li>
                     <li><a href="{% url 'store' %}">Store</a></li>
                 </ul>
-                <a href="#join" class="btn">Play Now</a>
+                
+                <!-- Bouton principal et auth -->
+                <div class="header-actions">
+                    <a href="#join" class="btn play-now-btn">Play Now</a>
+                    
+                    <!-- Auth section -->
+                    <div class="auth-section">
+                        {% if user.is_authenticated %}
+                            <div class="user-profile-dropdown">
+                                <div class="user-avatar" id="user-dropdown-toggle">
+                                    {% if user.profile.minecraft_uuid %}
+                                        <img src="https://mc-heads.net/avatar/{{ user.profile.minecraft_uuid }}/100" alt="{{ user.username }}">
+                                    {% elif user.profile.minecraft_username %}
+                                        <img src="https://mc-heads.net/avatar/{{ user.profile.minecraft_username }}/100" alt="{{ user.username }}">
+                                    {% else %}
+                                        <img src="https://mc-heads.net/avatar/MHF_Steve/100" alt="{{ user.username }}">
+                                    {% endif %}
+                                </div>
+                                <div class="dropdown-menu" id="user-dropdown-menu">
+                                    <div class="dropdown-user-info">
+                                        <div class="dropdown-avatar">
+                                            {% if user.profile.minecraft_uuid %}
+                                                <img src="https://mc-heads.net/avatar/{{ user.profile.minecraft_uuid }}/100" alt="{{ user.username }}">
+                                            {% elif user.profile.minecraft_username %}
+                                                <img src="https://mc-heads.net/avatar/{{ user.profile.minecraft_username }}/100" alt="{{ user.username }}">
+                                            {% else %}
+                                                <img src="https://mc-heads.net/avatar/MHF_Steve/100" alt="{{ user.username }}">
+                                            {% endif %}
+                                        </div>
+                                        <div class="dropdown-username">{{ user.username }}</div>
+                                        {% if user.profile.minecraft_username %}
+                                            <div class="dropdown-minecraft">{{ user.profile.minecraft_username }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="dropdown-links">
+                                        <a href="{% url 'profile' %}"><i class="fas fa-user"></i> Mon profil</a>
+                                        {% if user.is_staff %}
+                                            <a href="{% url 'admin:index' %}"><i class="fas fa-cog"></i> Administration</a>
+                                        {% endif %}
+                                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="auth-buttons">
+                                <a href="{% url 'login' %}" class="btn-auth login">Connexion</a>
+                                <a href="{% url 'register' %}" class="btn-auth register">Inscription</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
+    
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message message-{{ message.tags }}">
+                {{ message }}
+                <button class="message-close"><i class="fas fa-times"></i></button>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     
     {% block content %}{% endblock %}
     

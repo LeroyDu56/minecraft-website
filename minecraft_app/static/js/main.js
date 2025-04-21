@@ -31,6 +31,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // User dropdown menu toggle
+    const userDropdownToggle = document.getElementById('user-dropdown-toggle');
+    const userDropdownMenu = document.getElementById('user-dropdown-menu');
+    
+    if (userDropdownToggle && userDropdownMenu) {
+        // Toggle dropdown when clicking on avatar
+        userDropdownToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdownMenu.classList.toggle('active');
+        });
+        
+        // Close dropdown when clicking elsewhere
+        document.addEventListener('click', function() {
+            if (userDropdownMenu.classList.contains('active')) {
+                userDropdownMenu.classList.remove('active');
+            }
+        });
+        
+        // Prevent dropdown from closing when clicking inside it
+        userDropdownMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    // Handle message notifications
+    const messageCloseButtons = document.querySelectorAll('.message-close');
+    if (messageCloseButtons.length > 0) {
+        messageCloseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const message = this.parentElement;
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            });
+        });
+        
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.message').forEach(message => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            });
+        }, 5000);
+    }
+    
     // Copy server IP functionality
     const copyIpButton = document.getElementById('copy-ip');
     if (copyIpButton) {
