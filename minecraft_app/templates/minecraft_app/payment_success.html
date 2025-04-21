@@ -1,0 +1,40 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Paiement Réussi - GeoMC Towny Earth Server{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Paiement Réussi</h1>
+</section>
+
+<!-- Success Section -->
+<section class="section">
+    <div class="container">
+        <div class="auth-form-container">
+            <h2 class="auth-form-title">Merci pour votre achat!</h2>
+            
+            <div class="payment-success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
+                </div>
+                
+                {% if purchase %}
+                <div class="purchase-details">
+                    <h3>Détails de l'achat:</h3>
+                    <p>Rang: <span style="color: var(--primary);">{{ purchase.rank.name }}</span></p>
+                    <p>Montant: <span style="color: var(--primary);">{{ purchase.amount }} €</span></p>
+                </div>
+                {% endif %}
+                
+                <p class="mt-4">Votre rang a été activé sur votre compte. Rejoignez le serveur pour profiter de vos nouveaux avantages!</p>
+                
+                <div class="mt-4">
+                    <a href="{% url 'home' %}" class="btn">Retour à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

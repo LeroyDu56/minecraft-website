@@ -76,7 +76,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn" style="background-color: {{ rank.color_code }}">Purchase Now</a>
+                        <a href="{% url 'checkout' rank.id %}" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
                     </div>
                 </div>
             {% empty %}
@@ -103,7 +103,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn" style="background-color: #55efc4">Purchase Now</a>
+                        <a href="{% url 'checkout' rank.id %}" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
                     </div>
                 </div>
                 
@@ -131,7 +131,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn" style="background-color: #74b9ff">Purchase Now</a>
+                        <a href="{% url 'checkout' rank.id %}" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
                     </div>
                 </div>
                 
@@ -159,7 +159,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn" style="background-color: #a29bfe">Purchase Now</a>
+                        <a href="{% url 'checkout' rank.id %}" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
                     </div>
                 </div>
                 
@@ -188,7 +188,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn" style="background-color: #ffeaa7; color: #2d3436">Purchase Now</a>
+                        <a href="{% url 'checkout' rank.id %}" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
                     </div>
                 </div>
             {% endfor %}

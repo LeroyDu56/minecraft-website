@@ -31,10 +31,33 @@
                     {% if profile.minecraft_username %}
                         <div class="profile-minecraft">{{ profile.minecraft_username }}</div>
                     {% endif %}
-                    
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">
+                            {% if profile.minecraft_username %}
+                                <i class="fas fa-check" style="color: var(--success);"></i>
+                            {% else %}
+                                <i class="fas fa-times" style="color: var(--danger);"></i>
+                            {% endif %}
+                        </div>
+                        <div class="profile-stat-label">Minecraft</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">
+                            {% if profile.discord_username %}
+                                <i class="fas fa-check" style="color: var(--success);"></i>
+                            {% else %}
+                                <i class="fas fa-times" style="color: var(--danger);"></i>
+                            {% endif %}
+                        </div>
+                        <div class="profile-stat-label">Discord</div>
+                    </div>
                 </div>
                 
                 <div class="profile-links">
+                    <a href="{% url 'store' %}"><i class="fas fa-shopping-cart"></i> Boutique</a>
                     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
                 </div>
             </div>
@@ -67,11 +90,35 @@
                     </form>
                 </div>
                 
-                <!-- Additional sections for future features -->
+                <!-- Ranks Section -->
+                <div class="profile-section">
+                    <h3 class="profile-section-title">Mes Rangs</h3>
+                    
+                    {% if purchases %}
+                        <div class="purchases-list">
+                            {% for purchase in purchases %}
+                                <div class="purchase-item" style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                                    <div class="purchase-rank" style="font-weight: bold; color: {{ purchase.rank.color_code }}">
+                                        {{ purchase.rank.name }}
+                                    </div>
+                                    <div class="purchase-date" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                                        Acheté le {{ purchase.created_at|date:"d/m/Y" }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-purchases" style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                            <p>Vous n'avez pas encore acheté de rang. Visitez notre <a href="{% url 'store' %}" style="color: var(--primary);">boutique</a> pour découvrir nos offres!</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Activity Section -->
                 <div class="profile-section">
                     <h3 class="profile-section-title">Activité récente</h3>
                     
-                    <div class="activity-empty">
+                    <div class="activity-empty" style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 5px;">
                         <p>Aucune activité récente à afficher.</p>
                     </div>
                 </div>
@@ -79,5 +126,4 @@
         </div>
     </div>
 </section>
-
 {% endblock %}

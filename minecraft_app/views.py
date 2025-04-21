@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, Rank
+from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, Rank, UserPurchase
 from django.db.models import Count, Sum
 from django.urls import reverse
 from django.http import HttpResponse
@@ -13,11 +13,14 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from .models import UserProfile
 from .services import fetch_minecraft_uuid, format_uuid_with_dashes
+from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 import logging
 import stripe
 
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def home(request):
     server = TownyServer.objects.first()
@@ -76,20 +79,7 @@ def dynmap(request):
     
     return render(request, 'minecraft_app/dynmap.html', context)
 
-def staff(request):
-    admins = StaffMember.objects.filter(role='admin')
-    mods = StaffMember.objects.filter(role='mod')
-    helpers = StaffMember.objects.filter(role='helper')
-    builders = StaffMember.objects.filter(role='builder')
-    
-    context = {
-        'admins': admins,
-        'mods': mods,
-        'helpers': helpers,
-        'builders': builders,
-    }
-    
-    return render(request, 'minecraft_app/staff.html', context)
+
 
 def store(request):  # Remplace ranks
     ranks_list = Rank.objects.all().order_by('price')
@@ -208,7 +198,10 @@ def profile_view(request):
         profile = user.profile
     except UserProfile.DoesNotExist:
         profile = UserProfile.objects.create(user=user)
-        
+    
+    # Récupérer le serveur pour le contexte global
+    server = TownyServer.objects.first()
+    
     if request.method == 'POST':
         # Formulaire de mise à jour du profil
         minecraft_username = request.POST.get('minecraft_username')
@@ -239,8 +232,13 @@ def profile_view(request):
         
         messages.success(request, "Profil mis à jour avec succès!")
         return redirect('profile')
+    
+    context = {
+        'profile': profile,
+        'server': server
+    }
         
-    return render(request, 'minecraft_app/profile.html', {'profile': profile})
+    return render(request, 'minecraft_app/profile.html', context)
 
 # Vue de déconnexion
 def logout_view(request):
@@ -294,57 +292,109 @@ def login_view(request):
     
     return render(request, 'minecraft_app/login.html', {'form': form})
 
+@login_required  # Assure que l'utilisateur est connecté
 def checkout(request, rank_id):
-      rank = Rank.objects.get(id=rank_id)
-      try:
-          checkout_session = stripe.checkout.Session.create(
-              payment_method_types=['card'],
-              line_items=[
-                  {
-                      'price_data': {
-                          'currency': 'eur',
-                          'unit_amount': int(rank.price * 100),  # Montant en centimes
-                          'product_data': {
-                              'name': rank.name,
-                              'description': rank.description,
-                          },
-                      },
-                      'quantity': 1,
-                  }
-              ],
-              mode='payment',
-              success_url=request.build_absolute_uri(reverse('payment_success')),
-              cancel_url=request.build_absolute_uri(reverse('payment_cancel')),
-          )
-          return redirect(checkout_session.url, code=303)
-      except Exception as e:
-          return render(request, 'minecraft_app/error.html', {'error': str(e)})
+    rank = get_object_or_404(Rank, id=rank_id)
+    user = request.user
+    
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'unit_amount': int(rank.price * 100),  # Montant en centimes
+                        'product_data': {
+                            'name': rank.name,
+                            'description': rank.description,
+                        },
+                    },
+                    'quantity': 1,
+                }
+            ],
+            metadata={
+                'user_id': user.id,
+                'username': user.username,
+                'rank_id': rank.id,
+                'rank_name': rank.name
+            },
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('payment_success') + f'?session_id={{CHECKOUT_SESSION_ID}}'),
+            cancel_url=request.build_absolute_uri(reverse('payment_cancel')),
+        )
+        return redirect(checkout_session.url, code=303)
+    except Exception as e:
+        messages.error(request, f"Erreur lors de la création du paiement: {str(e)}")
+        return redirect('store')
 
 def payment_success(request):
-      return render(request, 'minecraft_app/payment_success.html')
+    session_id = request.GET.get('session_id')
+    if session_id:
+        try:
+            purchase = UserPurchase.objects.get(payment_id=session_id)
+            return render(request, 'minecraft_app/payment_success.html', {
+                'purchase': purchase,
+                'server': TownyServer.objects.first()
+            })
+        except UserPurchase.DoesNotExist:
+            pass
+    
+    # Fallback si l'achat n'est pas trouvé (peut arriver si le webhook n'a pas encore traité)
+    return render(request, 'minecraft_app/payment_success.html', {
+        'server': TownyServer.objects.first()
+    })
 
 def payment_cancel(request):
       return render(request, 'minecraft_app/payment_cancel.html')
 
+@csrf_exempt  # Important pour les webhooks Stripe
 def stripe_webhook(request):
-      payload = request.body
-      sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-      endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
-      try:
-          event = stripe.Webhook.construct_event(
-              payload, sig_header, endpoint_secret
-          )
-      except ValueError:
-          return HttpResponse(status=400)
-      except stripe.error.SignatureVerificationError:
-          return HttpResponse(status=400)
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError:
+        return HttpResponse(status=400)
 
-      if event['type'] == 'checkout.session.completed':
-          session = event['data']['object']
-          rank_name = session['line_items'][0]['description']
-          customer_email = session.get('customer_email', 'inconnu')
-          print(f"Paiement réussi pour {rank_name} par {customer_email}")
-          # TODO: Ajoute ici la logique pour appliquer le rang au joueur
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        # Récupérer les informations depuis les métadonnées
+        user_id = session.get('metadata', {}).get('user_id')
+        rank_id = session.get('metadata', {}).get('rank_id')
+        
+        if user_id and rank_id:
+            try:
+                user = User.objects.get(id=user_id)
+                rank = Rank.objects.get(id=rank_id)
+                
+                # Enregistrer l'achat
+                UserPurchase.objects.create(
+                    user=user,
+                    rank=rank,
+                    amount=rank.price,
+                    payment_id=session.id,
+                    payment_status='completed'
+                )
+                
+                # Vous pourriez ajouter ici la logique pour attribuer le rang dans le jeu
+                # Par exemple, si vous avez un champ pour stocker le rang de l'utilisateur:
+                # user.profile.minecraft_rank = rank.name
+                # user.profile.save()
+                
+                logging.info(f"Paiement réussi pour {rank.name} par {user.username}")
+            except User.DoesNotExist:
+                logging.error(f"Utilisateur avec ID {user_id} non trouvé")
+            except Rank.DoesNotExist:
+                logging.error(f"Rang avec ID {rank_id} non trouvé")
+        else:
+            logging.error("Métadonnées utilisateur ou rang manquantes dans la session Stripe")
 
-      return HttpResponse(status=200)
+    return HttpResponse(status=200)
