@@ -103,3 +103,43 @@ def contact(request):
 
 def faq(request):
     return render(request, 'minecraft_app/faq.html')
+
+def staff(request):
+    # Check if staff members exist, if not create default administrators
+    if StaffMember.objects.count() == 0:
+        # Create administrators
+        StaffMember.objects.create(
+            name="EnzoLaPicole",
+            role="admin",
+            description="Founder and lead developer of GeoMC server. Responsible for technical operations and overall gameplay experience.",
+            discord_username="EnzoLaPicole#1234"
+        )
+        
+        StaffMember.objects.create(
+            name="karatoss",
+            role="admin",
+            description="Co-administrator in charge of community management and moderation. Towny plugin specialist.",
+            discord_username="karatoss#5678"
+        )
+        
+        StaffMember.objects.create(
+            name="Betaking",
+            role="admin",
+            description="Administrator responsible for events and communications. Expert in town construction and design.",
+            discord_username="Betaking#9012"
+        )
+    
+    # Get staff members by role
+    admins = StaffMember.objects.filter(role='admin')
+    mods = StaffMember.objects.filter(role='mod')
+    helpers = StaffMember.objects.filter(role='helper')
+    builders = StaffMember.objects.filter(role='builder')
+    
+    context = {
+        'admins': admins,
+        'mods': mods,
+        'helpers': helpers,
+        'builders': builders,
+    }
+    
+    return render(request, 'minecraft_app/staff.html', context)

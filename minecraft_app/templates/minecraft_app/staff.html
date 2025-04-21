@@ -1,0 +1,309 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Our Team - GeoMC Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/staff.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Our Team</h1>
+</section>
+
+<!-- Staff Section -->
+<section class="staff-section">
+    <div class="container">
+        <h2 class="section-title">The Team Behind GeoMC</h2>
+        <p class="section-subtitle">Meet the people who make the server thrive every day</p>
+        
+        <!-- Administrators -->
+        <h3 class="staff-category">Administrators</h3>
+        <div class="staff-grid">
+            {% for admin in admins %}
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/{{ admin.name }}/100" alt="{{ admin.name }}">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">{{ admin.name }}</h4>
+                            <span class="staff-role">{{ admin.get_role_display }}</span>
+                            {% if admin.name == "EnzoLaPicole" %}
+                                <span class="staff-badge">Developer</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        {% if admin.description %}
+                            <p class="staff-description">{{ admin.description }}</p>
+                        {% else %}
+                            <p class="staff-description">
+                                {% if admin.name == "EnzoLaPicole" %}
+                                    Founder and lead developer of GeoMC server. Responsible for technical operations and overall gameplay experience.
+                                {% elif admin.name == "karatoss" %}
+                                    Co-administrator in charge of community management and moderation. Towny plugin specialist.
+                                {% elif admin.name == "Betaking" %}
+                                    Administrator responsible for events and communications. Expert in town construction and design.
+                                {% else %}
+                                    GeoMC server administrator.
+                                {% endif %}
+                            </p>
+                        {% endif %}
+                        
+                        <div class="staff-social">
+                            {% if admin.discord_username %}
+                                <div class="social-item">
+                                    <i class="fab fa-discord"></i>
+                                    <span>{{ admin.discord_username }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Placeholder for admins if none are in database -->
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/EnzoLaPicole/100" alt="EnzoLaPicole">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">EnzoLaPicole</h4>
+                            <span class="staff-role">Administrator</span>
+                            <span class="staff-badge">Developer</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">
+                            Founder and lead developer of GeoMC server. Responsible for technical operations and overall gameplay experience.
+                        </p>
+                        <div class="staff-social">
+                            <div class="social-item">
+                                <i class="fab fa-discord"></i>
+                                <span>EnzoLaPicole#1234</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/karatoss/100" alt="karatoss">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">karatoss</h4>
+                            <span class="staff-role">Administrator</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">
+                            Co-administrator in charge of community management and moderation. Towny plugin specialist.
+                        </p>
+                        <div class="staff-social">
+                            <div class="social-item">
+                                <i class="fab fa-discord"></i>
+                                <span>karatoss#5678</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/Betaking/100" alt="Betaking">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">Betaking</h4>
+                            <span class="staff-role">Administrator</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">
+                            Administrator responsible for events and communications. Expert in town construction and design.
+                        </p>
+                        <div class="staff-social">
+                            <div class="social-item">
+                                <i class="fab fa-discord"></i>
+                                <span>Betaking#9012</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Moderators -->
+        <h3 class="staff-category">Moderators</h3>
+        <div class="staff-grid">
+            {% for mod in mods %}
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/{{ mod.name }}/100" alt="{{ mod.name }}">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">{{ mod.name }}</h4>
+                            <span class="staff-role">{{ mod.get_role_display }}</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">{{ mod.description|default:"GeoMC server moderator. Helps maintain a pleasant and respectful gaming environment for all players." }}</p>
+                        
+                        {% if mod.discord_username %}
+                            <div class="staff-social">
+                                <div class="social-item">
+                                    <i class="fab fa-discord"></i>
+                                    <span>{{ mod.discord_username }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <!-- Placeholder for mods if none are in database -->
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/ModPlayer1/100" alt="ModPlayer1">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">ModPlayer1</h4>
+                            <span class="staff-role">Moderator</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">
+                            Experienced moderator, mainly active during daytime to help new players.
+                        </p>
+                        <div class="staff-social">
+                            <div class="social-item">
+                                <i class="fab fa-discord"></i>
+                                <span>ModPlayer1#1234</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/ModPlayer2/100" alt="ModPlayer2">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">ModPlayer2</h4>
+                            <span class="staff-role">Moderator</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">
+                            Moderator specialized in resolving conflicts between nations and handling grief complaints.
+                        </p>
+                        <div class="staff-social">
+                            <div class="social-item">
+                                <i class="fab fa-discord"></i>
+                                <span>ModPlayer2#5678</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Helpers -->
+        {% if helpers %}
+        <h3 class="staff-category">Helpers</h3>
+        <div class="staff-grid">
+            {% for helper in helpers %}
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/{{ helper.name }}/100" alt="{{ helper.name }}">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">{{ helper.name }}</h4>
+                            <span class="staff-role">{{ helper.get_role_display }}</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">{{ helper.description|default:"Helper on the GeoMC server. Assists new players in understanding server systems and integrating into the community." }}</p>
+                        
+                        {% if helper.discord_username %}
+                            <div class="staff-social">
+                                <div class="social-item">
+                                    <i class="fab fa-discord"></i>
+                                    <span>{{ helper.discord_username }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Builders -->
+        {% if builders %}
+        <h3 class="staff-category">Builders</h3>
+        <div class="staff-grid">
+            {% for builder in builders %}
+                <div class="staff-card">
+                    <div class="staff-header">
+                        <div class="staff-avatar">
+                            <img src="https://mc-heads.net/avatar/{{ builder.name }}/100" alt="{{ builder.name }}">
+                        </div>
+                        <div class="staff-info">
+                            <h4 class="staff-name">{{ builder.name }}</h4>
+                            <span class="staff-role">{{ builder.get_role_display }}</span>
+                        </div>
+                    </div>
+                    <div class="staff-content">
+                        <p class="staff-description">{{ builder.description|default:"Builder on the GeoMC server. Responsible for creating public structures and improving common areas." }}</p>
+                        
+                        {% if builder.discord_username %}
+                            <div class="staff-social">
+                                <div class="social-item">
+                                    <i class="fab fa-discord"></i>
+                                    <span>{{ builder.discord_username }}</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Join Our Team Section -->
+<section class="join-team-section">
+    <div class="container">
+        <h2 class="section-title">Join Our Team</h2>
+        <p class="section-subtitle">Want to help us grow GeoMC?</p>
+        
+        <div class="application-info">
+            <p>We regularly look for passionate new team members to help manage and develop our server. If you're interested, check the requirements and apply on our Discord.</p>
+            
+            <div class="requirements">
+                <h4>Requirements:</h4>
+                <ul>
+                    <li><i class="fas fa-check"></i> Be at least 16 years old</li>
+                    <li><i class="fas fa-check"></i> Be regularly active on the server</li>
+                    <li><i class="fas fa-check"></i> Have a good knowledge of server plugins</li>
+                    <li><i class="fas fa-check"></i> Be mature and respectful towards the community</li>
+                    <li><i class="fas fa-check"></i> Have a working microphone for team meetings</li>
+                </ul>
+            </div>
+            
+            <div class="application-button">
+                <a href="#" class="btn btn-accent">Apply on Discord</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
