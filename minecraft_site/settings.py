@@ -31,6 +31,14 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+
+
+# Configuration RCON pour Minecraft
+MINECRAFT_RCON_HOST = os.getenv('MINECRAFT_RCON_HOST', 'localhost')
+MINECRAFT_RCON_PORT = int(os.getenv('MINECRAFT_RCON_PORT', '25575'))
+MINECRAFT_RCON_PASSWORD = os.getenv('MINECRAFT_RCON_PASSWORD', 'password')
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

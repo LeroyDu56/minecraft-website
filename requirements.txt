@@ -9,3 +9,4 @@ requests==2.31.0
 sqlparse==0.5.3
 urllib3==2.4.0
 stripe==10.3.0
+mcrcon==0.7.0

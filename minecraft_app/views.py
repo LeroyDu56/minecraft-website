@@ -13,6 +13,7 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from .services import fetch_minecraft_uuid, format_uuid_with_dashes
 from django.views.decorators.csrf import csrf_exempt
+from .minecraft_service import apply_rank_to_player
 import requests
 import json
 import logging
@@ -364,13 +365,24 @@ def process_successful_payment(session):
             rank = Rank.objects.get(id=rank_id)
             
             # Record the purchase
-            UserPurchase.objects.create(
+            purchase = UserPurchase.objects.create(
                 user=user,
                 rank=rank,
                 amount=rank.price,
                 payment_id=session.id,
                 payment_status='completed'
             )
+            
+            # Appliquer le rang sur le serveur Minecraft
+            minecraft_username = user.profile.minecraft_username
+            if minecraft_username:
+                success = apply_rank_to_player(minecraft_username, rank.name)
+                if success:
+                    logging.info(f"Rank {rank.name} successfully applied to Minecraft player {minecraft_username}")
+                else:
+                    logging.error(f"Failed to apply rank {rank.name} to player {minecraft_username}")
+            else:
+                logging.warning(f"User {user.username} doesn't have a Minecraft username set; rank not applied")
             
             logging.info(f"Payment successful for {rank.name} by {user.username}")
         except User.DoesNotExist:

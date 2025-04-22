@@ -2,25 +2,65 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile  # Ajout explicite pour plus de clarté
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     env_file:
-      - .env  # Charger les variables depuis .env
+      - .env
     depends_on:
       - db
     restart: always
+    healthcheck:  # Ajout d'un healthcheck pour vérifier que le service est opérationnel
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   db:
     image: postgres:13
     env_file:
-      - .env  # Charger les variables pour la base de données
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    environment:  # Ajout explicite des variables pour Postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     restart: always
+    healthcheck:  # Ajout d'un healthcheck pour la base de données
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  minecraft:
+    image: itzg/minecraft-server
+    ports:
+      - "25565:25565"
+      - "25575:25575"
+    environment:
+      EULA: "TRUE"
+      TYPE: PAPER
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${MINECRAFT_RCON_PASSWORD}
+      RCON_PORT: "25575"
+    volumes:
+      - minecraft_data:/data
+    restart: always
+    healthcheck:  # Ajout d'un healthcheck pour le serveur Minecraft
+      test: ["CMD", "mc-monitor", "status", "--host", "localhost", "--port", "25565"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 volumes:
   postgres_data:
+  minecraft_data:
