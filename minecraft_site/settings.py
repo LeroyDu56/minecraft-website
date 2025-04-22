@@ -26,6 +26,7 @@ load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
+LOGIN_URL = '/login/'
 
 # Clés Stripe
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
@@ -146,6 +147,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://c2e8-2a02-a03f-c99f-c501-b950-9df2-5941-78d.ngrok-free.app',
+    'https://3792-2a02-a03f-c99f-c501-a79-4a85-d188-da90.ngrok-free.app',
     # Ajoutez d'autres origines si nécessaire
 ]
