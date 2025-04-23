@@ -437,3 +437,64 @@ def payment_cancel(request):
 def payment_failed(request):
     messages.error(request, "Your payment could not be processed. Please try again or use a different payment method.")
     return render(request, 'minecraft_app/payment_failed.html')
+
+
+def contact(request):
+    server = TownyServer.objects.first()
+    
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        name = request.POST.get('name', '')
+        email = request.POST.get('email', '')
+        minecraft_username = request.POST.get('minecraft_username', '')
+        subject = request.POST.get('subject', '')
+        message = request.POST.get('message', '')
+        
+        # Valider les données (vérification simple)
+        if name and email and subject and message:
+            # Préparer le sujet de l'email
+            subject_line = f"[GeoMC Contact] {subject}"
+            
+            # Préparer le contenu de l'email
+            email_content = f"""
+Nouveau message du formulaire de contact GeoMC:
+
+Nom: {name}
+Email: {email}
+Nom d'utilisateur Minecraft: {minecraft_username if minecraft_username else 'Non fourni'}
+Sujet: {subject}
+
+Message:
+{message}
+            """
+            
+            # Envoyer l'email via l'API Gmail
+            try:
+                from minecraft_app.gmail_api import send_email
+                success = send_email(
+                    to=settings.CONTACT_EMAIL,
+                    subject=subject_line,
+                    body=email_content,
+                    from_email=f"{name} <{email}>"
+                )
+                
+                if success:
+                    messages.success(request, "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.")
+                else:
+                    messages.error(request, "Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer plus tard ou nous contacter directement par email.")
+                
+                # Rediriger pour éviter la resoumission du formulaire
+                return redirect('contact')
+            except Exception as e:
+                # Gérer les erreurs d'envoi d'email
+                messages.error(request, f"Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer plus tard.")
+                logging.error(f"Erreur d'envoi d'email: {str(e)}")
+        else:
+            # Si des champs obligatoires sont manquants
+            messages.error(request, "Veuillez remplir tous les champs obligatoires.")
+    
+    context = {
+        'server': server,
+    }
+    
+    return render(request, 'minecraft_app/contact.html', context)

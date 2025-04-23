@@ -1,0 +1,127 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - GeoMC Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <h1>Contact Us</h1>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+    <div class="container">
+        <div class="contact-intro">
+            <h2 class="section-title">Get in Touch</h2>
+            <p class="section-subtitle">Have questions, suggestions, or need assistance? We're here to help!</p>
+        </div>
+        
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email Us</h3>
+                    <p>For general inquiries, support, or business matters</p>
+                    <a href="mailto:geomc.contact@gmail.com">geomc.contact@gmail.com</a>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <h3>Join Our Discord</h3>
+                    <p>Get real-time help from our community and staff team</p>
+                    <a href="#" class="discord-link">discord.gg/geomc</a>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>In-Game Support</h3>
+                    <p>Connect to our server and use the command:</p>
+                    <code>/helpop your message</code>
+                </div>
+            </div>
+            
+            <div class="contact-form-container">
+                <h3>Send Us a Message</h3>
+                <p>Fill out the form below and we'll get back to you as soon as possible</p>
+                
+                <form class="contact-form" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="name">Your Name *</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="minecraft_username">Minecraft Username</label>
+                        <input type="text" id="minecraft_username" name="minecraft_username" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <select id="subject" name="subject" class="form-control" required>
+                            <option value="">Select a subject</option>
+                            <option value="general">General Question</option>
+                            <option value="support">Technical Support</option>
+                            <option value="report">Report an Issue</option>
+                            <option value="suggestion">Suggestion</option>
+                            <option value="business">Business Inquiry</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Your Message *</label>
+                        <textarea id="message" name="message" class="form-control" rows="6" required></textarea>
+                    </div>
+                    
+                    <div class="form-action">
+                        <button type="submit" class="btn submit-btn">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="staff-contact">
+            <h3>Meet Our Staff Team</h3>
+            <p>Need to contact a specific staff member? Check our <a href="{% url 'staff' %}">staff page</a> to find the right person for your inquiry.</p>
+        </div>
+        
+        <div class="social-contact">
+            <h3>Connect With Us</h3>
+            <p>Follow us on social media for server updates, events, and community highlights</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Link -->
+<section class="faq-link-section">
+    <div class="container">
+        <h2>Before You Contact Us</h2>
+        <p>You might find an immediate answer to your question in our Frequently Asked Questions section.</p>
+        <a href="{% url 'faq' %}" class="btn">Check our FAQ</a>
+    </div>
+</section>
+{% endblock %}

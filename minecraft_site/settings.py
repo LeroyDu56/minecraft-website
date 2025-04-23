@@ -150,3 +150,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://3792-2a02-a03f-c99f-c501-a79-4a85-d188-da90.ngrok-free.app',
     # Ajoutez d'autres origines si nécessaire
 ]
+
+GMAIL_API_CREDENTIALS = os.getenv('GMAIL_API_CREDENTIALS', '')
+GMAIL_API_TOKEN = os.getenv('GMAIL_API_TOKEN', '')
+CONTACT_EMAIL = 'geomc.contact@gmail.com'

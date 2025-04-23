@@ -10,3 +10,6 @@ sqlparse==0.5.3
 urllib3==2.4.0
 stripe==10.3.0
 mcrcon==0.7.0
+google-api-python-client==2.107.0
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0

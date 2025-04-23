@@ -1,0 +1,142 @@
+/* Rules Page Styles */
+.rules-section {
+    padding-bottom: 80px;
+}
+
+.rules-intro {
+    max-width: 800px;
+    margin: 0 auto 50px;
+    text-align: center;
+}
+
+.rules-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.rule-card {
+    background-color: var(--darker);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.rule-card:hover {
+    transform: translateY(-5px);
+}
+
+.rule-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--primary);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    min-width: 70px;
+    padding: 20px;
+}
+
+.rule-content {
+    padding: 20px 25px;
+    flex: 1;
+}
+
+.rule-title {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.rule-description {
+    color: var(--light);
+    line-height: 1.6;
+}
+
+.rules-note {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 50px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.note-icon {
+    font-size: 2.5rem;
+    color: var(--warning);
+    flex-shrink: 0;
+}
+
+.note-content h3 {
+    color: var(--warning);
+    margin-bottom: 15px;
+}
+
+.note-content p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+/* Discord Section */
+.discord-section {
+    background-color: var(--darker);
+    padding: 60px 0;
+    text-align: center;
+}
+
+.discord-btn {
+    background-color: #7289da;
+    color: white;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.discord-btn:hover {
+    background-color: #5f73bc;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.discord-btn i {
+    margin-right: 8px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .rule-card {
+        flex-direction: column;
+    }
+    
+    .rule-number {
+        width: 100%;
+        padding: 10px;
+    }
+    
+    .rules-note {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .note-icon {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .rule-content {
+        padding: 15px;
+    }
+    
+    .rule-title {
+        font-size: 1.1rem;
+    }
+    
+    .rules-note {
+        padding: 20px;
+    }
+}
