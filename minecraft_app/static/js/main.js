@@ -1,10 +1,20 @@
 /**
- * Main JavaScript file for GeoMC website
+ * Main JavaScript file for Novania website
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Ajoutons un script de débogage pour voir si le document est bien chargé
+    // Débogage pour confirmer le chargement du DOM
     console.log('DOM chargé - Script initialisé');
+
+    // Effet de défilement pour le header
+    window.addEventListener('scroll', function() {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
     
     // Mobile menu toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
@@ -81,16 +91,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Copy server IP functionality
     const copyIpButton = document.getElementById('copy-ip');
+    const serverIpElement = document.getElementById('server-ip');
+    
     if (copyIpButton) {
         copyIpButton.addEventListener('click', function() {
-            const serverIP = 'play.geomc.fr';
+            const serverIP = 'play.novania.fr';
             navigator.clipboard.writeText(serverIP).then(function() {
                 // Change button text temporarily
-                const btn = document.getElementById('copy-ip');
-                const originalText = btn.textContent;
-                btn.textContent = 'IP Copied!';
+                const originalText = copyIpButton.textContent;
+                copyIpButton.textContent = 'IP Copied!';
+                copyIpButton.classList.add('copied');
+                
                 setTimeout(function() {
-                    btn.textContent = originalText;
+                    copyIpButton.textContent = originalText;
+                    copyIpButton.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    }
+    
+    // Permettre de copier l'IP en cliquant directement sur l'élément qui l'affiche
+    if (serverIpElement) {
+        serverIpElement.addEventListener('click', function() {
+            const serverIP = 'play.novania.fr';
+            navigator.clipboard.writeText(serverIP).then(function() {
+                serverIpElement.classList.add('copied');
+                
+                setTimeout(function() {
+                    serverIpElement.classList.remove('copied');
                 }, 2000);
             });
         });
@@ -130,4 +158,132 @@ document.addEventListener('DOMContentLoaded', function() {
             item.classList.add('active');
         }
     });
+    
+    // Animation de nombre de joueurs (effet de compteur)
+    const playerCount = document.querySelector('.player-count');
+    if (playerCount) {
+        const text = playerCount.textContent;
+        const numbers = text.match(/\d+/g);
+        
+        if (numbers && numbers.length === 2) {
+            const currentPlayers = parseInt(numbers[0]);
+            const maxPlayers = parseInt(numbers[1]);
+            
+            // Animation du compteur
+            let count = 0;
+            const duration = 1500; // ms
+            const interval = 30; // ms
+            const increment = Math.ceil(currentPlayers / (duration / interval));
+            
+            const counter = setInterval(() => {
+                count += increment;
+                if (count >= currentPlayers) {
+                    count = currentPlayers;
+                    clearInterval(counter);
+                }
+                playerCount.textContent = `${count}/${maxPlayers}`;
+            }, interval);
+        }
+    }
+    
+    // Effet de surbrillance aléatoire pour server-ip
+    if (serverIpElement) {
+        function randomHighlight() {
+            const duration = Math.random() * 1000 + 2000; // Entre 2 et 3 secondes
+            serverIpElement.style.boxShadow = 'inset 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 215, 0, 0.6)';
+            
+            setTimeout(() => {
+                serverIpElement.style.boxShadow = 'inset 0 2px 5px rgba(0, 0, 0, 0.3)';
+                
+                // Planifier la prochaine surbrillance après un délai aléatoire
+                setTimeout(randomHighlight, Math.random() * 4000 + 3000);
+            }, duration);
+        }
+        
+        // Démarrer l'effet après un délai initial
+        setTimeout(randomHighlight, 2000);
+    }
+    
+    // Effet particules pour la section join (version simple)
+    const joinSection = document.querySelector('.join-section');
+    if (joinSection) {
+        // Créer un conteneur pour les particules
+        const particlesContainer = document.createElement('div');
+        particlesContainer.className = 'particles-container';
+        particlesContainer.style.position = 'absolute';
+        particlesContainer.style.top = '0';
+        particlesContainer.style.left = '0';
+        particlesContainer.style.width = '100%';
+        particlesContainer.style.height = '100%';
+        particlesContainer.style.overflow = 'hidden';
+        particlesContainer.style.zIndex = '0';
+        joinSection.prepend(particlesContainer);
+        
+        // Créer quelques particules
+        const particleCount = window.innerWidth < 768 ? 15 : 30;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.position = 'absolute';
+            particle.style.width = `${Math.random() * 4 + 2}px`;
+            particle.style.height = particle.style.width;
+            particle.style.backgroundColor = 'rgba(255, 215, 0, 0.7)';
+            particle.style.borderRadius = '50%';
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.boxShadow = '0 0 10px rgba(255, 215, 0, 0.7)';
+            particle.style.opacity = Math.random() * 0.5 + 0.3;
+            particle.style.zIndex = '0';
+            
+            // Animation de déplacement
+            const duration = Math.random() * 60 + 30;
+            particle.style.animation = `float ${duration}s infinite linear`;
+            
+            // Ajouter une règle d'animation unique
+            const keyframes = `
+                @keyframes float {
+                    0% {
+                        transform: translate(0, 0);
+                    }
+                    25% {
+                        transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+                    }
+                    50% {
+                        transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+                    }
+                    75% {
+                        transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+                    }
+                    100% {
+                        transform: translate(0, 0);
+                    }
+                }
+            `;
+            
+            // Ajouter les keyframes au document
+            const style = document.createElement('style');
+            style.innerHTML = keyframes;
+            document.head.appendChild(style);
+            
+            // Ajouter la particule au conteneur
+            particlesContainer.appendChild(particle);
+        }
+    }
+    
+    // Effet de highlight pour le status online
+    const statusIndicator = document.querySelector('.status-indicator.status-online');
+    if (statusIndicator) {
+        function pulseEffect() {
+            statusIndicator.style.boxShadow = '0 0 15px #2ecc71';
+            
+            setTimeout(() => {
+                statusIndicator.style.boxShadow = '0 0 5px #2ecc71';
+                
+                setTimeout(pulseEffect, 2000);
+            }, 1000);
+        }
+        
+        pulseEffect();
+    }
 });

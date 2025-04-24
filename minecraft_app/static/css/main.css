@@ -1,4 +1,4 @@
-/* Main CSS for GeoMC website */
+/* Main CSS for Novania website */
 
 /* Variables */
 :root {
@@ -56,30 +56,47 @@ a:hover {
 
 /* Header */
 header {
-    background-color: var(--darker);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     position: sticky;
     top: 0;
     z-index: 1000;
+    padding: 12px 0;
+    transition: background 0.3s, padding 0.3s;
+}
+
+/* Header modifié lors du défilement */
+header.scrolled {
+    background: rgba(10, 15, 30, 0.95);
+    padding: 8px 0;
 }
 
 /* Navbar */
 .navbar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
+    padding: 5px 0;
     width: 100%;
     flex-wrap: nowrap;
     position: relative;
 }
 
 .logo {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     color: var(--primary);
-    position: absolute;
-    left: 0;
+    position: static;  /* Changé de absolute à static */
+    margin-right: 30px;  /* Espace après le logo */
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 60px;  /* Logo plus grand */
+    width: auto;
 }
 
 .nav-links {
@@ -88,19 +105,38 @@ header {
     margin: 0;
     padding: 0;
     list-style: none;
-    justify-content: center;
+    justify-content: flex-start;  /* Alignement à gauche au lieu de centré */
     flex-grow: 1;
 }
 
 .nav-links a {
-    color: var(--light);
+    color: rgba(255, 255, 255, 0.85);
     font-weight: 500;
-    transition: color 0.3s;
+    transition: color 0.3s, transform 0.2s;
+    padding: 8px 0;
+    position: relative;
     font-size: 1.1rem;
 }
 
 .nav-links a:hover, .nav-links a.active {
-    color: var(--primary);
+    color: #ffd700;
+    transform: translateY(-2px);
+}
+
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffd700;
+    transition: width 0.3s;
+}
+
+.nav-links a:hover::after, .nav-links a.active::after {
+    width: 100%;
 }
 
 /* Buttons */
@@ -320,12 +356,25 @@ footer {
     align-items: center;
     gap: 15px;
     margin-left: auto;
-    position: absolute;
-    right: 0;
+    position: static;
 }
 
 .play-now-btn {
+    background: linear-gradient(to right, #ffc107, #ff9800);
+    color: #1a1a2e;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 25px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
     white-space: nowrap;
+}
+
+.play-now-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+    background: linear-gradient(to right, #ffca28, #ffa000);
+    color: #1a1a2e;
 }
 
 /* Authentication Styles */
@@ -744,8 +793,12 @@ footer {
     .nav-links {
         order: 3;
         width: 100%;
-        justify-content: center;
+        justify-content: flex-start;
         margin-top: 15px;
+    }
+
+    .logo {
+        margin-right: 20px;
     }
     
     .header-actions {
@@ -759,6 +812,11 @@ footer {
         gap: 10px;
     }
     
+
+    .logo img {
+        height: 50px;
+    }
+
     .header-actions {
         margin-top: 15px;
         justify-content: center;
@@ -779,7 +837,7 @@ footer {
     }
     
     .navbar {
-        position: relative;
+        
         padding-bottom: 15px;
     }
     
@@ -804,6 +862,7 @@ footer {
     .navbar.mobile-open .nav-links {
         display: flex;
         order: 4;
+        flex-direction: column;
     }
     
     .nav-links li {

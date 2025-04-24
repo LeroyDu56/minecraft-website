@@ -8,75 +8,88 @@
 {% block content %}
 <!-- Hero Section -->
 <section class="hero">
+    <div class="video-background">
+        <video id="background-video" autoplay loop muted playsinline>
+            <source src="{% static 'videos/background_loop.mp4' %}" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+    
     <div class="hero-content">
-        <h1>GeoMC</h1>
+        <div class="hero-title-image">
+            <img src="{% static 'images/TEXT_NOVANIA.png' %}" alt="Novania" class="text-logo">
+        </div>
         <p class="hero-subtitle">Towny Minecraft Server on an Earth Map</p>
         <p class="hero-description">Create your town, join a nation, and shape the history of the world your way.</p>
         <div class="hero-buttons">
-            <a href="#join" class="btn btn-accent">Play Now</a>
-            <a href="{% url 'dynmap' %}" class="btn">View Map</a>
+            <a href="#join" class="btn btn-accent glow-effect">Play Now</a>
+            <a href="{% url 'dynmap' %}" class="btn glass-effect">View Map</a>
         </div>
     </div>
 </section>
 
 <!-- Server Join Section -->
-<section class="join-section" id="join">
+<section id="join" class="join-section">
     <div class="container">
         <h2 class="section-title">Join the Adventure</h2>
-        <p class="section-subtitle">Connect now and start your story</p>
+        <p class="section-subtitle">Embark on an epic journey through our Earth-scale world</p>
         
         <div class="server-info-card">
             <div class="server-info-header">
-                <div class="server-name">{{ server.name }}</div>
+                <div class="server-name">Novania - Earth Towny</div>
                 <div class="server-status">
                     <span class="status-indicator {% if server.status %}status-online{% else %}status-offline{% endif %}"></span>
                     <span>{% if server.status %}Online{% else %}Offline{% endif %}</span>
-                    <span class="player-count">{{ server.player_count }}/{{ server.max_players }} players</span>
+                    <span class="player-count">{{ server.player_count }}/{{ server.max_players }}</span>
                 </div>
             </div>
             
             <div class="server-content">
-                <p class="server-description">{{ server.description }}</p>
+                <p class="server-description">Join a community of builders, traders, and adventurers on our immersive 1:1000 scale Earth map. Claim your territory, build your town, and shape the history of our virtual world.</p>
                 
-                <div class="server-details">
-                    <div class="detail-item">
-                        <div class="detail-icon"><i class="fas fa-server"></i></div>
-                        <div class="detail-label">Version</div>
-                        <div class="detail-value">1.21.4</div>
-                    </div>
-                </div>
-                
-                <div class="server-ip">play.geomc.fr</div>
+                <div id="server-ip" class="server-ip">play.novania.fr</div>
                 
                 <div class="join-now">
-                    <button id="copy-ip" class="btn btn-accent">Copy Server IP</button>
-                    <p>Copy the IP address and paste it into your Minecraft server list</p>
+                    
+                    <p>Simply copy the server address and add it to your Minecraft server list</p>
                 </div>
-                
-                <script>
-                    document.getElementById('copy-ip').addEventListener('click', function() {
-                        const serverIP = 'play.geomc.fr';
-                        navigator.clipboard.writeText(serverIP).then(function() {
-                            // Change button text temporarily
-                            const btn = document.getElementById('copy-ip');
-                            const originalText = btn.textContent;
-                            btn.textContent = 'IP Copied!';
-                            setTimeout(function() {
-                                btn.textContent = originalText;
-                            }, 2000);
-                        });
-                    });
-                </script>
             </div>
         </div>
     </div>
 </section>
 
+<!-- Script pour copier l'IP au clic -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const serverIp = document.getElementById('server-ip');
+        const copyBtn = document.getElementById('copy-ip');
+        
+        // Fonction pour copier l'IP au clic
+        function copyIpToClipboard() {
+            const ip = 'play.novania.fr';
+            navigator.clipboard.writeText(ip).then(function() {
+                // Effet visuel pour indiquer la copie
+                copyBtn.textContent = 'IP Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(function() {
+                    copyBtn.textContent = 'Copy IP Address';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        // Ajouter l'événement au clic sur le bouton et sur l'IP
+        copyBtn.addEventListener('click', copyIpToClipboard);
+        serverIp.addEventListener('click', copyIpToClipboard);
+    });
+</script>
+
 <!-- Features Section -->
 <section class="features-section">
     <div class="container">
         <h2 class="section-title">Discover Our Features</h2>
-        <p class="section-subtitle">What makes GeoMC unique</p>
+        <p class="section-subtitle">What makes Novania unique</p>
         
         <div class="grid-3">
             <div class="feature-card">
@@ -201,4 +214,36 @@
         </div>
     </div>
 </section>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.getElementById('background-video');
+        
+        // Créer l'effet de fondu à la fin de chaque lecture
+        video.addEventListener('timeupdate', function() {
+            // Si la vidéo est proche de la fin (2 secondes avant)
+            if (video.currentTime >= video.duration - 2) {
+                // Commencer le fondu
+                video.style.opacity = 1 - ((video.duration - video.currentTime) / 2);
+            } else if (video.currentTime <= 2) {
+                // Fondu en entrée au début
+                video.style.opacity = video.currentTime / 2;
+            } else {
+                // Opacité normale pendant la lecture
+                video.style.opacity = 1;
+            }
+        });
+        
+        // Au redémarrage de la vidéo
+        video.addEventListener('seeked', function() {
+            if (video.currentTime === 0) {
+                video.style.opacity = 0;
+                setTimeout(() => {
+                    video.style.opacity = 1;
+                }, 10);
+            }
+        });
+    });
+</script>
 {% endblock %}

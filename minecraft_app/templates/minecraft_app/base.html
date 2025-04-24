@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}GeoMC - Towny Earth Minecraft Server{% endblock %}</title>
+    <title>{% block title %}Novania - Towny Earth Minecraft Server{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
@@ -15,7 +15,9 @@
     <header>
         <div class="container">
             <nav class="navbar">
-                <a href="{% url 'home' %}" class="logo">GeoMC</a>
+                <a href="{% url 'home' %}" class="logo">
+                    <img src="{% static 'images/LOGO_NOVANIA.png' %}" alt="Novania" height="40">
+                </a>
                 
                 <!-- Hamburger Menu Button -->
                 <div class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -106,7 +108,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-column">
-                    <h3>GeoMC</h3>
+                    <h3>Novania</h3>
                     <p>Towny Minecraft server on a 1:1000 scale Earth map. Create your town, join a nation, and shape the history of the world.</p>
                 </div>
                 <div class="footer-column">
@@ -134,7 +136,7 @@
                         <span>{% if server.status %}Online{% else %}Offline{% endif %}</span>
                         <span class="player-count">{{ server.player_count }}/{{ server.max_players }}</span>
                     </div>
-                    <div class="server-ip">play.geomc.fr</div>
+                    <div class="server-ip">play.Novania.fr</div>
                     <div class="social-links">
                         <a href="https://discord.gg/a8G7wUKp2Y" title="Discord" target="_blank"><i class="fab fa-discord"></i></a>
                         <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
@@ -143,7 +145,7 @@
                     </div>
                 </div>
             </div>
-            <p class="copyright">&copy; 2025 GeoMC. All rights reserved. Minecraft is a registered trademark of Mojang AB.</p>
+            <p class="copyright">&copy; 2025 Novania. All rights reserved. Minecraft is a registered trademark of Mojang AB.</p>
         </div>
     </footer>
     

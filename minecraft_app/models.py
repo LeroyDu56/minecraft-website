@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class TownyServer(models.Model):
-    name = models.CharField(max_length=100, default="GeoMC - Earth Towny")
-    ip_address = models.CharField(max_length=100, default="play.geomc.fr")
+    name = models.CharField(max_length=100, default="Novania - Earth Towny")
+    ip_address = models.CharField(max_length=100, default="play.Novania.fr")
     description = models.TextField(default="Towny server on a 1:1000 scale Earth map")
     version = models.CharField(max_length=20, default="1.20.4")
     player_count = models.IntegerField(default=0)

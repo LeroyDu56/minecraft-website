@@ -116,7 +116,7 @@ def staff(request):
         StaffMember.objects.create(
             name="EnzoLaPicole",
             role="admin",
-            description="Founder and lead developer of GeoMC server. Responsible for technical operations and overall gameplay experience.",
+            description="Founder and lead developer of Novania server. Responsible for technical operations and overall gameplay experience.",
             discord_username="EnzoLaPicole#1234"
         )
         
@@ -181,7 +181,7 @@ def register_view(request):
                 
             # Log in the user
             login(request, user)
-            messages.success(request, "Account created successfully! Welcome to GeoMC!")
+            messages.success(request, "Account created successfully! Welcome to Novania!")
             return redirect('home')
     else:
         form = RegisterForm()
