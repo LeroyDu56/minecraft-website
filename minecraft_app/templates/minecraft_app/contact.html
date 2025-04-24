@@ -25,20 +25,11 @@
             <div class="contact-info">
                 <div class="info-card">
                     <div class="info-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <h3>Email Us</h3>
-                    <p>For general inquiries, support, or business matters</p>
-                    <a href="mailto:geomc.contact@gmail.com">geomc.contact@gmail.com</a>
-                </div>
-                
-                <div class="info-card">
-                    <div class="info-icon">
                         <i class="fab fa-discord"></i>
                     </div>
-                    <h3>Join Our Discord</h3>
+                    <h3>Discord Support</h3>
                     <p>Get real-time help from our community and staff team</p>
-                    <a href="#" class="discord-link">discord.gg/geomc</a>
+                    <a href="https://discord.gg/a8G7wUKp2Y" class="discord-link" target="_blank">discord.gg/a8G7wUKp2Y</a>
                 </div>
                 
                 <div class="info-card">
@@ -49,11 +40,20 @@
                     <p>Connect to our server and use the command:</p>
                     <code>/helpop your message</code>
                 </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Discord Support Ticket</h3>
+                    <p>Open a support ticket in our Discord server for direct assistance</p>
+                    <a href="https://discord.gg/a8G7wUKp2Y" class="discord-link" target="_blank">discord.gg/a8G7wUKp2Y</a>
+                </div>
             </div>
             
             <div class="contact-form-container">
                 <h3>Send Us a Message</h3>
-                <p>Fill out the form below and we'll get back to you as soon as possible</p>
+                <p>We prefer Discord for communication, but you can also send us a message here and we'll get back to you as soon as possible!</p>
                 
                 <form class="contact-form" method="post">
                     {% csrf_token %}
@@ -64,8 +64,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <label for="discord_username">Discord Username</label>
+                        <input type="text" id="discord_username" name="discord_username" class="form-control" placeholder="username#0000">
+                        <div class="form-help-text">We'll contact you via Discord if provided</div>
                     </div>
                     
                     <div class="form-group">
@@ -103,14 +104,14 @@
             <p>Need to contact a specific staff member? Check our <a href="{% url 'staff' %}">staff page</a> to find the right person for your inquiry.</p>
         </div>
         
-        <div class="social-contact">
-            <h3>Connect With Us</h3>
-            <p>Follow us on social media for server updates, events, and community highlights</p>
-            <div class="social-links">
-                <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+        <div class="discord-highlight">
+            <div class="discord-icon">
+                <i class="fab fa-discord"></i>
+            </div>
+            <div class="discord-text">
+                <h3>Join Our Discord Community</h3>
+                <p>The fastest way to get support, connect with other players, and stay updated on server news</p>
+                <a href="https://discord.gg/a8G7wUKp2Y" class="discord-link" target="_blank">discord.gg/a8G7wUKp2Y</a>
             </div>
         </div>
     </div>

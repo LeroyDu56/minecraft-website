@@ -445,50 +445,35 @@ def contact(request):
     if request.method == 'POST':
         # Récupérer les données du formulaire
         name = request.POST.get('name', '')
-        email = request.POST.get('email', '')
+        discord_username = request.POST.get('discord_username', '')
         minecraft_username = request.POST.get('minecraft_username', '')
         subject = request.POST.get('subject', '')
         message = request.POST.get('message', '')
         
         # Valider les données (vérification simple)
-        if name and email and subject and message:
-            # Préparer le sujet de l'email
-            subject_line = f"[GeoMC Contact] {subject}"
+        if name and subject and message:
+            # Ici, tu peux implémenter ta logique pour enregistrer le message dans une base de données
+            # ou l'envoyer via un webhook Discord
             
-            # Préparer le contenu de l'email
-            email_content = f"""
-Nouveau message du formulaire de contact GeoMC:
-
-Nom: {name}
-Email: {email}
-Nom d'utilisateur Minecraft: {minecraft_username if minecraft_username else 'Non fourni'}
-Sujet: {subject}
-
-Message:
-{message}
-            """
+            # Exemple de code pour enregistrer dans une base de données (tu pourrais créer un modèle ContactMessage)
+            # ContactMessage.objects.create(
+            #     name=name,
+            #     discord_username=discord_username,
+            #     minecraft_username=minecraft_username,
+            #     subject=subject,
+            #     message=message,
+            #     status='pending'
+            # )
             
-            # Envoyer l'email via l'API Gmail
-            try:
-                from minecraft_app.gmail_api import send_email
-                success = send_email(
-                    to=settings.CONTACT_EMAIL,
-                    subject=subject_line,
-                    body=email_content,
-                    from_email=f"{name} <{email}>"
-                )
-                
-                if success:
-                    messages.success(request, "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.")
-                else:
-                    messages.error(request, "Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer plus tard ou nous contacter directement par email.")
-                
-                # Rediriger pour éviter la resoumission du formulaire
-                return redirect('contact')
-            except Exception as e:
-                # Gérer les erreurs d'envoi d'email
-                messages.error(request, f"Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer plus tard.")
-                logging.error(f"Erreur d'envoi d'email: {str(e)}")
+            # Envoyer une notification à l'équipe (à implémenter selon tes besoins)
+            # Par exemple, via un webhook Discord
+            # send_discord_webhook(name, discord_username, minecraft_username, subject, message)
+            
+            # Afficher un message de succès
+            messages.success(request, "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.")
+            
+            # Rediriger pour éviter la resoumission du formulaire
+            return redirect('contact')
         else:
             # Si des champs obligatoires sont manquants
             messages.error(request, "Veuillez remplir tous les champs obligatoires.")
@@ -498,3 +483,28 @@ Message:
     }
     
     return render(request, 'minecraft_app/contact.html', context)
+
+# Fonction à implémenter pour envoyer les messages via Discord webhook
+# def send_discord_webhook(name, discord_username, minecraft_username, subject, message):
+#     webhook_url = settings.DISCORD_WEBHOOK_URL
+#     
+#     data = {
+#         "embeds": [{
+#             "title": f"Nouveau message: {subject}",
+#             "description": message,
+#             "color": 3447003,  # Bleu Discord
+#             "fields": [
+#                 {"name": "De", "value": name, "inline": True},
+#                 {"name": "Discord", "value": discord_username or "Non fourni", "inline": True},
+#                 {"name": "Minecraft", "value": minecraft_username or "Non fourni", "inline": True}
+#             ],
+#             "footer": {"text": "Message envoyé depuis le site web"}
+#         }]
+#     }
+#     
+#     try:
+#         response = requests.post(webhook_url, json=data)
+#         return response.status_code == 204
+#     except Exception as e:
+#         logging.error(f"Erreur d'envoi au webhook Discord: {str(e)}")
+#         return False

@@ -147,10 +147,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://3792-2a02-a03f-c99f-c501-a79-4a85-d188-da90.ngrok-free.app',
+    'https://380d-2a02-a03f-c99f-c501-183c-48c9-ca4b-d382.ngrok-free.app',
     # Ajoutez d'autres origines si nécessaire
 ]
 
-GMAIL_API_CREDENTIALS = os.getenv('GMAIL_API_CREDENTIALS', '')
-GMAIL_API_TOKEN = os.getenv('GMAIL_API_TOKEN', '')
-CONTACT_EMAIL = 'geomc.contact@gmail.com'
+# Configuration Discord
+DISCORD_SERVER_LINK = "https://discord.gg/a8G7wUKp2Y"
+DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL', '')  # Ajoute cette URL à ton fichier .env
