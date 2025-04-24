@@ -1,20 +1,35 @@
 {% extends 'minecraft_app/base.html' %}
 {% load static %}
 
-{% block title %}Connexion - Novania Towny Earth Server{% endblock %}
+{% block title %}Sign In - Novania Towny Earth Server{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
 
 {% block content %}
-<!-- Auth Section -->
-<section class="auth-page-section">
+<!-- Auth Hero Section -->
+<section class="auth-hero">
+    <div class="auth-particles" id="auth-particles"></div>
+    <div class="auth-hero-content">
+        <h1 class="auth-hero-title">Welcome Back</h1>
+        <p class="auth-hero-subtitle">Sign in to access your account</p>
+    </div>
+</section>
+
+<!-- Auth Form Section -->
+<section class="auth-form-section login-section">
     <div class="container">
         <div class="auth-form-container">
-            <h2 class="auth-form-title">Connexion</h2>
+            <div class="auth-form-header">
+                <div class="auth-form-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2 class="auth-form-title">Sign In</h2>
+                <p class="auth-form-subtitle">Welcome back to Novania</p>
+            </div>
             
-            <form method="post">
+            <form method="post" class="auth-form">
                 {% csrf_token %}
                 
                 <!-- Errors -->
@@ -28,35 +43,48 @@
                 
                 <!-- Username -->
                 <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}" class="form-label">Nom d'utilisateur</label>
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        <i class="fas fa-user"></i> Username
+                    </label>
                     {{ form.username }}
                     {% if form.username.errors %}
-                        {% for error in form.username.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <div class="form-error-container">
+                            {% for error in form.username.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                 </div>
                 
                 <!-- Password -->
                 <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}" class="form-label">Mot de passe</label>
+                    <label for="{{ form.password.id_for_label }}" class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
                     {{ form.password }}
                     {% if form.password.errors %}
-                        {% for error in form.password.errors %}
-                            <div class="form-error">{{ error }}</div>
-                        {% endfor %}
+                        <div class="form-error-container">
+                            {% for error in form.password.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                 </div>
                 
                 <div class="forgot-password">
-                    <a href="#">Mot de passe oublié?</a>
+                    <a href="#">Forgot Password?</a>
                 </div>
                 
-                <button type="submit" class="form-submit">Se connecter</button>
+                <div class="form-action">
+                    <button type="submit" class="form-submit">
+                        <span>Sign In</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </form>
             
             <div class="auth-links">
-                Vous n'avez pas de compte? <a href="{% url 'register' %}">Inscrivez-vous</a>
+                <p>Don't have an account yet? <a href="{% url 'register' %}">Create Account</a></p>
             </div>
             
         </div>
@@ -72,6 +100,51 @@
         inputs.forEach(input => {
             input.classList.add('form-control');
         });
+        
+        // Create particles for auth hero
+        createParticles('auth-particles', 40);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Submit button animation
+        const submitBtn = document.querySelector('.form-submit');
+        if (submitBtn) {
+            submitBtn.addEventListener('mouseenter', function() {
+                this.classList.add('btn-hover');
+            });
+            
+            submitBtn.addEventListener('mouseleave', function() {
+                this.classList.remove('btn-hover');
+            });
+        }
     });
 </script>
 {% endblock %}

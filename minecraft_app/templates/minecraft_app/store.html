@@ -8,20 +8,22 @@
 {% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Store</h1>
+<!-- Hero Store Section -->
+<section class="store-hero">
+    <div class="store-particles" id="store-particles"></div>
+    <div class="store-hero-content">
+        <h1 class="store-title">Premium Ranks</h1>
+        <p class="store-subtitle">Support the server and unlock exclusive perks</p>
+        
+        <div class="store-description">
+            <p>Our server is maintained by a passionate team of volunteers. Your support helps us cover server costs and develop new features for everyone to enjoy. All ranks are lifetime purchases!</p>
+        </div>
+    </div>
 </section>
 
-<!-- Store Section -->
-<section class="section">
-    <div class="container">
-        <div class="store-header">
-            <h2 class="section-title">Support the Server</h2>
-            <p class="section-subtitle">Get exclusive perks and help us keep the adventure going</p>
-            <p>Our server is maintained by a passionate team of volunteers. Your support helps us cover server costs and develop new features for everyone to enjoy.</p>
-        </div>
-        
+<!-- Store Products Section -->
+<section class="store-products-section">
+    <div class="container">        
         <div class="store-grid">
             {% for rank in ranks %}
                 <div class="product-card product-{{ rank.name|lower }}">
@@ -29,7 +31,7 @@
                         <h3 class="product-name" style="color: {{ rank.color_code }}">{{ rank.name }}</h3>
                         <div class="product-price">€{{ rank.price }}<span class="price-unit">/lifetime</span></div>
                         {% if rank.name == "Premium" %}
-                            <div class="promotion-badge">Popular</div>
+                            <div class="product-badge">Most Popular</div>
                         {% endif %}
                     </div>
                     
@@ -77,9 +79,9 @@
                     
                     <div class="product-footer">
                         {% if rank.id %}
-                            <a href="{% url 'checkout' rank.id %}" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
+                            <a href="{% url 'checkout' rank.id %}" class="btn-purchase" style="background: linear-gradient(to right, {{ rank.color_code }}, {{ rank.color_code }}CC);">Purchase Now</a>
                         {% else %}
-                            <a href="#" class="btn" style="background-color: {{ rank.color_code }}">Purchase now</a>
+                            <a href="#" class="btn-purchase" style="background: linear-gradient(to right, {{ rank.color_code }}, {{ rank.color_code }}CC);">Purchase Now</a>
                         {% endif %}
                     </div>
                 </div>
@@ -107,7 +109,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn">Purchase (Example)</a>
+                        <a href="#" class="btn-purchase">Purchase Now</a>
                     </div>
                 </div>
                 
@@ -115,7 +117,7 @@
                     <div class="product-header">
                         <h3 class="product-name">Premium</h3>
                         <div class="product-price">€10<span class="price-unit">/lifetime</span></div>
-                        <div class="promotion-badge">Popular</div>
+                        <div class="product-badge">Most Popular</div>
                     </div>
                     
                     <div class="product-content">
@@ -135,7 +137,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn">Purchase (Example)</a>
+                        <a href="#" class="btn-purchase">Purchase Now</a>
                     </div>
                 </div>
                 
@@ -163,7 +165,7 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn">Purchase (Example)</a>
+                        <a href="#" class="btn-purchase">Purchase Now</a>
                     </div>
                 </div>
                 
@@ -192,66 +194,85 @@
                     </div>
                     
                     <div class="product-footer">
-                        <a href="#" class="btn">Purchase (Example)</a>
+                        <a href="#" class="btn-purchase">Purchase Now</a>
                     </div>
                 </div>
             {% endfor %}
         </div>
         
-        <div class="payment-methods">
-            <h3>Secure Payment Methods</h3>
-            <p>We accept various payment methods for your convenience</p>
-            <div class="payment-icons">
-                <i class="fab fa-cc-paypal" title="PayPal"></i>
-                <i class="fab fa-cc-visa" title="Visa"></i>
-                <i class="fab fa-cc-mastercard" title="Mastercard"></i>
-                <i class="fab fa-cc-stripe" title="Stripe"></i>
-                <i class="fas fa-credit-card" title="Other Cards"></i>
+        <div class="payment-section">
+            <h3 class="payment-title">Secure Payment Methods</h3>
+            <p class="payment-description">We accept various payment methods for your convenience. All transactions are secure and encrypted.</p>
+            
+            <div class="payment-methods">
+                <div class="payment-method visa">
+                    <i class="fab fa-cc-visa" title="Visa"></i>
+                </div>
+                <div class="payment-method mastercard">
+                    <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                </div>
+                <div class="payment-method stripe">
+                    <i class="fab fa-cc-stripe" title="Stripe"></i>
+                </div>
+                <div class="payment-method other">
+                    <i class="fas fa-credit-card" title="Other Cards"></i>
+                </div>
             </div>
         </div>
         
         <!-- FAQ Section -->
         <div class="faq-section">
-            <h2 class="section-title">Frequently Asked Questions</h2>
+            <h2 class="faq-title">Frequently Asked Questions</h2>
             
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>How long do ranks last?</span>
-                    <i class="fas fa-chevron-down"></i>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How long do ranks last?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>All purchased ranks on Novania are permanent. Once you buy a rank, you keep it forever, even through server resets or map changes.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>All purchased ranks on Novania are permanent. Once you buy a rank, you keep it forever, even through server resets or map changes.</p>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I receive my rank after purchase?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Ranks are usually applied automatically within minutes of a successful purchase. The system links your website account to your Minecraft username. If you don't receive your rank within an hour, please contact a staff member on our Discord server.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I upgrade my rank later?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! If you already have a rank and want to upgrade to a higher one, you'll only need to pay the difference. Contact a staff member for assistance with upgrades.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Where does the money go?</h3>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>All funds from rank purchases go directly toward server costs, including hosting, domain fees, development, and future expansions. We're a non-profit community project run by volunteers.</p>
+                    </div>
                 </div>
             </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>How do I receive my rank after purchase?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>Ranks are usually applied automatically within minutes of a successful purchase. If you don't receive your rank within an hour, please contact a staff member on our Discord server.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Can I upgrade my rank later?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>Yes! If you already have a rank and want to upgrade to a higher one, you'll only need to pay the difference. Contact a staff member for assistance with upgrades.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Where does the money go?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>All funds from rank purchases go directly toward server costs, including hosting, domain fees, development, and future expansions. We're a non-profit community project run by volunteers.</p>
-                </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="store-cta">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to enhance your gameplay?</h2>
+                <p class="cta-text">Join our premium members and take your Minecraft experience to the next level!</p>
+                <a href="#" class="cta-btn" id="scrollToTop">Browse Ranks</a>
             </div>
         </div>
     </div>
@@ -261,27 +282,93 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for the store-particles container
+        const particlesContainer = document.getElementById('store-particles');
+        if (particlesContainer) {
+            const particleCount = window.innerWidth < 768 ? 20 : 40;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
         // FAQ Toggle
         const faqQuestions = document.querySelectorAll('.faq-question');
         
         faqQuestions.forEach(question => {
             question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
                 const answer = this.nextElementSibling;
+                const icon = this.querySelector('.faq-icon i');
                 
-                // Toggle display
-                if (answer.style.display === 'block') {
-                    answer.style.display = 'none';
-                    this.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
-                } else {
-                    answer.style.display = 'block';
-                    this.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+                // Check if this FAQ item is already active
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items first
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                    item.querySelector('.faq-answer').style.maxHeight = '0';
+                    item.querySelector('.faq-icon i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+                });
+                
+                // If the clicked item wasn't active, open it
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
                 }
             });
         });
         
-        // Initially hide all answers
-        document.querySelectorAll('.faq-answer').forEach(answer => {
-            answer.style.display = 'none';
+        // Scroll to top button
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        if (scrollToTopBtn) {
+            scrollToTopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+        
+        // Add hover effects to product cards
+        const productCards = document.querySelectorAll('.product-card');
+        
+        productCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                // Add a class to other cards to dim them slightly
+                productCards.forEach(otherCard => {
+                    if (otherCard !== card) {
+                        otherCard.classList.add('card-dimmed');
+                    }
+                });
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                // Remove the dim class from all cards
+                productCards.forEach(otherCard => {
+                    otherCard.classList.remove('card-dimmed');
+                });
+            });
         });
     });
 </script>

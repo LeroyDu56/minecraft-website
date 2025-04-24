@@ -8,178 +8,358 @@
 {% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Our Team</h1>
+<!-- Staff Hero Section -->
+<section class="staff-hero">
+    <div class="staff-particles" id="staff-particles"></div>
+    <div class="staff-hero-content">
+        <h1 class="staff-hero-title">Meet Our Team</h1>
+        <p class="staff-hero-subtitle">The dedicated people behind Novania</p>
+        
+        <div class="staff-hero-description">
+            <p>Our passionate team works tirelessly to create the best possible experience for our players. Learn more about the people who make Novania possible!</p>
+        </div>
+    </div>
 </section>
 
-<!-- Staff Section -->
-<section class="staff-section">
+<!-- Staff Main Section -->
+<section class="staff-main-section">
     <div class="container">
-        <h2 class="section-title">The Team Behind Novania</h2>
-        <p class="section-subtitle">Meet the people who make the server thrive every day</p>
-        
         <!-- Administrators -->
-        <h3 class="staff-category">Administrators</h3>
-        <div class="staff-grid">
-            {% for admin in admins %}
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/{{ admin.name }}/100" alt="{{ admin.name }}">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">{{ admin.name }}</h4>
-                            <span class="staff-role">{{ admin.get_role_display }}</span>
-                            {% if admin.name == "EnzoLaPicole" %}
-                                <span class="staff-badge">Developer</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        {% if admin.description %}
-                            <p class="staff-description">{{ admin.description }}</p>
-                        {% else %}
-                            <p class="staff-description">
-                                {% if admin.name == "EnzoLaPicole" %}
-                                    Founder and lead developer of Novania server. Responsible for technical operations and overall gameplay experience.
-                                {% elif admin.name == "karatoss" %}
-                                    Co-administrator in charge of community management and moderation. Towny plugin specialist.
-                                {% elif admin.name == "Betaking" %}
-                                    Administrator responsible for events and communications. Expert in town construction and design.
-                                {% else %}
-                                    Novania server administrator.
-                                {% endif %}
-                            </p>
-                        {% endif %}
-                        
-                        <div class="staff-social">
-                            {% if admin.discord_username %}
-                                <div class="social-item">
-                                    <i class="fab fa-discord"></i>
-                                    <span>{{ admin.discord_username }}</span>
+        <div class="staff-category-container">
+            <h2 class="staff-category">Administrators</h2>
+            <div class="staff-line"></div>
+            
+            <div class="staff-grid">
+                {% for admin in admins %}
+                    <div class="staff-card">
+                        <div class="staff-card-inner">
+                            <div class="staff-card-front">
+                                <div class="staff-header">
+                                    <div class="staff-avatar">
+                                        <img src="https://mc-heads.net/avatar/{{ admin.name }}/100" alt="{{ admin.name }}">
+                                    </div>
                                 </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <!-- Placeholder for admins if none are in database -->
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/EnzoLaPicole/100" alt="EnzoLaPicole">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">EnzoLaPicole</h4>
-                            <span class="staff-role">Administrator</span>
-                            <span class="staff-badge">Developer</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">
-                            Founder and lead developer of Novania server. Responsible for technical operations and overall gameplay experience.
-                        </p>
-                        <div class="staff-social">
-                            <div class="social-item">
-                                <i class="fab fa-discord"></i>
-                                <span>Enzoo#0660</span>
+                                <div class="staff-content">
+                                    <h3 class="staff-name">{{ admin.name }}</h3>
+                                    <div class="staff-roles">
+                                        <span class="staff-role" data-role="admin">{{ admin.get_role_display }}</span>
+                                        {% if admin.name == "EnzoLaPicole" %}
+                                            <span class="staff-role developer">Developer</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="staff-card-back">
+                                <div class="staff-back-content">
+                                    <h3 class="staff-name">{{ admin.name }}</h3>
+                                    <div class="staff-divider"></div>
+                                    {% if admin.description %}
+                                        <p class="staff-description">{{ admin.description }}</p>
+                                    {% else %}
+                                        <p class="staff-description">
+                                            {% if admin.name == "EnzoLaPicole" %}
+                                                Founder and lead developer of Novania server. Responsible for technical operations and overall gameplay experience.
+                                            {% elif admin.name == "karatoss" %}
+                                                Co-administrator in charge of community management and moderation. Towny plugin specialist.
+                                            {% elif admin.name == "Betaking" %}
+                                                Administrator responsible for events and communications. Expert in town construction and design.
+                                            {% else %}
+                                                Novania server administrator.
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+                                    
+                                    {% if admin.discord_username %}
+                                        <div class="staff-social">
+                                            <div class="social-item discord">
+                                                <i class="fab fa-discord"></i>
+                                                <span>{{ admin.discord_username }}</span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/karatoss/100" alt="karatoss">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">karatoss</h4>
-                            <span class="staff-role">Administrator</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">
-                            Co-administrator in charge of community management and moderation. Towny plugin specialist.
-                        </p>
-                        <div class="staff-social">
-                            <div class="social-item">
-                                <i class="fab fa-discord"></i>
-                                <span>MrKaratoss#3000</span>
+                {% empty %}
+                    <!-- Placeholder for admins if none are in database -->
+                    <div class="staff-card">
+                        <div class="staff-card-inner">
+                            <div class="staff-card-front">
+                                <div class="staff-header">
+                                    <div class="staff-avatar">
+                                        <img src="https://mc-heads.net/avatar/EnzoLaPicole/100" alt="EnzoLaPicole">
+                                    </div>
+                                </div>
+                                <div class="staff-content">
+                                    <h3 class="staff-name">EnzoLaPicole</h3>
+                                    <span class="staff-role" data-role="admin">Administrator</span>
+                                    <span class="staff-badge">Developer</span>
+                                </div>
+                            </div>
+                            <div class="staff-card-back">
+                                <div class="staff-back-content">
+                                    <h3 class="staff-name">EnzoLaPicole</h3>
+                                    <div class="staff-divider"></div>
+                                    <p class="staff-description">
+                                        Founder and lead developer of Novania server. Responsible for technical operations and overall gameplay experience.
+                                    </p>
+                                    <div class="staff-social">
+                                        <div class="social-item discord">
+                                            <i class="fab fa-discord"></i>
+                                            <span>Enzoo#0660</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="staff-card">
-                    <div class="staff-header">
-                        <div class="staff-avatar">
-                            <img src="https://mc-heads.net/avatar/Betaking/100" alt="Betaking">
-                        </div>
-                        <div class="staff-info">
-                            <h4 class="staff-name">Betaking</h4>
-                            <span class="staff-role">Administrator</span>
-                        </div>
-                    </div>
-                    <div class="staff-content">
-                        <p class="staff-description">
-                            Administrator responsible for events and communications. Expert in town construction and design.
-                        </p>
-                        <div class="staff-social">
-                            <div class="social-item">
-                                <i class="fab fa-discord"></i>
-                                <span>Betaking#3571</span>
+                    
+                    <div class="staff-card">
+                        <div class="staff-card-inner">
+                            <div class="staff-card-front">
+                                <div class="staff-header">
+                                    <div class="staff-avatar">
+                                        <img src="https://mc-heads.net/avatar/karatoss/100" alt="karatoss">
+                                    </div>
+                                </div>
+                                <div class="staff-content">
+                                    <h3 class="staff-name">karatoss</h3>
+                                    <span class="staff-role" data-role="admin">Administrator</span>
+                                </div>
+                            </div>
+                            <div class="staff-card-back">
+                                <div class="staff-back-content">
+                                    <h3 class="staff-name">karatoss</h3>
+                                    <div class="staff-divider"></div>
+                                    <p class="staff-description">
+                                        Co-administrator in charge of community management and moderation. Towny plugin specialist.
+                                    </p>
+                                    <div class="staff-social">
+                                        <div class="social-item discord">
+                                            <i class="fab fa-discord"></i>
+                                            <span>MrKaratoss#3000</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                    
+                    <div class="staff-card">
+                        <div class="staff-card-inner">
+                            <div class="staff-card-front">
+                                <div class="staff-header">
+                                    <div class="staff-avatar">
+                                        <img src="https://mc-heads.net/avatar/Betaking/100" alt="Betaking">
+                                    </div>
+                                </div>
+                                <div class="staff-content">
+                                    <h3 class="staff-name">Betaking</h3>
+                                    <span class="staff-role" data-role="admin">Administrator</span>
+                                </div>
+                            </div>
+                            <div class="staff-card-back">
+                                <div class="staff-back-content">
+                                    <h3 class="staff-name">Betaking</h3>
+                                    <div class="staff-divider"></div>
+                                    <p class="staff-description">
+                                        Administrator responsible for events and communications. Expert in town construction and design.
+                                    </p>
+                                    <div class="staff-social">
+                                        <div class="social-item discord">
+                                            <i class="fab fa-discord"></i>
+                                            <span>Betaking#3571</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         
         <!-- Moderators -->
-        <h3 class="staff-category">Moderators</h3>
-        <div class="staff-grid">
-
+        <div class="staff-category-container">
+            <h2 class="staff-category">Moderators</h2>
+            <div class="staff-line"></div>
+            
+            <div class="staff-grid">
+                {% for mod in mods %}
+                    <div class="staff-card">
+                        <!-- Staff card content for moderators -->
+                    </div>
+                {% empty %}
+                    <div class="empty-staff">
+                        <div class="empty-staff-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <p>We're currently looking for moderators to join our team!</p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
         <!-- Helpers -->
-        <h3 class="staff-category">Helpers</h3>
-        <div class="staff-grid">
-
+        <div class="staff-category-container">
+            <h2 class="staff-category">Helpers</h2>
+            <div class="staff-line"></div>
+            
+            <div class="staff-grid">
+                {% for helper in helpers %}
+                    <div class="staff-card">
+                        <!-- Staff card content for helpers -->
+                    </div>
+                {% empty %}
+                    <div class="empty-staff">
+                        <div class="empty-staff-icon">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <p>We're currently looking for helpers to join our team!</p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
         <!-- Builders -->
-        <h3 class="staff-category">Builders</h3>
-        <div class="staff-grid">
-
-        </div>
-</section>
-
-<!-- Join Our Team Section -->
-<section class="join-team-section">
-    <div class="container">
-        <h2 class="section-title">Join Our Team</h2>
-        <p class="section-subtitle">Want to help us grow Novania?</p>
-        
-        <div class="application-info">
-            <p>We currently have 3 active staff positions and are looking for new team members to help manage and develop our server. If you're interested, check the requirements and apply on our Discord.</p>
+        <div class="staff-category-container">
+            <h2 class="staff-category">Builders</h2>
+            <div class="staff-line"></div>
             
-            <div class="requirements">
-                <h4>Requirements:</h4>
-                <ul>
-                    <li><i class="fas fa-check"></i> Be at least 18 years old</li>
-                    <li><i class="fas fa-check"></i> Be regularly active on the server</li>
-                    <li><i class="fas fa-check"></i> Have a good knowledge of server plugins</li>
-                    <li><i class="fas fa-check"></i> Be mature and respectful towards the community</li>
-                    <li><i class="fas fa-check"></i> Have a working microphone for team meetings</li>
-                </ul>
-            </div>
-            
-            <div class="application-button">
-                <a href="https://discord.gg/a8G7wUKp2Y" class="btn btn-accent" target="_blank">Apply on Discord</a>
+            <div class="staff-grid">
+                {% for builder in builders %}
+                    <div class="staff-card">
+                        <!-- Staff card content for builders -->
+                    </div>
+                {% empty %}
+                    <div class="empty-staff">
+                        <div class="empty-staff-icon">
+                            <i class="fas fa-hammer"></i>
+                        </div>
+                        <p>We're currently looking for builders to join our team!</p>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </section>
+
+<!-- Join Our Team Section -->
+<section class="join-team-section">
+    <div class="join-team-particles" id="join-team-particles"></div>
+    <div class="container">
+        <div class="join-team-content">
+            <h2 class="join-team-title">Join Our Team</h2>
+            <p class="join-team-subtitle">Want to help us grow Novania?</p>
+            
+            <div class="join-team-cards">
+                <div class="requirements-card">
+                    <div class="requirements-header">
+                        <div class="requirements-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3>Requirements</h3>
+                    </div>
+                    <ul class="requirements-list">
+                        <li><i class="fas fa-check"></i> Be at least 18 years old</li>
+                        <li><i class="fas fa-check"></i> Be regularly active on the server</li>
+                        <li><i class="fas fa-check"></i> Have a good knowledge of server plugins</li>
+                        <li><i class="fas fa-check"></i> Be mature and respectful towards the community</li>
+                        <li><i class="fas fa-check"></i> Have a working microphone for team meetings</li>
+                    </ul>
+                </div>
+                
+                <div class="positions-card">
+                    <div class="positions-header">
+                        <div class="positions-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3>Open Positions</h3>
+                    </div>
+                    <ul class="positions-list">
+                        <li><i class="fas fa-shield-alt"></i> Moderator</li>
+                        <li><i class="fas fa-hands-helping"></i> Helper</li>
+                        <li><i class="fas fa-hammer"></i> Builder</li>
+                    </ul>
+                    <a href="https://discord.gg/a8G7wUKp2Y" class="btn apply-btn" target="_blank">
+                        <i class="fab fa-discord"></i> Apply on Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for staff hero
+        createParticles('staff-particles', 40);
+        
+        // Create particles for join team section
+        createParticles('join-team-particles', 30);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Flip cards on hover/touch
+        const staffCards = document.querySelectorAll('.staff-card');
+        
+        staffCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.querySelector('.staff-card-inner').classList.add('flipped');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.querySelector('.staff-card-inner').classList.remove('flipped');
+            });
+            
+            // For touch devices
+            card.addEventListener('touchstart', function(e) {
+                const inner = this.querySelector('.staff-card-inner');
+                if (inner.classList.contains('flipped')) {
+                    inner.classList.remove('flipped');
+                } else {
+                    // Remove flipped class from all other cards first
+                    document.querySelectorAll('.staff-card-inner').forEach(el => {
+                        if (el !== inner) {
+                            el.classList.remove('flipped');
+                        }
+                    });
+                    inner.classList.add('flipped');
+                }
+                e.preventDefault(); // Prevent scrolling on touch
+            });
+        });
+    });
+</script>
 {% endblock %}

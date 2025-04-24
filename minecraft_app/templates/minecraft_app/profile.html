@@ -1,29 +1,39 @@
 {% extends 'minecraft_app/base.html' %}
 {% load static %}
 
-{% block title %}Mon Profil - Novania Towny Earth Server{% endblock %}
+{% block title %}My Profile - Novania Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Mon Profil</h1>
+<!-- Profile Hero Section -->
+<section class="profile-hero">
+    <div class="profile-particles" id="profile-particles"></div>
+    <div class="profile-hero-content">
+        <h1 class="profile-hero-title">My Profile</h1>
+        <p class="profile-hero-subtitle">Manage your account and settings</p>
+    </div>
 </section>
 
-<!-- Profile Section -->
-<section class="section">
+<!-- Profile Main Section -->
+<section class="profile-main-section">
     <div class="container">
         <div class="profile-container">
             <!-- Profile Sidebar -->
             <div class="profile-sidebar">
-                <div class="profile-avatar-large">
-                    {% if profile.minecraft_uuid %}
-                        <img src="https://mc-heads.net/avatar/{{ profile.minecraft_uuid }}/200" alt="{{ user.username }}">
-                    {% elif profile.minecraft_username %}
-                        <img src="https://mc-heads.net/avatar/{{ profile.minecraft_username }}/200" alt="{{ user.username }}">
-                    {% else %}
-                        <img src="https://mc-heads.net/avatar/MHF_Steve/200" alt="{{ user.username }}">
-                    {% endif %}
-                    <div class="profile-avatar-overlay"></div>
+                <div class="profile-avatar-wrapper">
+                    <div class="profile-avatar">
+                        {% if profile.minecraft_uuid %}
+                            <img src="https://mc-heads.net/avatar/{{ profile.minecraft_uuid }}/200" alt="{{ user.username }}">
+                        {% elif profile.minecraft_username %}
+                            <img src="https://mc-heads.net/avatar/{{ profile.minecraft_username }}/200" alt="{{ user.username }}">
+                        {% else %}
+                            <img src="https://mc-heads.net/avatar/MHF_Steve/200" alt="{{ user.username }}">
+                        {% endif %}
+                    </div>
+                    <div class="avatar-overlay"></div>
                 </div>
                 
                 <div class="profile-user-info">
@@ -37,9 +47,9 @@
                     <div class="profile-stat">
                         <div class="profile-stat-value">
                             {% if profile.minecraft_username %}
-                                <i class="fas fa-check" style="color: var(--success);"></i>
+                                <i class="fas fa-check" aria-hidden="true"></i>
                             {% else %}
-                                <i class="fas fa-times" style="color: var(--danger);"></i>
+                                <i class="fas fa-times" aria-hidden="true"></i>
                             {% endif %}
                         </div>
                         <div class="profile-stat-label">Minecraft</div>
@@ -47,9 +57,9 @@
                     <div class="profile-stat">
                         <div class="profile-stat-value">
                             {% if profile.discord_username %}
-                                <i class="fas fa-check" style="color: var(--success);"></i>
+                                <i class="fas fa-check" aria-hidden="true"></i>
                             {% else %}
-                                <i class="fas fa-times" style="color: var(--danger);"></i>
+                                <i class="fas fa-times" aria-hidden="true"></i>
                             {% endif %}
                         </div>
                         <div class="profile-stat-label">Discord</div>
@@ -57,73 +67,206 @@
                 </div>
                 
                 <div class="profile-links">
-                    <a href="{% url 'store' %}"><i class="fas fa-shopping-cart"></i> Boutique</a>
-                    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                    <a href="{% url 'store' %}" class="profile-link">
+                        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+                        <span>Store</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="profile-link logout">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        <span>Sign Out</span>
+                    </a>
                 </div>
             </div>
             
-            <!-- Profile Main Content -->
-            <div class="profile-main">
-                <div class="profile-section">
-                    <h3 class="profile-section-title">Informations du profil</h3>
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        
-                        <div class="form-group">
-                            <label for="minecraft_username" class="form-label">Nom d'utilisateur Minecraft</label>
-                            <input type="text" id="minecraft_username" name="minecraft_username" class="form-control" value="{{ profile.minecraft_username }}">
-                            <div class="form-help-text">Ce nom sera utilisé pour afficher votre tête Minecraft.</div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="discord_username" class="form-label">Nom d'utilisateur Discord</label>
-                            <input type="text" id="discord_username" name="discord_username" class="form-control" value="{{ profile.discord_username }}">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="bio" class="form-label">Biographie</label>
-                            <textarea id="bio" name="bio" class="form-control" rows="5">{{ profile.bio }}</textarea>
-                        </div>
-                        
-                        <button type="submit" class="form-submit">Mettre à jour le profil</button>
-                    </form>
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Profile Tabs -->
+                <div class="profile-tabs">
+                    <button class="profile-tab active" data-tab="account">
+                        <i class="fas fa-user" aria-hidden="true"></i>
+                        <span>Account</span>
+                    </button>
+                    <button class="profile-tab" data-tab="ranks">
+                        <i class="fas fa-crown" aria-hidden="true"></i>
+                        <span>My Ranks</span>
+                    </button>
+                    <button class="profile-tab" data-tab="activity">
+                        <i class="fas fa-history" aria-hidden="true"></i>
+                        <span>Activity</span>
+                    </button>
                 </div>
                 
-                <!-- Ranks Section -->
-                <div class="profile-section">
-                    <h3 class="profile-section-title">Mes Rangs</h3>
-                    
-                    {% if purchases %}
-                        <div class="purchases-list">
-                            {% for purchase in purchases %}
-                                <div class="purchase-item" style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 5px; margin-bottom: 10px;">
-                                    <div class="purchase-rank" style="font-weight: bold; color: {{ purchase.rank.color_code }}">
-                                        {{ purchase.rank.name }}
-                                    </div>
-                                    <div class="purchase-date" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
-                                        Acheté le {{ purchase.created_at|date:"d/m/Y" }}
-                                    </div>
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Account Tab -->
+                    <div class="tab-pane active" id="account">
+                        <div class="profile-section">
+                            <h3 class="profile-section-title">Account Information</h3>
+                            
+                            <form method="post" class="profile-form">
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label for="minecraft_username" class="form-label">
+                                        <i class="fas fa-cube" aria-hidden="true"></i>
+                                        Minecraft Username
+                                    </label>
+                                    <input type="text" id="minecraft_username" name="minecraft_username" class="form-control" value="{{ profile.minecraft_username }}">
+                                    <div class="form-help-text">This username will be used to display your Minecraft head.</div>
                                 </div>
-                            {% endfor %}
+                                
+                                <div class="form-group">
+                                    <label for="discord_username" class="form-label">
+                                        <i class="fab fa-discord" aria-hidden="true"></i>
+                                        Discord Username
+                                    </label>
+                                    <input type="text" id="discord_username" name="discord_username" class="form-control" value="{{ profile.discord_username }}">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="bio" class="form-label">
+                                        <i class="fas fa-comment-alt" aria-hidden="true"></i>
+                                        Biography
+                                    </label>
+                                    <textarea id="bio" name="bio" class="form-control" rows="5">{{ profile.bio }}</textarea>
+                                </div>
+                                
+                                <div class="form-action">
+                                    <button type="submit" class="form-submit">
+                                        <span>Update Profile</span>
+                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    {% else %}
-                        <div class="empty-purchases" style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 5px;">
-                            <p>Vous n'avez pas encore acheté de rang. Visitez notre <a href="{% url 'store' %}" style="color: var(--primary);">boutique</a> pour découvrir nos offres!</p>
-                        </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Activity Section -->
-                <div class="profile-section">
-                    <h3 class="profile-section-title">Activité récente</h3>
+                    </div>
                     
-                    <div class="activity-empty" style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 5px;">
-                        <p>Aucune activité récente à afficher.</p>
+                    <!-- Ranks Tab -->
+                    <div class="tab-pane" id="ranks">
+                        <div class="profile-section">
+                            <h3 class="profile-section-title">My Ranks</h3>
+                            
+                            {% if purchases %}
+                                <div class="ranks-list">
+                                    {% for purchase in purchases %}
+                                        <div class="rank-item">
+                                            <div class="rank-badge" style="background-color: {{ purchase.rank.color_code }}">
+                                                <i class="fas fa-crown" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="rank-details">
+                                                <div class="rank-name" style="color: {{ purchase.rank.color_code }}">
+                                                    {{ purchase.rank.name }}
+                                                </div>
+                                                <div class="rank-date">
+                                                    Purchased on {{ purchase.created_at|date:"M d, Y" }}
+                                                </div>
+                                            </div>
+                                            <div class="rank-status">
+                                                <span class="status-badge active">Active</span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="empty-ranks">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-crown" aria-hidden="true"></i>
+                                    </div>
+                                    <p>You haven't purchased any ranks yet.</p>
+                                    <a href="{% url 'store' %}" class="btn">Visit Store</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Activity Tab -->
+                    <div class="tab-pane" id="activity">
+                        <div class="profile-section">
+                            <h3 class="profile-section-title">Recent Activity</h3>
+                            
+                            <div class="empty-activity">
+                                <div class="empty-icon">
+                                    <i class="fas fa-history" aria-hidden="true"></i>
+                                </div>
+                                <p>No recent activity to display.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for profile hero
+        createParticles('profile-particles', 30);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.profile-tab');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab panes
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                // Show the selected tab pane
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Submit button animation
+        const submitBtn = document.querySelector('.form-submit');
+        if (submitBtn) {
+            submitBtn.addEventListener('mouseenter', function() {
+                this.classList.add('btn-hover');
+            });
+            
+            submitBtn.addEventListener('mouseleave', function() {
+                this.classList.remove('btn-hover');
+            });
+        }
+    });
+</script>
 {% endblock %}

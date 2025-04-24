@@ -8,23 +8,25 @@
 {% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Server Rules</h1>
+<!-- Rules Hero Section -->
+<section class="rules-hero">
+    <div class="rules-particles" id="rules-particles"></div>
+    <div class="rules-hero-content">
+        <h1 class="rules-hero-title">Server Rules</h1>
+        <p class="rules-hero-subtitle">Guidelines for a fair and enjoyable experience</p>
+        
+        <div class="rules-hero-description">
+            <p>Our server is built on respect, fairness, and fun. Following these rules helps us maintain a balanced, respectful, and enjoyable experience for everyone. Violating these rules may result in warnings or bans, depending on the severity and frequency of the offense.</p>
+        </div>
+    </div>
 </section>
 
-<!-- Rules Section -->
-<section class="rules-section">
+<!-- Rules Main Section -->
+<section class="rules-main-section">
     <div class="container">
-        <div class="rules-intro">
-            <h2 class="section-title">Our Server Guidelines</h2>
-            <p class="section-subtitle">Please follow these rules to ensure a fun and fair experience for everyone</p>
-            <p>Our goal is to create a welcoming environment for all players. These rules help us maintain a balanced, respectful, and enjoyable experience. Violating these rules may result in warnings or bans, depending on the severity and frequency of the offense.</p>
-        </div>
-        
         <div class="rules-container">
             {% for rule in rules %}
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
                     <div class="rule-number">{{ forloop.counter }}</div>
                     <div class="rule-content">
                         <h3 class="rule-title">{{ rule.title }}</h3>
@@ -33,7 +35,7 @@
                 </div>
             {% empty %}
                 <!-- Sample rules if no data available -->
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="100">
                     <div class="rule-number">1</div>
                     <div class="rule-content">
                         <h3 class="rule-title">Respect All Players</h3>
@@ -41,7 +43,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="rule-number">2</div>
                     <div class="rule-content">
                         <h3 class="rule-title">No Griefing or Stealing</h3>
@@ -49,7 +51,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="rule-number">3</div>
                     <div class="rule-content">
                         <h3 class="rule-title">No Cheating or Exploits</h3>
@@ -57,7 +59,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="400">
                     <div class="rule-number">4</div>
                     <div class="rule-content">
                         <h3 class="rule-title">Keep Builds Appropriate</h3>
@@ -65,7 +67,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="500">
                     <div class="rule-number">5</div>
                     <div class="rule-content">
                         <h3 class="rule-title">No Spamming</h3>
@@ -73,7 +75,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="600">
                     <div class="rule-number">6</div>
                     <div class="rule-content">
                         <h3 class="rule-title">War and PvP Rules</h3>
@@ -81,7 +83,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="700">
                     <div class="rule-number">7</div>
                     <div class="rule-content">
                         <h3 class="rule-title">Respect Staff Decisions</h3>
@@ -89,7 +91,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="800">
                     <div class="rule-number">8</div>
                     <div class="rule-content">
                         <h3 class="rule-title">Lag Prevention</h3>
@@ -97,7 +99,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="900">
                     <div class="rule-number">9</div>
                     <div class="rule-content">
                         <h3 class="rule-title">No Advertising</h3>
@@ -105,7 +107,7 @@
                     </div>
                 </div>
                 
-                <div class="rule-card">
+                <div class="rule-card" data-aos="fade-up" data-aos-delay="1000">
                     <div class="rule-number">10</div>
                     <div class="rule-content">
                         <h3 class="rule-title">Have Fun!</h3>
@@ -128,12 +130,72 @@
     </div>
 </section>
 
-<!-- Discord Section -->
+<!-- Discord CTA Section -->
 <section class="discord-section">
+    <div class="discord-particles" id="discord-particles"></div>
     <div class="container">
-        <h2 class="section-title">Questions About Our Rules?</h2>
-        <p class="section-subtitle">Join our Discord server for clarification or to report rule violations</p>
-        <a href="https://discord.gg/a8G7wUKp2Y" class="btn discord-btn" target="_blank"><i class="fab fa-discord"></i> Join Our Discord</a>
+        <div class="discord-content">
+            <h2 class="discord-title">Got Questions About Our Rules?</h2>
+            <p class="discord-text">Join our Discord server for clarification or to report rule violations</p>
+            <a href="https://discord.gg/a8G7wUKp2Y" class="discord-btn" target="_blank">
+                <i class="fab fa-discord"></i>
+                <span>Join Our Discord</span>
+            </a>
+        </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for rules hero
+        createParticles('rules-particles', 40);
+        
+        // Create particles for discord section
+        createParticles('discord-particles', 30);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Add hover effects to rule cards
+        const ruleCards = document.querySelectorAll('.rule-card');
+        ruleCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('rule-card-hover');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('rule-card-hover');
+            });
+        });
+    });
+</script>
 {% endblock %}
