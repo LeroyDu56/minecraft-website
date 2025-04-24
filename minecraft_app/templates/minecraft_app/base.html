@@ -103,51 +103,82 @@
     
     {% block content %}{% endblock %}
     
-    <!-- Footer -->
-    <footer>
+
+<!-- Simplified Footer -->
+<footer class="enhanced-footer">
+    <div class="footer-main">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-column">
-                    <h3>Novania</h3>
-                    <p>Towny Minecraft server on a 1:1000 scale Earth map. Create your town, join a nation, and shape the history of the world.</p>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
+                    <h3 class="footer-heading">Quick Links</h3>
                     <ul class="footer-links">
-                        <li><a href="{% url 'home' %}">Home</a></li>
-                        <li><a href="{% url 'nations' %}">Nations</a></li>
-                        <li><a href="{% url 'dynmap' %}">Map</a></li>
-                        <li><a href="{% url 'store' %}">Store</a></li>
+                        <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="{% url 'nations' %}"><i class="fas fa-flag"></i> Nations</a></li>
+                        <li><a href="{% url 'dynmap' %}"><i class="fas fa-map"></i> Map</a></li>
+                        <li><a href="{% url 'store' %}"><i class="fas fa-shopping-cart"></i> Store</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-column">
-                    <h3>Information</h3>
+                    <h3 class="footer-heading">Information</h3>
                     <ul class="footer-links">
-                        <li><a href="{% url 'rules' %}">Rules</a></li>
-                        <li><a href="{% url 'staff' %}">Staff</a></li>
-                        <li><a href="{% url 'faq' %}">FAQ</a></li>
-                        <li><a href="{% url 'contact' %}">Contact</a></li>
+                        <li><a href="{% url 'rules' %}"><i class="fas fa-gavel"></i> Rules</a></li>
+                        <li><a href="{% url 'staff' %}"><i class="fas fa-users-cog"></i> Staff</a></li>
+                        <li><a href="{% url 'faq' %}"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="{% url 'contact' %}"><i class="fas fa-envelope"></i> Contact</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-column">
-                    <h3>Join Us</h3>
-                    <div class="server-status">
-                        <span class="status-indicator {% if server.status %}status-online{% else %}status-offline{% endif %}"></span>
-                        <span>{% if server.status %}Online{% else %}Offline{% endif %}</span>
-                        <span class="player-count">{{ server.player_count }}/{{ server.max_players }}</span>
+                    <h3 class="footer-heading">Server Status</h3>
+                    <div class="footer-status-badge">
+                        <span class="status-icon {% if server.status %}status-online{% else %}status-offline{% endif %}"></span>
+                        <span class="status-text">{% if server.status %}Server Online{% else %}Server Offline{% endif %}</span>
                     </div>
-                    <div class="server-ip">play.Novania.fr</div>
+                    <div class="player-count-info">
+                        <i class="fas fa-users"></i>
+                        <span class="player-count">{{ server.player_count }}/{{ server.max_players }}</span> players online
+                    </div>
+                    <div class="server-version">
+                        <i class="fas fa-code-branch"></i>
+                        Version: {{ server.version|default:"1.20.4" }}
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 class="footer-heading">Connect With Us</h3>
                     <div class="social-links">
-                        <a href="https://discord.gg/a8G7wUKp2Y" title="Discord" target="_blank"><i class="fab fa-discord"></i></a>
-                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://discord.gg/a8G7wUKp2Y" class="social-link discord" title="Discord" target="_blank">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" class="social-link twitter" title="Twitter" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link instagram" title="Instagram" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link youtube" title="YouTube" target="_blank">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                    <div class="discord-join">
+                        <p>Join our community</p>
+                        <a href="https://discord.gg/a8G7wUKp2Y" class="discord-btn" target="_blank">
+                            <i class="fab fa-discord"></i> Discord Server
+                        </a>
                     </div>
                 </div>
             </div>
-            <p class="copyright">&copy; 2025 Novania. All rights reserved. Minecraft is a registered trademark of Mojang AB.</p>
         </div>
-    </footer>
+    </div>
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p class="copyright">&copy; 2025 Novania. All rights reserved. Minecraft is a registered trademark of Mojang AB.</p>
+            <p class="footer-disclaimer">This is a fan project and is not affiliated with Mojang Studios.</p>
+        </div>
+    </div>
+</footer>
     
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
