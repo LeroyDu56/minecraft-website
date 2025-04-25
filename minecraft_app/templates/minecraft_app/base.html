@@ -68,18 +68,18 @@
                                         {% endif %}
                                     </div>
                                     <div class="dropdown-links">
-                                        <a href="{% url 'profile' %}"><i class="fas fa-user"></i> Mon profil</a>
+                                        <a href="{% url 'profile' %}"><i class="fas fa-user"></i> My profile</a>
                                         {% if user.is_staff %}
                                             <a href="{% url 'admin:index' %}"><i class="fas fa-cog"></i> Administration</a>
                                         {% endif %}
-                                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+                                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sign out</a>
                                     </div>
                                 </div>
                             </div>
                         {% else %}
                             <div class="auth-buttons">
-                                <a href="{% url 'login' %}" class="btn-auth login">Connexion</a>
-                                <a href="{% url 'register' %}" class="btn-auth register">Inscription</a>
+                                <a href="{% url 'login' %}" class="btn-auth login">Sign in</a>
+                                <a href="{% url 'register' %}" class="btn-auth register">Register</a>
                             </div>
                         {% endif %}
                     </div>
@@ -112,7 +112,6 @@
                     <h3 class="footer-heading">Quick Links</h3>
                     <ul class="footer-links">
                         <li><a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="{% url 'nations' %}"><i class="fas fa-flag"></i> Nations</a></li>
                         <li><a href="{% url 'dynmap' %}"><i class="fas fa-map"></i> Map</a></li>
                         <li><a href="{% url 'store' %}"><i class="fas fa-shopping-cart"></i> Store</a></li>
                     </ul>
@@ -140,7 +139,7 @@
                     </div>
                     <div class="server-version">
                         <i class="fas fa-code-branch"></i>
-                        Version: {{ server.version|default:"1.20.4" }}
+                        Version: {{ server.version|default:"1.21.4" }}
                     </div>
                 </div>
                 
@@ -149,15 +148,6 @@
                     <div class="social-links">
                         <a href="https://discord.gg/a8G7wUKp2Y" class="social-link discord" title="Discord" target="_blank">
                             <i class="fab fa-discord"></i>
-                        </a>
-                        <a href="#" class="social-link twitter" title="Twitter" target="_blank">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link instagram" title="Instagram" target="_blank">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="social-link youtube" title="YouTube" target="_blank">
-                            <i class="fab fa-youtube"></i>
                         </a>
                     </div>
                     <div class="discord-join">

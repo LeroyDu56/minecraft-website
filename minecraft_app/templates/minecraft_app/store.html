@@ -475,8 +475,12 @@
 </section>
 {% endblock %}
 
+
 {% block extra_js %}
 <script>
+    // Define the add_to_cart URL as a JavaScript variable
+    const addToCartUrl = "{% url 'add_to_cart' %}";
+
     document.addEventListener('DOMContentLoaded', function() {
         // Create particles for the store-particles container
         const particlesContainer = document.getElementById('store-particles');
@@ -487,19 +491,15 @@
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
-                // Random size
                 const size = Math.random() * 4 + 2;
                 particle.style.width = size + 'px';
                 particle.style.height = size + 'px';
                 
-                // Random position
                 particle.style.top = Math.random() * 100 + '%';
                 particle.style.left = Math.random() * 100 + '%';
                 
-                // Random opacity
                 particle.style.opacity = Math.random() * 0.5 + 0.3;
                 
-                // Animation delay
                 particle.style.animationDelay = Math.random() * 5 + 's';
                 
                 particlesContainer.appendChild(particle);
@@ -512,16 +512,9 @@
         
         storeTabs.forEach(tab => {
             tab.addEventListener('click', function() {
-                // Remove active class from all tabs
                 storeTabs.forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
                 this.classList.add('active');
-                
-                // Hide all content sections
                 storeContents.forEach(content => content.classList.remove('active'));
-                
-                // Show the selected content
                 const tabId = this.getAttribute('data-tab');
                 document.getElementById(tabId + '-content').classList.add('active');
             });
@@ -533,15 +526,9 @@
         
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Remove active class from all buttons
                 categoryBtns.forEach(b => b.classList.remove('active'));
-                
-                // Add active class to clicked button
                 this.classList.add('active');
-                
                 const category = this.getAttribute('data-category');
-                
-                // Show/hide cards based on category
                 treasureCards.forEach(card => {
                     if (category === 'all' || card.getAttribute('data-category') === category) {
                         card.style.display = 'block';
@@ -552,29 +539,29 @@
             });
         });
         
-        // Quantity Buttons
-        const minusBtns = document.querySelectorAll('.quantity-btn.minus');
-        const plusBtns = document.querySelectorAll('.quantity-btn.plus');
-        
-        minusBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.nextElementSibling;
-                const currentValue = parseInt(input.value);
-                if (currentValue > parseInt(input.min)) {
-                    input.value = currentValue - 1;
+        // Quantity Buttons with Event Delegation
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('quantity-btn') && e.target.classList.contains('minus')) {
+                e.preventDefault();
+                const input = e.target.nextElementSibling;
+                if (input && input.type === 'number') {
+                    const currentValue = parseInt(input.value) || 1;
+                    const minValue = parseInt(input.min) || 1;
+                    if (currentValue > minValue) {
+                        input.value = currentValue - 1;
+                    }
                 }
-            });
-        });
-        
-        plusBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                const currentValue = parseInt(input.value);
-                const maxValue = parseInt(input.max);
-                if (!maxValue || currentValue < maxValue) {
-                    input.value = currentValue + 1;
+            } else if (e.target.classList.contains('quantity-btn') && e.target.classList.contains('plus')) {
+                e.preventDefault();
+                const input = e.target.previousElementSibling;
+                if (input && input.type === 'number') {
+                    const currentValue = parseInt(input.value) || 1;
+                    const maxValue = parseInt(input.max) || Infinity;
+                    if (currentValue < maxValue) {
+                        input.value = currentValue + 1;
+                    }
                 }
-            });
+            }
         });
         
         // FAQ Toggle
@@ -586,17 +573,13 @@
                 const answer = this.nextElementSibling;
                 const icon = this.querySelector('.faq-icon i');
                 
-                // Check if this FAQ item is already active
                 const isActive = faqItem.classList.contains('active');
-                
-                // Close all FAQ items first
                 document.querySelectorAll('.faq-item').forEach(item => {
                     item.classList.remove('active');
                     item.querySelector('.faq-answer').style.maxHeight = '0';
                     item.querySelector('.faq-icon i').classList.replace('fa-chevron-up', 'fa-chevron-down');
                 });
                 
-                // If the clicked item wasn't active, open it
                 if (!isActive) {
                     faqItem.classList.add('active');
                     answer.style.maxHeight = answer.scrollHeight + 'px';
@@ -604,26 +587,86 @@
                 }
             });
         });
+        
+        // Convertir tous les formulaires d'ajout au panier en AJAX
+        const addToCartForms = document.querySelectorAll(`form[action="${addToCartUrl}"]`);
+        
+        addToCartForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                fetch(addToCartUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMessage(data.message, data.status);
+                    updateCartIndicator(data.cart_count, data.cart_total);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('An error occurred while adding to cart.', 'error');
+                });
+            });
+        });
+        
+        // Fonction pour afficher un message temporaire
+        function showMessage(message, status) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `ajax-message ajax-message-${status}`;
+            messageElement.innerHTML = `
+                <div class="ajax-message-content">
+                    <span>${message}</span>
+                    <button class="ajax-message-close">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(messageElement);
+            
+            setTimeout(() => {
+                messageElement.classList.add('show');
+            }, 10);
+            
+            const closeButton = messageElement.querySelector('.ajax-message-close');
+            closeButton.addEventListener('click', () => {
+                messageElement.classList.remove('show');
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 300);
+            });
+            
+            setTimeout(() => {
+                messageElement.classList.remove('show');
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 300);
+            }, 4000);
+        }
+        
+        // Fonction pour mettre à jour l'indicateur du panier
+        function updateCartIndicator(count, total) {
+            const cartCount = document.querySelector('.cart-count');
+            const cartTotal = document.querySelector('.cart-total');
+            
+            if (cartCount) {
+                cartCount.textContent = count;
+                cartCount.classList.add('pulse');
+                setTimeout(() => {
+                    cartCount.classList.remove('pulse');
+                }, 500);
+            }
+            
+            if (cartTotal) {
+                cartTotal.textContent = `€${total}`;
+            }
+        }
     });
 </script>
-
-<script>
-    // Gestionnaire pour les formulaires d'ajout au panier des trésors
-    document.addEventListener('DOMContentLoaded', function() {
-        // Trouver tous les formulaires d'ajout au panier
-        const treasureCartForms = document.querySelectorAll('.treasure-cart-form');
-        
-        treasureCartForms.forEach(form => {
-            // Ajouter un écouteur d'événements au bouton de soumission
-            const submitBtn = form.querySelector('.add-to-cart-btn');
-            if (submitBtn) {
-                submitBtn.addEventListener('click', function(e) {
-                    // Cette ligne n'est pas strictement nécessaire car le bouton est déjà de type submit,
-                    // mais c'est une précaution supplémentaire
-                    form.submit();
-                });
-            }
-        });
-    });
-    </script>
 {% endblock %}

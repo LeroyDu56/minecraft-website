@@ -550,13 +550,16 @@ def store(request):
     
     return render(request, 'minecraft_app/store.html', context)
 
-# Add to cart view
+# Modifié le fichier views.py pour supporter AJAX dans la fonction add_to_cart
+
 @login_required
 def add_to_cart(request):
     if request.method == 'POST':
         item_type = request.POST.get('item_type')
         item_id = request.POST.get('item_id')
         quantity = int(request.POST.get('quantity', 1))
+        message = ""
+        status = "success"
         
         if item_type == 'rank':
             try:
@@ -571,13 +574,14 @@ def add_to_cart(request):
                 
                 if not created:
                     # Rank already in cart
-                    messages.info(request, f"Rank '{rank.name}' is already in your cart.")
+                    message = f"Rank '{rank.name}' is already in your cart."
+                    status = "info"
                 else:
-                    messages.success(request, f"Rank '{rank.name}' added to your cart.")
+                    message = f"Rank '{rank.name}' added to your cart."
                 
             except Rank.DoesNotExist:
-                messages.error(request, "The selected rank does not exist.")
-                return redirect('store')
+                message = "The selected rank does not exist."
+                status = "error"
                 
         elif item_type == 'store_item':
             try:
@@ -594,18 +598,42 @@ def add_to_cart(request):
                     # Update quantity if already in cart
                     cart_item.quantity = F('quantity') + quantity
                     cart_item.save()
-                    messages.success(request, f"Updated quantity of '{store_item.name}' in your cart.")
+                    cart_item.refresh_from_db()  # Important pour obtenir la nouvelle valeur
+                    message = f"Updated quantity of '{store_item.name}' in your cart."
                 else:
-                    messages.success(request, f"'{store_item.name}' added to your cart.")
+                    message = f"'{store_item.name}' added to your cart."
                 
             except StoreItem.DoesNotExist:
-                messages.error(request, "The selected item does not exist.")
-                return redirect('store')
+                message = "The selected item does not exist."
+                status = "error"
         
         else:
-            messages.error(request, "Invalid item type.")
+            message = "Invalid item type."
+            status = "error"
+        
+        # Calculer le nouveau total du panier
+        cart_items = CartItem.objects.filter(user=request.user)
+        cart_count = cart_items.count()
+        cart_total = sum(item.get_subtotal() for item in cart_items)
+        
+        # Si c'est une requête AJAX, renvoyer une réponse JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': status,
+                'message': message,
+                'cart_count': cart_count,
+                'cart_total': cart_total
+            })
+        
+        # Sinon, ajouter le message flash et rediriger
+        if status == "success":
+            messages.success(request, message)
+        elif status == "info":
+            messages.info(request, message)
+        else:
+            messages.error(request, message)
             
-        return redirect('cart')
+        return redirect('store')
     
     return redirect('store')
 

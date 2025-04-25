@@ -550,12 +550,19 @@
     color: var(--light);
     cursor: pointer;
     transition: all 0.2s ease;
+    position: relative; 
+    z-index: 10; 
+    user-select: none; 
 }
 
 .quantity-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
 }
 
+.quantity-btn:active {
+    transform: scale(0.95); 
+}
 .treasure-quantity input {
     width: 40px;
     height: 30px;
@@ -650,6 +657,76 @@
     color: #ffeaa7;
 }
 
+.ajax-message {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    max-width: 350px;
+    z-index: 9999;
+    transform: translateX(110%);
+    transition: transform 0.3s ease;
+}
+
+.ajax-message.show {
+    transform: translateX(0);
+}
+
+.ajax-message-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: var(--darker);
+    border-left: 4px solid var(--primary);
+    color: white;
+}
+
+.ajax-message-success .ajax-message-content {
+    border-color: var(--success);
+    background-color: rgba(46, 204, 113, 0.2);
+}
+
+.ajax-message-error .ajax-message-content {
+    border-color: var(--danger);
+    background-color: rgba(231, 76, 60, 0.2);
+}
+
+.ajax-message-info .ajax-message-content {
+    border-color: var(--info);
+    background-color: rgba(52, 152, 219, 0.2);
+}
+
+.ajax-message-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 15px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.ajax-message-close:hover {
+    opacity: 1;
+}
+
+/* Animation pour le compteur du panier */
+.cart-count {
+    transition: transform 0.3s ease;
+}
+
+.cart-count.pulse {
+    animation: pulseBadge 0.5s ease;
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
 
 /* Payment Methods Section */
 .payment-section {
