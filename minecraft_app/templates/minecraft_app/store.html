@@ -270,7 +270,7 @@
                             <div class="treasure-footer">
                                 <div class="treasure-price">€{{ item.price }}</div>
                                 
-                                <form action="{% url 'add_to_cart' %}" method="POST">
+                                <form action="{% url 'add_to_cart' %}" method="POST" class="treasure-cart-form">
                                     {% csrf_token %}
                                     <input type="hidden" name="item_type" value="store_item">
                                     <input type="hidden" name="item_id" value="{{ item.id }}">
@@ -606,4 +606,24 @@
         });
     });
 </script>
+
+<script>
+    // Gestionnaire pour les formulaires d'ajout au panier des trésors
+    document.addEventListener('DOMContentLoaded', function() {
+        // Trouver tous les formulaires d'ajout au panier
+        const treasureCartForms = document.querySelectorAll('.treasure-cart-form');
+        
+        treasureCartForms.forEach(form => {
+            // Ajouter un écouteur d'événements au bouton de soumission
+            const submitBtn = form.querySelector('.add-to-cart-btn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    // Cette ligne n'est pas strictement nécessaire car le bouton est déjà de type submit,
+                    // mais c'est une précaution supplémentaire
+                    form.submit();
+                });
+            }
+        });
+    });
+    </script>
 {% endblock %}
