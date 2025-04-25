@@ -8,13 +8,17 @@
 {% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Frequently Asked Questions</h1>
+<!-- FAQ Hero Section -->
+<section class="faq-hero">
+    <div class="faq-particles" id="faq-particles"></div>
+    <div class="faq-hero-content">
+        <h1 class="faq-hero-title">Frequently Asked Questions</h1>
+        <p class="faq-hero-subtitle">Find answers to common questions about our server</p>
+    </div>
 </section>
 
-<!-- FAQ Section -->
-<section class="faq-section">
+<!-- FAQ Main Section -->
+<section class="faq-main-section">
     <div class="container">
         <div class="faq-intro">
             <h2 class="section-title">Got Questions? We Have Answers</h2>
@@ -35,7 +39,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>What is Novania?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Novania is a Minecraft server running on a 1:1000 scale map of Earth. Players can create towns, join nations, and engage in diplomacy, trade, or warfare, all on a realistic representation of our world.</p>
@@ -45,7 +49,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do I join the server?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>To join Novania, you need Minecraft Java Edition version 1.20.4. Open Minecraft, go to Multiplayer, click "Add Server", and enter <strong>play.Novania.fr</strong> as the server address. Click "Done" and then connect to the server!</p>
@@ -55,7 +59,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>Is the server free to play?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Yes, Novania is completely free to play! We offer optional donation ranks in our store that provide various perks, but they're not required to enjoy the full Towny experience.</p>
@@ -65,10 +69,10 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>Do you have a Discord server?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
-                        <p>Yes! We have an active Discord community where you can chat with other players, get help from staff, and stay updated on server events. You can join through the Discord button in the website footer or by using this link: <a href="#">https://discord.gg/a8G7wUKp2Y</a></p>
+                        <p>Yes! We have an active Discord community where you can chat with other players, get help from staff, and stay updated on server events. You can join through the Discord button in the website footer or by using this link: <a href="https://discord.gg/a8G7wUKp2Y" target="_blank">discord.gg/a8G7wUKp2Y</a></p>
                     </div>
                 </div>
             </div>
@@ -78,7 +82,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>What plugins does the server use?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Our server uses several plugins to enhance gameplay, including Towny, EssentialsX, GriefPrevention, mcMMO, Dynmap, and several custom plugins tailored specifically for our Earth map experience.</p>
@@ -88,7 +92,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>Is PvP enabled on the server?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>PvP is disabled in peaceful towns and neutral areas but can be enabled in designated PvP zones or between towns/nations that have declared war on each other. This creates a balanced environment where players can choose their level of engagement in conflicts.</p>
@@ -98,7 +102,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>Are there any custom features?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Yes! We have several custom features including realistic resource distribution based on real-world geography, unique nation abilities reflective of their real-world counterparts, custom events, and more. Our goal is to provide a unique Earth-based gameplay experience.</p>
@@ -108,7 +112,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do I claim land?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Land claiming is done through the Towny system. First, you need to create or join a town using <code>/town new [town name]</code> or <code>/town join [town name]</code>. Once in a town, mayors or assistants can claim land using <code>/town claim</code> while standing in the chunk you want to claim. Each claim costs money from the town bank.</p>
@@ -121,7 +125,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do I create a town?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>To create a town, use the command <code>/town new [town name]</code>. You need $2,000 to create a town. Choose your location carefully, as your first claim will be your town spawn. Remember that towns should be created in locations that make geographical sense on our Earth map.</p>
@@ -131,7 +135,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do I create or join a nation?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>To create a nation, you must first be a mayor of a town. Then use <code>/nation new [nation name]</code>. Creating a nation costs $25,000 from your town bank. To join an existing nation, the mayor of your town needs to accept an invitation from a nation's leader using <code>/nation join [nation name]</code> after receiving an invite.</p>
@@ -141,7 +145,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>What are the benefits of joining a nation?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Nations provide various benefits including:</p>
@@ -159,7 +163,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>Are there any rules about town/nation names?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Yes, town and nation names should be appropriate and follow our naming guidelines:</p>
@@ -180,7 +184,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How does the economy work?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Novania has a player-driven economy with a server currency. You can earn money through various activities like trading, completing jobs, selling items to shops, and participating in events. Money is used for claiming land, paying town taxes, purchasing items, and more.</p>
@@ -190,7 +194,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do I earn money?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>There are several ways to earn money on Novania:</p>
@@ -208,7 +212,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>What are the town upkeep costs?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Towns have daily upkeep costs that scale with their size. The base cost is $10 per day, plus $5 per claimed chunk. Nations have an upkeep cost of $100 per day plus $15 per member town. Make sure to keep enough money in your town/nation bank to cover these costs, or your town may fall into ruin!</p>
@@ -218,7 +222,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do player shops work?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Players can create their own shops using chest shops. To create a shop:</p>
@@ -238,7 +242,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>What Minecraft version should I use?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>Our server currently runs on Minecraft version 1.20.4. For the best experience, you should use the same version. We update the server to newer versions after extensive testing to ensure stability.</p>
@@ -248,7 +252,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>Are mods allowed?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>We allow client-side mods that don't provide unfair advantages. Allowed mods include:</p>
@@ -265,7 +269,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>I'm experiencing lag, what can I do?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>If you're experiencing lag, try these steps:</p>
@@ -283,7 +287,7 @@
                 <div class="faq-item">
                     <div class="faq-question">
                         <h3>How do I link my Discord account?</h3>
-                        <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                        <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
                         <p>To link your Discord account with your Minecraft account:</p>
@@ -301,11 +305,16 @@
         </div>
         
         <div class="faq-contact">
-            <h3>Still have questions?</h3>
-            <p>If you couldn't find the answer you're looking for, feel free to ask in our Discord server or contact our staff team directly.</p>
-            <div class="faq-contact-buttons">
-                <a href="https://discord.gg/a8G7wUKp2Y" class="btn discord-btn" target="_blank"><i class="fab fa-discord"></i> Join Discord</a>
-                <a href="{% url 'contact' %}" class="btn"><i class="fas fa-envelope"></i> Contact Us</a>
+            <div class="faq-contact-inner">
+                <div class="contact-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3>Still have questions?</h3>
+                <p>If you couldn't find the answer you're looking for, feel free to ask in our Discord server or contact our staff team directly.</p>
+                <div class="faq-contact-buttons">
+                    <a href="https://discord.gg/a8G7wUKp2Y" class="btn discord-btn" target="_blank"><i class="fab fa-discord"></i> Join Discord</a>
+                    <a href="{% url 'contact' %}" class="btn contact-btn"><i class="fas fa-envelope"></i> Contact Us</a>
+                </div>
             </div>
         </div>
     </div>
@@ -315,25 +324,66 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for FAQ hero
+        createParticles('faq-particles', 40);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
         // FAQ Toggles
         const faqQuestions = document.querySelectorAll('.faq-question');
         
         faqQuestions.forEach(question => {
             question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
                 const answer = this.nextElementSibling;
-                const icon = this.querySelector('.toggle-icon i');
+                const icon = this.querySelector('.faq-icon i');
                 
-                // Toggle display
-                if (answer.style.maxHeight) {
-                    answer.style.maxHeight = null;
-                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                } else {
-                    answer.style.maxHeight = answer.scrollHeight + "px";
-                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                // Check if this FAQ item is already active
+                const isActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items first
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                    const itemAnswer = item.querySelector('.faq-answer');
+                    itemAnswer.style.maxHeight = null;
+                    const itemIcon = item.querySelector('.faq-icon i');
+                    itemIcon.className = 'fas fa-chevron-down';
+                });
+                
+                // If the clicked item wasn't active, open it
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.className = 'fas fa-chevron-up';
                 }
-                
-                // Toggle active class
-                this.parentElement.classList.toggle('active');
             });
         });
         
