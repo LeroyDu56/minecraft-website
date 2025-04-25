@@ -8,13 +8,17 @@
 {% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Contact Us</h1>
+<!-- Contact Hero Section -->
+<section class="contact-hero">
+    <div class="contact-particles" id="contact-particles"></div>
+    <div class="contact-hero-content">
+        <h1 class="contact-hero-title">Contact Us</h1>
+        <p class="contact-hero-subtitle">Get in touch with our team</p>
+    </div>
 </section>
 
-<!-- Contact Section -->
-<section class="contact-section">
+<!-- Contact Main Section -->
+<section class="contact-main-section">
     <div class="container">
         <div class="contact-intro">
             <h2 class="section-title">Get in Touch</h2>
@@ -22,60 +26,85 @@
         </div>
         
         <div class="contact-container">
-            <div class="contact-info">
-                <div class="info-card">
-                    <div class="info-icon">
+            <div class="contact-sidebar">
+                <div class="contact-card">
+                    <div class="contact-card-icon">
                         <i class="fab fa-discord"></i>
                     </div>
-                    <h3>Discord Support</h3>
-                    <p>Get real-time help from our community and staff team</p>
-                    <a href="https://discord.gg/a8G7wUKp2Y" class="discord-link" target="_blank">discord.gg/a8G7wUKp2Y</a>
+                    <h3 class="contact-card-title">Discord</h3>
+                    <p class="contact-card-text">Join our Discord server for real-time support and community discussions</p>
+                    <a href="https://discord.gg/a8G7wUKp2Y" class="contact-card-link" target="_blank">
+                        <span>discord.gg/a8G7wUKp2Y</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
                 </div>
                 
-                <div class="info-card">
-                    <div class="info-icon">
+                <div class="contact-card">
+                    <div class="contact-card-icon">
                         <i class="fas fa-ticket-alt"></i>
                     </div>
-                    <h3>In-Game Support</h3>
-                    <p>Connect to our server and use the command:</p>
-                    <code>/helpop your message</code>
+                    <h3 class="contact-card-title">In-Game Support</h3>
+                    <p class="contact-card-text">Get help while playing on our server</p>
+                    <div class="contact-command">
+                        <code>/helpop your message</code>
+                        <button class="copy-command" data-command="/helpop your message">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="info-card">
-                    <div class="info-icon">
+                <div class="contact-card">
+                    <div class="contact-card-icon">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <h3>Discord Support Ticket</h3>
-                    <p>Open a support ticket in our Discord server for direct assistance</p>
-                    <a href="https://discord.gg/a8G7wUKp2Y" class="discord-link" target="_blank">discord.gg/a8G7wUKp2Y</a>
+                    <h3 class="contact-card-title">Support Ticket</h3>
+                    <p class="contact-card-text">Open a ticket in our Discord for direct assistance from our staff team</p>
+                    <a href="https://discord.gg/a8G7wUKp2Y" class="contact-card-link" target="_blank">
+                        <span>Open Ticket on Discord</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
                 </div>
             </div>
             
             <div class="contact-form-container">
-                <h3>Send Us a Message</h3>
-                <p>We prefer Discord for communication, but you can also send us a message here and we'll get back to you as soon as possible!</p>
+                <div class="contact-form-header">
+                    <div class="contact-form-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h2 class="contact-form-title">Send Us a Message</h2>
+                    <p class="contact-form-subtitle">We'll get back to you as soon as possible</p>
+                </div>
                 
                 <form class="contact-form" method="post">
                     {% csrf_token %}
                     
                     <div class="form-group">
-                        <label for="name">Your Name *</label>
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i> Your Name *
+                        </label>
                         <input type="text" id="name" name="name" class="form-control" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="discord_username">Discord Username</label>
+                        <label for="minecraft_username" class="form-label">
+                            <i class="fas fa-cube"></i> Minecraft Username
+                        </label>
+                        <input type="text" id="minecraft_username" name="minecraft_username" class="form-control">
+                        <div class="form-help-text">If you're contacting us about an in-game issue</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discord_username" class="form-label">
+                            <i class="fab fa-discord"></i> Discord Username
+                        </label>
                         <input type="text" id="discord_username" name="discord_username" class="form-control" placeholder="username#0000">
                         <div class="form-help-text">We'll contact you via Discord if provided</div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="minecraft_username">Minecraft Username</label>
-                        <input type="text" id="minecraft_username" name="minecraft_username" class="form-control">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="subject">Subject *</label>
+                        <label for="subject" class="form-label">
+                            <i class="fas fa-tag"></i> Subject *
+                        </label>
                         <select id="subject" name="subject" class="form-control" required>
                             <option value="">Select a subject</option>
                             <option value="general">General Question</option>
@@ -88,41 +117,124 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="message">Your Message *</label>
+                        <label for="message" class="form-label">
+                            <i class="fas fa-comment-alt"></i> Your Message *
+                        </label>
                         <textarea id="message" name="message" class="form-control" rows="6" required></textarea>
                     </div>
                     
                     <div class="form-action">
-                        <button type="submit" class="btn submit-btn">Send Message</button>
+                        <button type="submit" class="form-submit">
+                            <span>Send Message</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
         
-        <div class="staff-contact">
-            <h3>Meet Our Staff Team</h3>
-            <p>Need to contact a specific staff member? Check our <a href="{% url 'staff' %}">staff page</a> to find the right person for your inquiry.</p>
-        </div>
-        
-        <div class="discord-highlight">
-            <div class="discord-icon">
-                <i class="fab fa-discord"></i>
-            </div>
-            <div class="discord-text">
-                <h3>Join Our Discord Community</h3>
-                <p>The fastest way to get support, connect with other players, and stay updated on server news</p>
-                <a href="https://discord.gg/a8G7wUKp2Y" class="discord-link" target="_blank">discord.gg/a8G7wUKp2Y</a>
-            </div>
+        <div class="staff-contact-section">
+            <h3>Looking for someone specific?</h3>
+            <p>Check our <a href="{% url 'staff' %}">staff page</a> to find the right person for your inquiry.</p>
         </div>
     </div>
 </section>
 
-<!-- FAQ Link -->
-<section class="faq-link-section">
+<!-- Discord Section -->
+<section class="discord-section">
+    <div class="discord-particles" id="discord-particles"></div>
     <div class="container">
-        <h2>Before You Contact Us</h2>
-        <p>You might find an immediate answer to your question in our Frequently Asked Questions section.</p>
-        <a href="{% url 'faq' %}" class="btn">Check our FAQ</a>
+        <div class="discord-content">
+            <h2 class="discord-title">Join Our Community</h2>
+            <p class="discord-text">Connect with other players, get support, and stay updated on server news</p>
+            <a href="https://discord.gg/a8G7wUKp2Y" class="discord-btn" target="_blank">
+                <i class="fab fa-discord"></i>
+                <span>Join Our Discord</span>
+            </a>
+        </div>
     </div>
 </section>
+
+<!-- FAQ Link Section -->
+<section class="faq-link-section">
+    <div class="container">
+        <h2>Find Quick Answers</h2>
+        <p>Before contacting us, you might find an immediate answer to your question in our Frequently Asked Questions section.</p>
+        <a href="{% url 'faq' %}" class="btn faq-btn">
+            <i class="fas fa-question-circle"></i>
+            <span>Check our FAQ</span>
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for contact hero
+        createParticles('contact-particles', 40);
+        
+        // Create particles for discord section
+        createParticles('discord-particles', 30);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Copy command functionality
+        const copyButtons = document.querySelectorAll('.copy-command');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const command = this.getAttribute('data-command');
+                navigator.clipboard.writeText(command).then(() => {
+                    // Show copied feedback
+                    const originalIcon = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i>';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalIcon;
+                    }, 2000);
+                });
+            });
+        });
+        
+        // Submit button animation
+        const submitBtn = document.querySelector('.form-submit');
+        if (submitBtn) {
+            submitBtn.addEventListener('mouseenter', function() {
+                this.classList.add('btn-hover');
+            });
+            
+            submitBtn.addEventListener('mouseleave', function() {
+                this.classList.remove('btn-hover');
+            });
+        }
+    });
+</script>
 {% endblock %}

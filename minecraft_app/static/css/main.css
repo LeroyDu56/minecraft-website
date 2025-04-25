@@ -535,38 +535,64 @@ section {
 
 .auth-buttons {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .btn-auth {
-    padding: 8px 15px;
-    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    border-radius: 20px;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     white-space: nowrap;
 }
 
 .btn-auth.login {
     background-color: transparent;
-    border: 1px solid var(--primary);
+    border: 1px solid rgba(52, 152, 219, 0.5);
     color: var(--primary);
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-auth.login:hover {
+    border-color: var(--primary);
     background-color: rgba(52, 152, 219, 0.1);
+    transform: translateY(-3px);
 }
 
 .btn-auth.register {
-    background-color: var(--primary);
-    border: 1px solid var(--primary);
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    border: none;
     color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-auth.register::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
 }
 
 .btn-auth.register:hover {
-    background-color: var(--secondary);
-    border-color: var(--secondary);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.btn-auth.register:hover::before {
+    transform: translateX(100%);
 }
 
 /* User Profile Dropdown */
