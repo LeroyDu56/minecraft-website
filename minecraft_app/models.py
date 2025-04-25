@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import logging
 
 class TownyServer(models.Model):
     name = models.CharField(max_length=100, default="Novania - Earth Towny")
@@ -177,7 +178,13 @@ class CartItem(models.Model):
             return self.store_item.price * self.quantity
         return 0
     
-# Add this model to your models.py file
+    def save(self, *args, **kwargs):
+        logger = logging.getLogger(__name__)
+        logger.debug("DEBUG: Saving CartItem %s: quantity=%s", self.id, self.quantity)
+        super().save(*args, **kwargs)
+        logger.debug("DEBUG: Saved CartItem %s: quantity=%s", self.id, self.quantity)
+    
+
 class StoreItemPurchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='store_item_purchases')
     store_item = models.ForeignKey(StoreItem, on_delete=models.SET_NULL, null=True)

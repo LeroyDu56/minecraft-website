@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, UserProfile, UserPurchase, StoreItemPurchase, StoreItem, CartItem
 from django.db.models import Count, Sum, F
+from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
@@ -22,6 +23,7 @@ import stripe
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+logger = logging.getLogger(__name__)
 
 def home(request):
     server = TownyServer.objects.first()
@@ -670,22 +672,82 @@ def remove_from_cart(request, item_id):
 # Update cart item quantity
 @login_required
 def update_cart_quantity(request):
+    logger.debug("DEBUG: update_cart_quantity called (2025-04-29) with POST data: %s", request.POST)
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
         quantity = int(request.POST.get('quantity', 1))
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         
         try:
             cart_item = CartItem.objects.get(id=item_id, user=request.user)
+            logger.debug("DEBUG: Before update: Item %s, quantity=%s, store_item=%s, rank=%s", item_id, cart_item.quantity, cart_item.store_item, cart_item.rank)
             
             # Only store items can have quantities (not ranks)
             if cart_item.store_item:
+                # Set max quantity to 99
+                max_available = 99
+                logger.debug("DEBUG: Store item quantity available: %s, max_available: %s", cart_item.store_item.quantity, max_available)
+                
+                # Ensure quantity is within bounds
+                if quantity > max_available:
+                    quantity = max_available
+                    if is_ajax:
+                        return JsonResponse({
+                            'success': False,
+                            'error': f'Maximum quantity is {max_available}.',
+                            'current_quantity': cart_item.quantity
+                        })
+                    else:
+                        messages.warning(request, f"Quantity adjusted to maximum available ({max_available}).")
+                
+                # Update the quantity
+                logger.debug("DEBUG: Setting quantity to: %s", quantity)
                 cart_item.quantity = quantity
+                logger.debug("DEBUG: Quantity after set: %s", cart_item.quantity)
                 cart_item.save()
-                messages.success(request, f"Quantity updated for '{cart_item.store_item.name}'.")
-            
+                
+                logger.debug("DEBUG: After save: Item %s, quantity=%s", item_id, cart_item.quantity)
+                
+                # Refresh from database to confirm
+                cart_item.refresh_from_db()
+                logger.debug("DEBUG: After refresh: Item %s, DB quantity=%s", item_id, cart_item.quantity)
+                
+                if is_ajax:
+                    item_subtotal = cart_item.get_subtotal()
+                    cart_total = sum(item.get_subtotal() for item in CartItem.objects.filter(user=request.user))
+                    logger.debug("DEBUG: Subtotal=%s, Total=%s", item_subtotal, cart_total)
+                    return JsonResponse({
+                        'success': True,
+                        'item_subtotal': f"{item_subtotal:.2f}",
+                        'cart_total': f"{cart_total:.2f}",
+                        'current_quantity': cart_item.quantity
+                    })
+            else:
+                logger.debug("DEBUG: Item %s is a rank, quantity not updated", item_id)
+                if is_ajax:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Ranks cannot have quantity updated'
+                    })
+                
         except CartItem.DoesNotExist:
-            messages.error(request, "Item not found in your cart.")
-            
+            logger.debug("DEBUG: CartItem %s not found for user %s", item_id, request.user)
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': 'Item not found'})
+            else:
+                messages.error(request, "Item not found in your cart.")
+        except Exception as e:
+            logger.debug("DEBUG: Error updating cart: %s", str(e))
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': str(e)})
+            else:
+                messages.error(request, f"Error updating cart: {str(e)}")
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        logger.debug("DEBUG: Invalid AJAX request")
+        return JsonResponse({'success': False, 'error': 'Invalid request'})
+    
+    logger.debug("DEBUG: Redirecting to cart")
     return redirect('cart')
 
 # Checkout from cart

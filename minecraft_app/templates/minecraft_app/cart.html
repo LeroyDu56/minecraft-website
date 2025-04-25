@@ -64,15 +64,15 @@
                             
                             <div class="cart-item-quantity">
                                 {% if item.store_item %}
-                                    <form action="{% url 'update_cart_quantity' %}" method="POST" class="quantity-form">
+                                    <form action="{% url 'update_cart_quantity' %}" method="POST" class="quantity-form" data-item-id="{{ item.id }}" data-item-price="{{ item.store_item.price }}">
                                         {% csrf_token %}
                                         <input type="hidden" name="item_id" value="{{ item.id }}">
                                         <div class="quantity-control">
                                             <button type="button" class="quantity-btn minus">-</button>
-                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{% if item.store_item.quantity > 0 %}{{ item.store_item.quantity }}{% else %}99{% endif %}" class="quantity-input">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="quantity-input">
                                             <button type="button" class="quantity-btn plus">+</button>
                                         </div>
-                                        <button type="submit" class="update-quantity-btn">Update</button>
+                                        <!-- Update button removed -->
                                     </form>
                                 {% else %}
                                     <span class="fixed-quantity">1</span>
@@ -203,29 +203,207 @@
             }
         }
         
-        // Quantity Buttons
-        const minusBtns = document.querySelectorAll('.quantity-btn.minus');
-        const plusBtns = document.querySelectorAll('.quantity-btn.plus');
-        
-        minusBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.nextElementSibling;
-                const currentValue = parseInt(input.value);
-                if (currentValue > parseInt(input.min)) {
-                    input.value = currentValue - 1;
+        // AJAX quantity update functionality
+        function updateQuantity(itemId, quantity, button) {
+            console.log("Updating quantity for item ID:", itemId, "to", quantity);
+            
+            // Find the cart item container
+            const cartItem = button.closest('.cart-item');
+            if (!cartItem) {
+                console.error("Cart item container not found");
+                return;
+            }
+            
+            // Find the form within the cart item
+            const form = cartItem.querySelector('form.quantity-form');
+            if (!form) {
+                console.error("Form not found in cart item");
+                return;
+            }
+            
+            // Get the CSRF token from the form
+            const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            
+            // Create form data for the request
+            const formData = new FormData();
+            formData.append('item_id', itemId);
+            formData.append('quantity', quantity);
+            formData.append('csrfmiddlewaretoken', csrfToken);
+            
+            // Show loading indicator
+            cartItem.style.opacity = '0.7';
+            
+            // Log form details for debugging
+            console.log("Form action:", form.action);
+            console.log("Form method:", form.method);
+            console.log("CSRF token:", csrfToken);
+            
+            // Send AJAX request
+            fetch('/cart/update/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-            });
-        });
-        
-        plusBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const input = this.previousElementSibling;
-                const currentValue = parseInt(input.value);
-                const maxValue = parseInt(input.max);
-                if (!maxValue || currentValue < maxValue) {
-                    input.value = currentValue + 1;
+            })
+            .then(response => {
+                console.log("Response status:", response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response data:", data);
+                
+                if (data.success) {
+                    // Handle minimal test view response
+                    if (data.message && data.message.includes('Minimal test view')) {
+                        console.log('Minimal test view response:', data.message);
+                        return; // Ne pas mettre à jour l'interface pour la vue minimale
+                    }
+                    
+                    // Format numbers to 2 decimal places
+                    const formattedSubtotal = data.item_subtotal ? parseFloat(data.item_subtotal).toFixed(2) : '0.00';
+                    const formattedTotal = data.cart_total ? parseFloat(data.cart_total).toFixed(2) : '0.00';
+                    
+                    // Update subtotal display
+                    const subtotalElement = cartItem.querySelector('.cart-item-subtotal');
+                    if (subtotalElement) {
+                        subtotalElement.textContent = '€' + formattedSubtotal;
+                        console.log("Updated subtotal to:", formattedSubtotal);
+                    } else {
+                        console.error("Subtotal element not found");
+                    }
+                    
+                    // Update order total
+                    const totalElement = document.querySelector('.summary-item.total .summary-value');
+                    if (totalElement) {
+                        totalElement.textContent = '€' + formattedTotal;
+                        console.log("Updated total to:", formattedTotal);
+                    } else {
+                        console.error("Total element not found");
+                    }
+                    
+                    // Synchroniser l'input avec la quantité réelle
+                    const input = form.querySelector('input[name="quantity"]');
+                    if (input && data.current_quantity) {
+                        input.value = data.current_quantity;
+                        console.log("Input quantity updated to:", data.current_quantity);
+                    } else {
+                        console.error("Quantity input not found or current_quantity missing");
+                    }
+                    
+                    console.log('Quantity updated successfully');
+                } else {
+                    console.error('Error updating quantity:', data.error);
+                    const input = form.querySelector('input[name="quantity"]');
+                    if (input && data.current_quantity) {
+                        input.value = data.current_quantity;
+                    }
+                    alert(data.error); // Afficher l'erreur à l'utilisateur
                 }
+            })
+            .catch(error => {
+                console.error('AJAX error:', error);
+            })
+            .finally(() => {
+                // Remove loading indicator
+                cartItem.style.opacity = '1';
             });
+        }
+        
+        // Advanced quantity button handling
+        console.log("Advanced quantity buttons fix loaded");
+        
+        // Direct handler for all click events
+        document.body.addEventListener('click', function(event) {
+            // Handling minus button clicks
+            if (event.target.classList.contains('minus') || 
+                (event.target.parentElement && event.target.parentElement.classList.contains('minus'))) {
+                
+                const button = event.target.classList.contains('minus') ? event.target : event.target.parentElement;
+                console.log("Minus button clicked:", button);
+                
+                // Find the cart item
+                const cartItem = button.closest('.cart-item');
+                if (!cartItem) {
+                    console.error("Cart item not found for minus button");
+                    return;
+                }
+                
+                // Find the item ID from the form
+                const form = cartItem.querySelector('form.quantity-form');
+                if (!form) {
+                    console.error("Form not found in cart item");
+                    return;
+                }
+                
+                const itemId = form.querySelector('input[name="item_id"]').value;
+                console.log("Item ID from hidden input:", itemId);
+                
+                // Find the input element
+                const input = button.closest('.quantity-control').querySelector('input[type="number"]');
+                if (input) {
+                    console.log("Input found:", input, "Current value:", input.value);
+                    
+                    const currentValue = parseInt(input.value) || 1;
+                    const minValue = parseInt(input.min) || 1;
+                    
+                    if (currentValue > minValue) {
+                        // Update the value
+                        input.value = currentValue - 1;
+                        console.log("Value decreased to:", input.value);
+                        
+                        // Send AJAX request to update the quantity
+                        updateQuantity(itemId, input.value, button);
+                    } else {
+                        console.log("Already at minimum value");
+                    }
+                }
+            }
+            
+            // Handling plus button clicks
+            if (event.target.classList.contains('plus') || 
+                (event.target.parentElement && event.target.parentElement.classList.contains('plus'))) {
+                
+                const button = event.target.classList.contains('plus') ? event.target : event.target.parentElement;
+                console.log("Plus button clicked:", button);
+                
+                // Find the cart item
+                const cartItem = button.closest('.cart-item');
+                if (!cartItem) {
+                    console.error("Cart item not found for plus button");
+                    return;
+                }
+                
+                // Find the item ID from the form
+                const form = cartItem.querySelector('form.quantity-form');
+                if (!form) {
+                    console.error("Form not found in cart item");
+                    return;
+                }
+                
+                const itemId = form.querySelector('input[name="item_id"]').value;
+                console.log("Item ID from hidden input:", itemId);
+                
+                // Find the input element
+                const input = button.closest('.quantity-control').querySelector('input[type="number"]');
+                if (input) {
+                    console.log("Input found:", input, "Current value:", input.value);
+                    
+                    const currentValue = parseInt(input.value) || 1;
+                    const maxValue = 99;  // Set a fixed high value
+                    
+                    if (currentValue < maxValue) {
+                        // Update the value
+                        input.value = currentValue + 1;
+                        console.log("Value increased to:", input.value);
+                        
+                        // Send AJAX request to update the quantity
+                        updateQuantity(itemId, input.value, button);
+                    } else {
+                        console.log("Already at maximum value");
+                    }
+                }
+            }
         });
     });
 </script>

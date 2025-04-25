@@ -541,7 +541,8 @@
         
         // Quantity Buttons with Event Delegation
         document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('quantity-btn') && e.target.classList.contains('minus')) {
+            // Handle minus button
+            if (e.target.classList.contains('minus')) {
                 e.preventDefault();
                 const input = e.target.nextElementSibling;
                 if (input && input.type === 'number') {
@@ -551,7 +552,9 @@
                         input.value = currentValue - 1;
                     }
                 }
-            } else if (e.target.classList.contains('quantity-btn') && e.target.classList.contains('plus')) {
+            } 
+            // Handle plus button
+            else if (e.target.classList.contains('plus')) {
                 e.preventDefault();
                 const input = e.target.previousElementSibling;
                 if (input && input.type === 'number') {
