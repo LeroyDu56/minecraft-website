@@ -1,6 +1,6 @@
-/* Store styles - Enhanced for Novania */
+/* Updated Store Styles - Enhanced for Novania */
 
-/* Store Hero Section */
+/* Hero Section (same as before) */
 .store-hero {
     position: relative;
     padding: 80px 0;
@@ -63,13 +63,152 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Store Products Section */
+/* New Store Navigation Section */
+.store-navigation {
+    background-color: var(--darker);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.store-navigation .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.store-tabs {
+    display: flex;
+    gap: 15px;
+}
+
+.store-tab {
+    background: none;
+    border: none;
+    color: var(--light);
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.store-tab:hover {
+    color: #ffd700;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.store-tab.active {
+    color: var(--darker);
+    background: linear-gradient(to right, #ffd700, #ff9800);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.cart-indicator {
+    position: relative;
+}
+
+.cart-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(52, 152, 219, 0.2);
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: var(--light);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cart-link:hover {
+    background-color: rgba(52, 152, 219, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    background-color: #e74c3c;
+    color: white;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    padding: 0 6px;
+    font-weight: bold;
+}
+
+.cart-total {
+    font-size: 0.9rem;
+    color: #4caf50;
+}
+
+/* Store Products Section (updated) */
 .store-products-section {
     padding: 60px 0;
     position: relative;
 }
 
-/* Store Grid */
+.store-tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.store-tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Store Categories (for Treasures) */
+.store-categories {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.category-btn {
+    background-color: var(--darker);
+    border: 2px solid transparent;
+    color: var(--light);
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.category-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background-color: rgba(52, 152, 219, 0.2);
+    border-color: var(--primary);
+}
+
+.category-btn.active {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+/* Keep existing store grid (unchanged) */
 .store-grid {
     margin-top: 30px;
     display: grid;
@@ -77,7 +216,7 @@
     gap: 30px;
 }
 
-/* Product Cards */
+/* Keep existing product cards (updated) */
 .product-card {
     background-color: var(--darker);
     border-radius: 10px;
@@ -239,8 +378,12 @@
 }
 
 .btn-purchase {
-    display: inline-block;
-    padding: 15px 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px 20px;
     border-radius: 30px;
     font-weight: 600;
     font-size: 1.1rem;
@@ -252,6 +395,7 @@
     color: #1a1a2e;
     border: none;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .btn-purchase:before {
@@ -276,7 +420,180 @@
     transform: translateX(100%);
 }
 
-/* Product Color Themes */
+/* Treasure Cards (new) */
+.treasures-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.treasure-card {
+    background-color: var(--darker);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.treasure-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-image {
+    height: 180px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1a1a2e;
+}
+
+.treasure-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.treasure-image .treasure-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s ease;
+}
+
+.treasure-image .treasure-placeholder i {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.9);
+    transition: transform 0.5s ease;
+}
+
+.treasure-card:hover .treasure-image img,
+.treasure-card:hover .treasure-placeholder {
+    transform: scale(1.05);
+}
+
+.treasure-card:hover .treasure-placeholder i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.treasure-content {
+    padding: 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.treasure-category {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--light);
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.treasure-name {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.treasure-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    flex-grow: 1;
+}
+
+.treasure-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.treasure-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-quantity {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.quantity-btn {
+    background: none;
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.treasure-quantity input {
+    width: 40px;
+    height: 30px;
+    border: none;
+    background: none;
+    text-align: center;
+    color: var(--light);
+    font-weight: 600;
+    -moz-appearance: textfield;
+}
+
+.treasure-quantity input::-webkit-outer-spin-button,
+.treasure-quantity input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.add-to-cart-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.add-to-cart-btn:hover {
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Product color themes (same as before) */
 .product-vip {
     border-top: 5px solid #55efc4;
     box-shadow: 0 10px 30px rgba(85, 239, 196, 0.2);
@@ -333,7 +650,8 @@
     color: #ffeaa7;
 }
 
-/* Payment Section */
+
+/* Payment Methods Section */
 .payment-section {
     margin-top: 80px;
     background-color: var(--darker);
@@ -444,8 +762,7 @@
 .payment-method.other:hover {
     background-color: #4CAF50;
 }
-
-/* FAQ Section */
+/* FAQ section (same as before) */
 .faq-section {
     margin-top: 80px;
     padding: 50px 0;
@@ -526,70 +843,6 @@
     line-height: 1.7;
 }
 
-/* CTA Section */
-.store-cta {
-    margin-top: 80px;
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.9), rgba(41, 128, 185, 0.9)), url('../images/cta-background.jpg') center/cover no-repeat;
-    border-radius: 15px;
-    padding: 60px 40px;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.store-cta:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('../images/stars-bg.png') repeat;
-    opacity: 0.1;
-    animation: backgroundScroll 60s linear infinite;
-}
-
-.cta-content {
-    position: relative;
-    z-index: 1;
-}
-
-.cta-title {
-    font-size: 2.5rem;
-    color: white;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-.cta-text {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 30px;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.cta-btn {
-    display: inline-block;
-    padding: 15px 40px;
-    background: linear-gradient(to right, #ffd700, #ffa500);
-    color: #1a1a2e;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    text-decoration: none;
-}
-
-.cta-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
 /* Animation Keyframes */
 @keyframes titleGlow {
     0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
@@ -609,15 +862,24 @@
     100% { transform: translateY(0) translateX(0); opacity: 0.3; }
 }
 
-@keyframes backgroundScroll {
-    0% { background-position: 0 0; }
-    100% { background-position: 1000px 1000px; }
-}
-
-/* Responsive Styles */
+/* Responsive styles */
 @media (max-width: 992px) {
-    .store-grid {
+    .store-grid, .treasures-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .store-navigation .container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .store-tabs {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .cart-indicator {
+        margin-bottom: 10px;
     }
 }
 
@@ -630,29 +892,31 @@
         font-size: 1.2rem;
     }
     
-    .store-grid {
+    .store-grid, .treasures-grid {
         grid-template-columns: 1fr;
     }
     
-    .payment-methods {
-        gap: 15px;
+    .store-tab {
+        padding: 8px 15px;
+        font-size: 1rem;
     }
     
-    .payment-method {
-        width: 60px;
-        height: 60px;
+    .category-btn {
+        padding: 6px 15px;
+        font-size: 0.8rem;
     }
     
-    .payment-method i {
-        font-size: 2rem;
+    .product-name {
+        font-size: 1.8rem;
     }
     
-    .cta-title {
-        font-size: 2rem;
+    .product-price {
+        font-size: 2.5rem;
     }
     
-    .faq-title {
-        font-size: 2rem;
+    .treasure-card {
+        max-width: 350px;
+        margin: 0 auto;
     }
 }
 
@@ -661,39 +925,38 @@
         font-size: 2rem;
     }
     
+    .store-description {
+        padding: 15px;
+    }
+    
+    .store-tabs {
+        gap: 10px;
+    }
+    
+    .store-tab {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .cart-link {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
     .product-header {
         padding: 20px 15px;
     }
     
-    .product-name {
-        font-size: 1.5rem;
+    .product-content, 
+    .treasure-content {
+        padding: 20px 15px;
     }
     
-    .product-price {
-        font-size: 2.5rem;
-    }
-    
-    .product-content,
     .product-footer {
         padding: 20px 15px;
     }
     
-    .btn-purchase {
-        padding: 12px 30px;
-        font-size: 1rem;
-    }
-    
-    .payment-section,
-    .store-cta {
-        padding: 30px 20px;
-    }
-    
-    .payment-method {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .payment-method i {
-        font-size: 1.5rem;
+    .treasure-image {
+        height: 150px;
     }
 }

@@ -1,40 +1,132 @@
 {% extends 'minecraft_app/base.html' %}
 {% load static %}
 
-{% block title %}Paiement Réussi - Novania Towny Earth Server{% endblock %}
+{% block title %}Payment Successful - Novania Towny Earth Server{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="page-header">
-    <h1>Paiement Réussi</h1>
+<!-- Success Hero Section -->
+<section class="success-hero">
+    <div class="success-particles" id="success-particles"></div>
+    <div class="success-hero-content">
+        <h1 class="success-hero-title">Payment Successful!</h1>
+        <p class="success-hero-subtitle">Thank you for supporting our server</p>
+    </div>
 </section>
 
-<!-- Success Section -->
-<section class="section">
+<!-- Success Main Section -->
+<section class="success-main-section">
     <div class="container">
-        <div class="auth-form-container">
-            <h2 class="auth-form-title">Merci pour votre achat!</h2>
+        <div class="success-container">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
             
-            <div class="payment-success-content">
-                <div class="success-icon">
-                    <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
+            <h2 class="success-title">Your purchase has been processed</h2>
+            <p class="success-description">Your items have been added to your account. If you experience any issues, please contact our staff via Discord.</p>
+            
+            <!-- Purchase Details Section -->
+            <div class="purchase-details">
+                <h3 class="details-title">Purchase Details</h3>
+                
+                <div class="details-grid">
+                    {% if rank_purchases %}
+                        <div class="details-section">
+                            <h4 class="section-title">Rank Purchases</h4>
+                            <div class="purchased-items">
+                                {% for purchase in rank_purchases %}
+                                    <div class="purchased-item">
+                                        <div class="item-badge" style="background-color: {{ purchase.rank.color_code }}">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <div class="item-info">
+                                            <div class="item-name">{{ purchase.rank.name }} Rank</div>
+                                            <div class="item-price">€{{ purchase.amount }}</div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if store_item_purchases %}
+                        <div class="details-section">
+                            <h4 class="section-title">Item Purchases</h4>
+                            <div class="purchased-items">
+                                {% for purchase in store_item_purchases %}
+                                    <div class="purchased-item">
+                                        <div class="item-badge" style="background-color: {{ purchase.store_item.color_code }}">
+                                            <i class="fas fa-gift"></i>
+                                        </div>
+                                        <div class="item-info">
+                                            <div class="item-name">{{ purchase.store_item.name }}</div>
+                                            <div class="item-meta">
+                                                <span class="item-quantity">x{{ purchase.quantity }}</span>
+                                                <span class="item-price">€{{ purchase.amount }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
                 
-                {% if purchase %}
-                <div class="purchase-details">
-                    <h3>Détails de l'achat:</h3>
-                    <p>Rang: <span style="color: var(--primary);">{{ purchase.rank.name }}</span></p>
-                    <p>Montant: <span style="color: var(--primary);">{{ purchase.amount }} €</span></p>
+                <div class="purchase-total">
+                    <div class="total-label">Total Amount:</div>
+                    <div class="total-value">€{{ total_amount }}</div>
                 </div>
-                {% endif %}
-                
-                <p class="mt-4">Votre rang a été activé sur votre compte. Rejoignez le serveur pour profiter de vos nouveaux avantages!</p>
-                
-                <div class="mt-4">
-                    <a href="{% url 'home' %}" class="btn">Retour à l'accueil</a>
-                </div>
+            </div>
+            
+            <div class="success-actions">
+                <a href="{% url 'home' %}" class="btn btn-home">
+                    <i class="fas fa-home"></i>
+                    <span>Back to Home</span>
+                </a>
+                <a href="{% url 'store' %}" class="btn btn-store">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Continue Shopping</span>
+                </a>
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for success hero
+        createParticles('success-particles', 40);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+    });
+</script>
 {% endblock %}

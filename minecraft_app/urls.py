@@ -20,4 +20,9 @@ urlpatterns = [
     path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
     path('webhook/stripe/', views.stripe_webhook, name='stripe_webhook'),
     path('payment/failed/', views.payment_failed, name='payment_failed'),
+    path('cart/', views.view_cart, name='cart'),
+    path('cart/add/', views.add_to_cart, name='add_to_cart'),
+    path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/update/', views.update_cart_quantity, name='update_cart_quantity'),
+    path('cart/checkout/', views.checkout_cart, name='checkout_cart'),
 ]

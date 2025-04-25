@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, UserProfile, UserPurchase
-from django.db.models import Count, Sum
+from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, UserProfile, UserPurchase, StoreItemPurchase, StoreItem, CartItem
+from django.db.models import Count, Sum, F
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
@@ -306,25 +307,37 @@ def checkout(request, rank_id):
         messages.error(request, f"Error creating payment: {str(e)}")
         return redirect('store')
 
+
 def payment_success(request):
     session_id = request.GET.get('session_id')
+    
     if session_id:
-        try:
-            purchase = UserPurchase.objects.get(payment_id=session_id)
+        # Try to retrieve rank purchases
+        rank_purchases = UserPurchase.objects.filter(payment_id=session_id)
+        
+        # Try to retrieve store item purchases
+        store_item_purchases = StoreItemPurchase.objects.filter(payment_id=session_id)
+        
+        # Calculate total amount
+        total_amount = 0
+        for purchase in rank_purchases:
+            total_amount += purchase.amount
+        
+        for purchase in store_item_purchases:
+            total_amount += purchase.amount
+        
+        if rank_purchases.exists() or store_item_purchases.exists():
             return render(request, 'minecraft_app/payment_success.html', {
-                'purchase': purchase,
+                'rank_purchases': rank_purchases,
+                'store_item_purchases': store_item_purchases,
+                'total_amount': total_amount,
                 'server': TownyServer.objects.first()
             })
-        except UserPurchase.DoesNotExist:
-            pass
     
     # Fallback if purchase not found (can happen if webhook hasn't processed yet)
     return render(request, 'minecraft_app/payment_success.html', {
         'server': TownyServer.objects.first()
     })
-
-def payment_cancel(request):
-      return render(request, 'minecraft_app/payment_cancel.html')
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -508,3 +521,286 @@ def contact(request):
 #     except Exception as e:
 #         logging.error(f"Erreur d'envoi au webhook Discord: {str(e)}")
 #         return False
+
+
+# Update your store view
+def store(request):
+    ranks_list = Rank.objects.all().order_by('price')
+    store_items = StoreItem.objects.all().order_by('category', 'price')
+    
+    # Get cart data if user is authenticated
+    cart_count = 0
+    cart_total = 0
+    
+    if request.user.is_authenticated:
+        cart_items = CartItem.objects.filter(user=request.user)
+        cart_count = cart_items.count()
+        
+        # Calculate cart total
+        cart_total = 0
+        for item in cart_items:
+            cart_total += item.get_subtotal()
+    
+    context = {
+        'ranks': ranks_list,
+        'store_items': store_items,
+        'cart_count': cart_count,
+        'cart_total': cart_total,
+    }
+    
+    return render(request, 'minecraft_app/store.html', context)
+
+# Add to cart view
+@login_required
+def add_to_cart(request):
+    if request.method == 'POST':
+        item_type = request.POST.get('item_type')
+        item_id = request.POST.get('item_id')
+        quantity = int(request.POST.get('quantity', 1))
+        
+        if item_type == 'rank':
+            try:
+                rank = Rank.objects.get(id=item_id)
+                
+                # Check if already in cart
+                cart_item, created = CartItem.objects.get_or_create(
+                    user=request.user,
+                    rank=rank,
+                    defaults={'quantity': 1} # Ranks always have quantity 1
+                )
+                
+                if not created:
+                    # Rank already in cart
+                    messages.info(request, f"Rank '{rank.name}' is already in your cart.")
+                else:
+                    messages.success(request, f"Rank '{rank.name}' added to your cart.")
+                
+            except Rank.DoesNotExist:
+                messages.error(request, "The selected rank does not exist.")
+                return redirect('store')
+                
+        elif item_type == 'store_item':
+            try:
+                store_item = StoreItem.objects.get(id=item_id)
+                
+                # Check if already in cart
+                cart_item, created = CartItem.objects.get_or_create(
+                    user=request.user,
+                    store_item=store_item,
+                    defaults={'quantity': quantity}
+                )
+                
+                if not created:
+                    # Update quantity if already in cart
+                    cart_item.quantity = F('quantity') + quantity
+                    cart_item.save()
+                    messages.success(request, f"Updated quantity of '{store_item.name}' in your cart.")
+                else:
+                    messages.success(request, f"'{store_item.name}' added to your cart.")
+                
+            except StoreItem.DoesNotExist:
+                messages.error(request, "The selected item does not exist.")
+                return redirect('store')
+        
+        else:
+            messages.error(request, "Invalid item type.")
+            
+        return redirect('cart')
+    
+    return redirect('store')
+
+# View cart page
+@login_required
+def view_cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    
+    total = 0
+    for item in cart_items:
+        total += item.get_subtotal()
+    
+    context = {
+        'cart_items': cart_items,
+        'total': total,
+        'server': TownyServer.objects.first(),
+    }
+    
+    return render(request, 'minecraft_app/cart.html', context)
+
+# Remove from cart
+@login_required
+def remove_from_cart(request, item_id):
+    try:
+        cart_item = CartItem.objects.get(id=item_id, user=request.user)
+        item_name = cart_item.rank.name if cart_item.rank else cart_item.store_item.name
+        cart_item.delete()
+        messages.success(request, f"'{item_name}' has been removed from your cart.")
+    except CartItem.DoesNotExist:
+        messages.error(request, "Item not found in your cart.")
+    
+    return redirect('cart')
+
+# Update cart item quantity
+@login_required
+def update_cart_quantity(request):
+    if request.method == 'POST':
+        item_id = request.POST.get('item_id')
+        quantity = int(request.POST.get('quantity', 1))
+        
+        try:
+            cart_item = CartItem.objects.get(id=item_id, user=request.user)
+            
+            # Only store items can have quantities (not ranks)
+            if cart_item.store_item:
+                cart_item.quantity = quantity
+                cart_item.save()
+                messages.success(request, f"Quantity updated for '{cart_item.store_item.name}'.")
+            
+        except CartItem.DoesNotExist:
+            messages.error(request, "Item not found in your cart.")
+            
+    return redirect('cart')
+
+# Checkout from cart
+@login_required
+def checkout_cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    
+    if not cart_items.exists():
+        messages.error(request, "Your cart is empty.")
+        return redirect('cart')
+    
+    # Calculate total
+    total_amount = 0
+    items_description = []
+    
+    for item in cart_items:
+        subtotal = item.get_subtotal()
+        total_amount += subtotal
+        
+        if item.rank:
+            items_description.append(f"Rank: {item.rank.name}")
+        elif item.store_item:
+            items_description.append(f"{item.store_item.name} x{item.quantity}")
+    
+    # Create Stripe session
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'eur',
+                        'unit_amount': int(total_amount * 100),  # Montant en centimes
+                        'product_data': {
+                            'name': "Novania Store Purchase",
+                            'description': ", ".join(items_description),
+                        },
+                    },
+                    'quantity': 1,
+                }
+            ],
+            metadata={
+                'user_id': request.user.id,
+                'username': request.user.username,
+                'cart_items': ",".join([str(item.id) for item in cart_items]),
+            },
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('payment_success') + f'?session_id={{CHECKOUT_SESSION_ID}}'),
+            cancel_url=request.build_absolute_uri(reverse('payment_cancel')),
+        )
+        return redirect(checkout_session.url, code=303)
+    except Exception as e:
+        logging.error(f"Error creating Stripe checkout session for cart: {str(e)}")
+        messages.error(request, f"Error creating payment: {str(e)}")
+        return redirect('cart')
+
+# Update the successful payment processing
+def process_successful_payment(session):
+    # Get information from metadata
+    user_id = session.get('metadata', {}).get('user_id')
+    cart_items_ids = session.get('metadata', {}).get('cart_items', '').split(',')
+    
+    if not user_id or not cart_items_ids or not cart_items_ids[0]:
+        logging.error("Missing metadata in Stripe session")
+        return
+    
+    try:
+        user = User.objects.get(id=user_id)
+        
+        # Process each cart item
+        for item_id in cart_items_ids:
+            if not item_id:
+                continue
+                
+            try:
+                cart_item = CartItem.objects.get(id=item_id, user=user)
+                
+                # Record rank purchase
+                if cart_item.rank:
+                    purchase = UserPurchase.objects.create(
+                        user=user,
+                        rank=cart_item.rank,
+                        amount=cart_item.rank.price,
+                        payment_id=session.id,
+                        payment_status='completed'
+                    )
+                    
+                    # Apply rank on Minecraft server
+                    minecraft_username = user.profile.minecraft_username
+                    if minecraft_username:
+                        success = apply_rank_to_player(minecraft_username, cart_item.rank.name)
+                        if success:
+                            logging.info(f"Rank {cart_item.rank.name} successfully applied to Minecraft player {minecraft_username}")
+                        else:
+                            logging.error(f"Failed to apply rank {cart_item.rank.name} to player {minecraft_username}")
+                    else:
+                        logging.warning(f"User {user.username} doesn't have a Minecraft username set; rank not applied")
+                
+                # Record store item purchase
+                elif cart_item.store_item:
+                    # Create StoreItemPurchase record
+                    item_purchase = StoreItemPurchase.objects.create(
+                        user=user,
+                        store_item=cart_item.store_item,
+                        quantity=cart_item.quantity,
+                        amount=cart_item.store_item.price * cart_item.quantity,
+                        payment_id=session.id,
+                        payment_status='completed'
+                    )
+                    
+                    # Update store item quantity if it's limited
+                    if cart_item.store_item.quantity > 0:
+                        cart_item.store_item.quantity -= cart_item.quantity
+                        if cart_item.store_item.quantity < 0:
+                            cart_item.store_item.quantity = 0
+                        cart_item.store_item.save()
+                    
+                    # Apply store item benefits if applicable
+                    # This depends on what the items do in your system
+                    # For example:
+                    minecraft_username = user.profile.minecraft_username
+                    if minecraft_username:
+                        # Implement item-specific logic here based on item type/category
+                        if cart_item.store_item.category == 'collectible':
+                            # Logic for collectible items
+                            pass
+                        elif cart_item.store_item.category == 'cosmetic':
+                            # Logic for cosmetic items
+                            pass
+                        elif cart_item.store_item.category == 'utility':
+                            # Logic for utility items
+                            pass
+                        elif cart_item.store_item.category == 'special':
+                            # Logic for special items
+                            pass
+                
+                # Remove from cart after processing
+                cart_item.delete()
+                
+            except CartItem.DoesNotExist:
+                logging.error(f"Cart item with ID {item_id} not found")
+        
+        logging.info(f"Payment successful for user {user.username}")
+        
+    except User.DoesNotExist:
+        logging.error(f"User with ID {user_id} not found")

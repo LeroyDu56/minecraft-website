@@ -12,55 +12,209 @@
 <section class="store-hero">
     <div class="store-particles" id="store-particles"></div>
     <div class="store-hero-content">
-        <h1 class="store-title">Premium Ranks</h1>
-        <p class="store-subtitle">Support the server and unlock exclusive perks</p>
+        <h1 class="store-title">Novania Store</h1>
+        <p class="store-subtitle">Support the server and enhance your experience</p>
         
         <div class="store-description">
-            <p>Our server is maintained by a passionate team of volunteers. Your support helps us cover server costs and develop new features for everyone to enjoy. All ranks are lifetime purchases!</p>
+            <p>Our server is maintained by a passionate team of volunteers. Your support helps us cover server costs and develop new features for everyone to enjoy. Browse our premium ranks and exclusive treasures!</p>
+        </div>
+    </div>
+</section>
+
+<!-- Store Navigation -->
+<section class="store-navigation">
+    <div class="container">
+        <div class="store-tabs">
+            <button class="store-tab active" data-tab="ranks">Premium Ranks</button>
+            <button class="store-tab" data-tab="treasures">Exclusive Treasures</button>
+        </div>
+        
+        <!-- Shopping Cart Indicator -->
+        <div class="cart-indicator">
+            <a href="{% url 'cart' %}" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">{{ cart_count|default:"0" }}</span>
+                <span class="cart-total">€{{ cart_total|default:"0.00" }}</span>
+            </a>
         </div>
     </div>
 </section>
 
 <!-- Store Products Section -->
 <section class="store-products-section">
-    <div class="container">        
-        <div class="store-grid">
-            {% for rank in ranks %}
-                <div class="product-card product-{{ rank.name|lower }}">
-                    <div class="product-header">
-                        <h3 class="product-name" style="color: {{ rank.color_code }}">{{ rank.name }}</h3>
-                        <div class="product-price">€{{ rank.price }}<span class="price-unit">/lifetime</span></div>
-                        {% if rank.name == "Premium" %}
-                            <div class="product-badge">Most Popular</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="product-content">
-                        <div class="product-description">
-                            {{ rank.description }}
+    <div class="container">
+        <!-- Ranks Tab Content -->
+        <div class="store-tab-content active" id="ranks-content">
+            <h2 class="section-title">Premium Ranks</h2>
+            <p class="section-subtitle">Unlock special perks and privileges</p>
+            
+            <div class="store-grid">
+                {% for rank in ranks %}
+                    <div class="product-card product-{{ rank.name|lower }}">
+                        <div class="product-header">
+                            <h3 class="product-name" style="color: {{ rank.color_code }}">{{ rank.name }}</h3>
+                            <div class="product-price">€{{ rank.price }}<span class="price-unit">/lifetime</span></div>
+                            {% if rank.name == "Premium" %}
+                                <div class="product-badge">Most Popular</div>
+                            {% endif %}
                         </div>
                         
-                        <div class="product-features">
-                            <ul class="feature-list">
-                                {% if rank.name == "VIP" %}
+                        <div class="product-content">
+                            <div class="product-description">
+                                {{ rank.description }}
+                            </div>
+                            
+                            <div class="product-features">
+                                <ul class="feature-list">
+                                    {% if rank.name == "VIP" %}
+                                        <li><i class="fas fa-check-circle"></i> Colored chat and name tag</li>
+                                        <li><i class="fas fa-check-circle"></i> Access to /fly in the lobby</li>
+                                        <li><i class="fas fa-check-circle"></i> Set 2 homes</li>
+                                        <li><i class="fas fa-check-circle"></i> Special VIP Discord role</li>
+                                    {% elif rank.name == "Premium" %}
+                                        <li><i class="fas fa-check-circle"></i> All VIP features</li>
+                                        <li><i class="fas fa-check-circle"></i> Access to /enderchest</li>
+                                        <li><i class="fas fa-check-circle"></i> Set 5 homes</li>
+                                        <li><i class="fas fa-check-circle"></i> 20% shop discount</li>
+                                        <li><i class="fas fa-check-circle"></i> Premium Discord role</li>
+                                    {% elif rank.name == "Elite" %}
+                                        <li><i class="fas fa-check-circle"></i> All Premium features</li>
+                                        <li><i class="fas fa-check-circle"></i> Access to /workbench</li>
+                                        <li><i class="fas fa-check-circle"></i> Set 10 homes</li>
+                                        <li><i class="fas fa-check-circle"></i> 30% shop discount</li>
+                                        <li><i class="fas fa-check-circle"></i> Elite Discord role</li>
+                                        <li><i class="fas fa-check-circle"></i> Custom particle effects</li>
+                                    {% elif rank.name == "Legend" %}
+                                        <li><i class="fas fa-check-circle"></i> All Elite features</li>
+                                        <li><i class="fas fa-check-circle"></i> Set unlimited homes</li>
+                                        <li><i class="fas fa-check-circle"></i> 50% shop discount</li>
+                                        <li><i class="fas fa-check-circle"></i> Legend Discord role</li>
+                                        <li><i class="fas fa-check-circle"></i> Custom join messages</li>
+                                        <li><i class="fas fa-check-circle"></i> Monthly title customization</li>
+                                        <li><i class="fas fa-check-circle"></i> Priority server access</li>
+                                    {% else %}
+                                        <li><i class="fas fa-check-circle"></i> Feature 1</li>
+                                        <li><i class="fas fa-check-circle"></i> Feature 2</li>
+                                        <li><i class="fas fa-check-circle"></i> Feature 3</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="product-footer">
+                            <form action="{% url 'add_to_cart' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="item_type" value="rank">
+                                <input type="hidden" name="item_id" value="{{ rank.id }}">
+                                <button type="submit" class="btn-purchase" style="background: linear-gradient(to right, {{ rank.color_code }}, {{ rank.color_code }}CC);">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% empty %}
+                    <!-- Example ranks if none are available in database -->
+                    <div class="product-card product-vip">
+                        <div class="product-header">
+                            <h3 class="product-name">VIP</h3>
+                            <div class="product-price">€5<span class="price-unit">/lifetime</span></div>
+                        </div>
+                        
+                        <div class="product-content">
+                            <div class="product-description">
+                                Essential perks for the casual player. Get access to basic commands and quality of life improvements.
+                            </div>
+                            
+                            <div class="product-features">
+                                <ul class="feature-list">
                                     <li><i class="fas fa-check-circle"></i> Colored chat and name tag</li>
                                     <li><i class="fas fa-check-circle"></i> Access to /fly in the lobby</li>
                                     <li><i class="fas fa-check-circle"></i> Set 2 homes</li>
                                     <li><i class="fas fa-check-circle"></i> Special VIP Discord role</li>
-                                {% elif rank.name == "Premium" %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="product-footer">
+                            <button class="btn-purchase">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card product-premium">
+                        <div class="product-header">
+                            <h3 class="product-name">Premium</h3>
+                            <div class="product-price">€10<span class="price-unit">/lifetime</span></div>
+                            <div class="product-badge">Most Popular</div>
+                        </div>
+                        
+                        <div class="product-content">
+                            <div class="product-description">
+                                Enhanced gameplay features for the dedicated player. Enjoy more convenience and customization options.
+                            </div>
+                            
+                            <div class="product-features">
+                                <ul class="feature-list">
                                     <li><i class="fas fa-check-circle"></i> All VIP features</li>
                                     <li><i class="fas fa-check-circle"></i> Access to /enderchest</li>
                                     <li><i class="fas fa-check-circle"></i> Set 5 homes</li>
                                     <li><i class="fas fa-check-circle"></i> 20% shop discount</li>
                                     <li><i class="fas fa-check-circle"></i> Premium Discord role</li>
-                                {% elif rank.name == "Elite" %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="product-footer">
+                            <button class="btn-purchase">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card product-elite">
+                        <div class="product-header">
+                            <h3 class="product-name">Elite</h3>
+                            <div class="product-price">€20<span class="price-unit">/lifetime</span></div>
+                        </div>
+                        
+                        <div class="product-content">
+                            <div class="product-description">
+                                Premium features for the hardcore players. Get significant advantages and unique customization options.
+                            </div>
+                            
+                            <div class="product-features">
+                                <ul class="feature-list">
                                     <li><i class="fas fa-check-circle"></i> All Premium features</li>
                                     <li><i class="fas fa-check-circle"></i> Access to /workbench</li>
                                     <li><i class="fas fa-check-circle"></i> Set 10 homes</li>
                                     <li><i class="fas fa-check-circle"></i> 30% shop discount</li>
                                     <li><i class="fas fa-check-circle"></i> Elite Discord role</li>
                                     <li><i class="fas fa-check-circle"></i> Custom particle effects</li>
-                                {% elif rank.name == "Legend" %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="product-footer">
+                            <button class="btn-purchase">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card product-legend">
+                        <div class="product-header">
+                            <h3 class="product-name">Legend</h3>
+                            <div class="product-price">€30<span class="price-unit">/lifetime</span></div>
+                        </div>
+                        
+                        <div class="product-content">
+                            <div class="product-description">
+                                The ultimate package for true server supporters. Enjoy exclusive perks and maximum convenience.
+                            </div>
+                            
+                            <div class="product-features">
+                                <ul class="feature-list">
                                     <li><i class="fas fa-check-circle"></i> All Elite features</li>
                                     <li><i class="fas fa-check-circle"></i> Set unlimited homes</li>
                                     <li><i class="fas fa-check-circle"></i> 50% shop discount</li>
@@ -68,136 +222,187 @@
                                     <li><i class="fas fa-check-circle"></i> Custom join messages</li>
                                     <li><i class="fas fa-check-circle"></i> Monthly title customization</li>
                                     <li><i class="fas fa-check-circle"></i> Priority server access</li>
-                                {% else %}
-                                    <li><i class="fas fa-check-circle"></i> Feature 1</li>
-                                    <li><i class="fas fa-check-circle"></i> Feature 2</li>
-                                    <li><i class="fas fa-check-circle"></i> Feature 3</li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="product-footer">
-                        {% if rank.id %}
-                            <a href="{% url 'checkout' rank.id %}" class="btn-purchase" style="background: linear-gradient(to right, {{ rank.color_code }}, {{ rank.color_code }}CC);">Purchase Now</a>
-                        {% else %}
-                            <a href="#" class="btn-purchase" style="background: linear-gradient(to right, {{ rank.color_code }}, {{ rank.color_code }}CC);">Purchase Now</a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% empty %}
-                <!-- Example ranks if none are available in database -->
-                <div class="product-card product-vip">
-                    <div class="product-header">
-                        <h3 class="product-name">VIP</h3>
-                        <div class="product-price">€5<span class="price-unit">/lifetime</span></div>
-                    </div>
-                    
-                    <div class="product-content">
-                        <div class="product-description">
-                            Essential perks for the casual player. Get access to basic commands and quality of life improvements.
+                                </ul>
+                            </div>
                         </div>
                         
-                        <div class="product-features">
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check-circle"></i> Colored chat and name tag</li>
-                                <li><i class="fas fa-check-circle"></i> Access to /fly in the lobby</li>
-                                <li><i class="fas fa-check-circle"></i> Set 2 homes</li>
-                                <li><i class="fas fa-check-circle"></i> Special VIP Discord role</li>
-                            </ul>
+                        <div class="product-footer">
+                            <button class="btn-purchase">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="product-footer">
-                        <a href="#" class="btn-purchase">Purchase Now</a>
-                    </div>
-                </div>
-                
-                <div class="product-card product-premium">
-                    <div class="product-header">
-                        <h3 class="product-name">Premium</h3>
-                        <div class="product-price">€10<span class="price-unit">/lifetime</span></div>
-                        <div class="product-badge">Most Popular</div>
-                    </div>
-                    
-                    <div class="product-content">
-                        <div class="product-description">
-                            Enhanced gameplay features for the dedicated player. Enjoy more convenience and customization options.
-                        </div>
-                        
-                        <div class="product-features">
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check-circle"></i> All VIP features</li>
-                                <li><i class="fas fa-check-circle"></i> Access to /enderchest</li>
-                                <li><i class="fas fa-check-circle"></i> Set 5 homes</li>
-                                <li><i class="fas fa-check-circle"></i> 20% shop discount</li>
-                                <li><i class="fas fa-check-circle"></i> Premium Discord role</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="product-footer">
-                        <a href="#" class="btn-purchase">Purchase Now</a>
-                    </div>
-                </div>
-                
-                <div class="product-card product-elite">
-                    <div class="product-header">
-                        <h3 class="product-name">Elite</h3>
-                        <div class="product-price">€20<span class="price-unit">/lifetime</span></div>
-                    </div>
-                    
-                    <div class="product-content">
-                        <div class="product-description">
-                            Premium features for the hardcore players. Get significant advantages and unique customization options.
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Treasures Tab Content -->
+        <div class="store-tab-content" id="treasures-content">
+            <h2 class="section-title">Exclusive Treasures</h2>
+            <p class="section-subtitle">Enhance your gameplay with unique items and services</p>
+            
+            <div class="store-categories">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="collectible">Collectibles</button>
+                <button class="category-btn" data-category="cosmetic">Cosmetics</button>
+                <button class="category-btn" data-category="utility">Utilities</button>
+                <button class="category-btn" data-category="special">Specials</button>
+            </div>
+            
+            <div class="store-grid treasures-grid">
+                {% for item in store_items %}
+                    <div class="treasure-card" data-category="{{ item.category }}">
+                        <div class="treasure-image">
+                            {% if item.image %}
+                                <img src="{{ item.image }}" alt="{{ item.name }}">
+                            {% else %}
+                                <div class="treasure-placeholder" style="background-color: {{ item.color_code }}">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                            {% endif %}
                         </div>
                         
-                        <div class="product-features">
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check-circle"></i> All Premium features</li>
-                                <li><i class="fas fa-check-circle"></i> Access to /workbench</li>
-                                <li><i class="fas fa-check-circle"></i> Set 10 homes</li>
-                                <li><i class="fas fa-check-circle"></i> 30% shop discount</li>
-                                <li><i class="fas fa-check-circle"></i> Elite Discord role</li>
-                                <li><i class="fas fa-check-circle"></i> Custom particle effects</li>
-                            </ul>
+                        <div class="treasure-content">
+                            <div class="treasure-category">{{ item.get_category_display }}</div>
+                            <h3 class="treasure-name" style="color: {{ item.color_code }}">{{ item.name }}</h3>
+                            <p class="treasure-description">{{ item.description }}</p>
+                            
+                            <div class="treasure-footer">
+                                <div class="treasure-price">€{{ item.price }}</div>
+                                
+                                <form action="{% url 'add_to_cart' %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_type" value="store_item">
+                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                    
+                                    <div class="treasure-quantity">
+                                        <button type="button" class="quantity-btn minus">-</button>
+                                        <input type="number" name="quantity" value="1" min="1" max="{% if item.quantity > 0 %}{{ item.quantity }}{% else %}99{% endif %}">
+                                        <button type="button" class="quantity-btn plus">+</button>
+                                    </div>
+                                    
+                                    <button type="submit" class="add-to-cart-btn" style="background-color: {{ item.color_code }};">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="product-footer">
-                        <a href="#" class="btn-purchase">Purchase Now</a>
-                    </div>
-                </div>
-                
-                <div class="product-card product-legend">
-                    <div class="product-header">
-                        <h3 class="product-name">Legend</h3>
-                        <div class="product-price">€30<span class="price-unit">/lifetime</span></div>
-                    </div>
-                    
-                    <div class="product-content">
-                        <div class="product-description">
-                            The ultimate package for true server supporters. Enjoy exclusive perks and maximum convenience.
+                {% empty %}
+                    <!-- Example store items if none are available in database -->
+                    <div class="treasure-card" data-category="collectible">
+                        <div class="treasure-image">
+                            <div class="treasure-placeholder" style="background-color: #ff9800">
+                                <i class="fas fa-user"></i>
+                            </div>
                         </div>
                         
-                        <div class="product-features">
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check-circle"></i> All Elite features</li>
-                                <li><i class="fas fa-check-circle"></i> Set unlimited homes</li>
-                                <li><i class="fas fa-check-circle"></i> 50% shop discount</li>
-                                <li><i class="fas fa-check-circle"></i> Legend Discord role</li>
-                                <li><i class="fas fa-check-circle"></i> Custom join messages</li>
-                                <li><i class="fas fa-check-circle"></i> Monthly title customization</li>
-                                <li><i class="fas fa-check-circle"></i> Priority server access</li>
-                            </ul>
+                        <div class="treasure-content">
+                            <div class="treasure-category">Collectible</div>
+                            <h3 class="treasure-name" style="color: #ff9800">Custom Player Head</h3>
+                            <p class="treasure-description">Get a custom decorative player head of your choice for your builds and collections.</p>
+                            
+                            <div class="treasure-footer">
+                                <div class="treasure-price">€2.50</div>
+                                
+                                <div class="treasure-quantity">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="1" max="10">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                                
+                                <button class="add-to-cart-btn" style="background-color: #ff9800;">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="product-footer">
-                        <a href="#" class="btn-purchase">Purchase Now</a>
+                    <div class="treasure-card" data-category="cosmetic">
+                        <div class="treasure-image">
+                            <div class="treasure-placeholder" style="background-color: #e91e63">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="treasure-content">
+                            <div class="treasure-category">Cosmetic</div>
+                            <h3 class="treasure-name" style="color: #e91e63">Special Particle Effect</h3>
+                            <p class="treasure-description">Get a unique particle effect that follows you around as you explore the world.</p>
+                            
+                            <div class="treasure-footer">
+                                <div class="treasure-price">€3.99</div>
+                                
+                                <div class="treasure-quantity">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="1" max="1">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                                
+                                <button class="add-to-cart-btn" style="background-color: #e91e63;">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                    
+                    <div class="treasure-card" data-category="utility">
+                        <div class="treasure-image">
+                            <div class="treasure-placeholder" style="background-color: #4caf50">
+                                <i class="fas fa-home"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="treasure-content">
+                            <div class="treasure-category">Utility</div>
+                            <h3 class="treasure-name" style="color: #4caf50">Additional Home Slot</h3>
+                            <p class="treasure-description">Add an extra home teleport location to your existing limit.</p>
+                            
+                            <div class="treasure-footer">
+                                <div class="treasure-price">€1.99</div>
+                                
+                                <div class="treasure-quantity">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="1" max="5">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                                
+                                <button class="add-to-cart-btn" style="background-color: #4caf50;">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="treasure-card" data-category="special">
+                        <div class="treasure-image">
+                            <div class="treasure-placeholder" style="background-color: #9c27b0">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="treasure-content">
+                            <div class="treasure-category">Special</div>
+                            <h3 class="treasure-name" style="color: #9c27b0">Town Customization</h3>
+                            <p class="treasure-description">Get assistance from our builders to customize your town with unique structures.</p>
+                            
+                            <div class="treasure-footer">
+                                <div class="treasure-price">€15.00</div>
+                                
+                                <div class="treasure-quantity">
+                                    <button class="quantity-btn minus">-</button>
+                                    <input type="number" value="1" min="1" max="1">
+                                    <button class="quantity-btn plus">+</button>
+                                </div>
+                                
+                                <button class="add-to-cart-btn" style="background-color: #9c27b0;">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
         
         <div class="payment-section">
@@ -227,21 +432,21 @@
             <div class="faq-container">
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h3>How long do ranks last?</h3>
+                        <h3>How long do ranks and items last?</h3>
                         <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
-                        <p>All purchased ranks on Novania are permanent. Once you buy a rank, you keep it forever, even through server resets or map changes.</p>
+                        <p>All purchased ranks on Novania are permanent. Once you buy a rank, you keep it forever, even through server resets or map changes. Special items vary - some are permanent while others may be consumable. The description of each item will specify its duration.</p>
                     </div>
                 </div>
                 
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h3>How do I receive my rank after purchase?</h3>
+                        <h3>How do I receive my purchases after payment?</h3>
                         <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
-                        <p>Ranks are usually applied automatically within minutes of a successful purchase. The system links your website account to your Minecraft username. If you don't receive your rank within an hour, please contact a staff member on our Discord server.</p>
+                        <p>Ranks and digital items are usually applied automatically within minutes of a successful purchase. The system links your website account to your Minecraft username. For custom or special items that require staff intervention, our team will contact you within 24 hours. If you don't receive your purchase within the expected timeframe, please contact a staff member on our Discord server.</p>
                     </div>
                 </div>
                 
@@ -261,18 +466,9 @@
                         <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
                     </div>
                     <div class="faq-answer">
-                        <p>All funds from rank purchases go directly toward server costs, including hosting, domain fees, development, and future expansions. We're a non-profit community project run by volunteers.</p>
+                        <p>All funds from purchases go directly toward server costs, including hosting, domain fees, development, and future expansions. We're a non-profit community project run by volunteers.</p>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Call to Action Section -->
-        <div class="store-cta">
-            <div class="cta-content">
-                <h2 class="cta-title">Ready to enhance your gameplay?</h2>
-                <p class="cta-text">Join our premium members and take your Minecraft experience to the next level!</p>
-                <a href="#" class="cta-btn" id="scrollToTop">Browse Ranks</a>
             </div>
         </div>
     </div>
@@ -310,6 +506,77 @@
             }
         }
         
+        // Store Tabs
+        const storeTabs = document.querySelectorAll('.store-tab');
+        const storeContents = document.querySelectorAll('.store-tab-content');
+        
+        storeTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                storeTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all content sections
+                storeContents.forEach(content => content.classList.remove('active'));
+                
+                // Show the selected content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId + '-content').classList.add('active');
+            });
+        });
+        
+        // Category Filter
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const treasureCards = document.querySelectorAll('.treasure-card');
+        
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                
+                // Show/hide cards based on category
+                treasureCards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Quantity Buttons
+        const minusBtns = document.querySelectorAll('.quantity-btn.minus');
+        const plusBtns = document.querySelectorAll('.quantity-btn.plus');
+        
+        minusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.nextElementSibling;
+                const currentValue = parseInt(input.value);
+                if (currentValue > parseInt(input.min)) {
+                    input.value = currentValue - 1;
+                }
+            });
+        });
+        
+        plusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const currentValue = parseInt(input.value);
+                const maxValue = parseInt(input.max);
+                if (!maxValue || currentValue < maxValue) {
+                    input.value = currentValue + 1;
+                }
+            });
+        });
+        
         // FAQ Toggle
         const faqQuestions = document.querySelectorAll('.faq-question');
         
@@ -335,39 +602,6 @@
                     answer.style.maxHeight = answer.scrollHeight + 'px';
                     icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
                 }
-            });
-        });
-        
-        // Scroll to top button
-        const scrollToTopBtn = document.getElementById('scrollToTop');
-        if (scrollToTopBtn) {
-            scrollToTopBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-        }
-        
-        // Add hover effects to product cards
-        const productCards = document.querySelectorAll('.product-card');
-        
-        productCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                // Add a class to other cards to dim them slightly
-                productCards.forEach(otherCard => {
-                    if (otherCard !== card) {
-                        otherCard.classList.add('card-dimmed');
-                    }
-                });
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                // Remove the dim class from all cards
-                productCards.forEach(otherCard => {
-                    otherCard.classList.remove('card-dimmed');
-                });
             });
         });
     });

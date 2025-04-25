@@ -1,0 +1,232 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - Novania Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/store.css' %}">
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Cart Hero Section -->
+<section class="cart-hero">
+    <div class="cart-particles" id="cart-particles"></div>
+    <div class="cart-hero-content">
+        <h1 class="cart-hero-title">Shopping Cart</h1>
+        <p class="cart-hero-subtitle">Review your items before checkout</p>
+    </div>
+</section>
+
+<!-- Cart Main Section -->
+<section class="cart-main-section">
+    <div class="container">
+        <div class="cart-container">
+            {% if cart_items %}
+                <div class="cart-items">
+                    <div class="cart-header">
+                        <div class="cart-header-item product">Product</div>
+                        <div class="cart-header-item price">Price</div>
+                        <div class="cart-header-item quantity">Qty</div>
+                        <div class="cart-header-item subtotal">Subtotal</div>
+                        <div class="cart-header-item actions">Actions</div>
+                    </div>
+                    
+                    {% for item in cart_items %}
+                        <div class="cart-item">
+                            <div class="cart-item-product">
+                                {% if item.rank %}
+                                    <div class="item-image rank-image" style="background-color: {{ item.rank.color_code }}">
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <div class="item-details">
+                                        <h3 class="item-name">{{ item.rank.name }} Rank</h3>
+                                        <p class="item-description">{{ item.rank.description|truncatechars:100 }}</p>
+                                    </div>
+                                {% elif item.store_item %}
+                                    <div class="item-image {% if item.store_item.image %}with-image{% else %}no-image{% endif %}" {% if not item.store_item.image %}style="background-color: {{ item.store_item.color_code }}"{% endif %}>
+                                        {% if item.store_item.image %}
+                                            <img src="{{ item.store_item.image }}" alt="{{ item.store_item.name }}">
+                                        {% else %}
+                                            <i class="fas fa-gift"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="item-details">
+                                        <h3 class="item-name">{{ item.store_item.name }}</h3>
+                                        <p class="item-description">{{ item.store_item.description|truncatechars:100 }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="cart-item-price">
+                                €{% if item.rank %}{{ item.rank.price }}{% else %}{{ item.store_item.price }}{% endif %}
+                            </div>
+                            
+                            <div class="cart-item-quantity">
+                                {% if item.store_item %}
+                                    <form action="{% url 'update_cart_quantity' %}" method="POST" class="quantity-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                                        <div class="quantity-control">
+                                            <button type="button" class="quantity-btn minus">-</button>
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{% if item.store_item.quantity > 0 %}{{ item.store_item.quantity }}{% else %}99{% endif %}" class="quantity-input">
+                                            <button type="button" class="quantity-btn plus">+</button>
+                                        </div>
+                                        <button type="submit" class="update-quantity-btn">Update</button>
+                                    </form>
+                                {% else %}
+                                    <span class="fixed-quantity">1</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="cart-item-subtotal">
+                                €{{ item.get_subtotal }}
+                            </div>
+                            
+                            <div class="cart-item-actions">
+                                <a href="{% url 'remove_from_cart' item.id %}" class="remove-item-btn" title="Remove from cart">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="cart-summary">
+                    <h2 class="summary-title">Order Summary</h2>
+                    
+                    <div class="summary-items">
+                        <div class="summary-item">
+                            <span class="summary-label">Items ({{ cart_items|length }}):</span>
+                            <span class="summary-value">€{{ total }}</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span class="summary-label">Discount:</span>
+                            <span class="summary-value">€0.00</span>
+                        </div>
+                        
+                        <div class="summary-divider"></div>
+                        
+                        <div class="summary-item total">
+                            <span class="summary-label">Total:</span>
+                            <span class="summary-value">€{{ total }}</span>
+                        </div>
+                    </div>
+                    
+                    <form action="{% url 'checkout_cart' %}" method="POST" class="checkout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="checkout-btn">
+                            <i class="fas fa-lock"></i> Proceed to Checkout
+                        </button>
+                    </form>
+                    
+                    <div class="continue-shopping">
+                        <a href="{% url 'store' %}" class="continue-shopping-link">
+                            <i class="fas fa-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h2>Your cart is empty</h2>
+                    <p>Looks like you haven't added any items to your cart yet.</p>
+                    <a href="{% url 'store' %}" class="continue-shopping-btn">
+                        Continue Shopping
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Payment Methods Section -->
+<section class="cart-payment-section">
+    <div class="container">
+        <div class="payment-info">
+            <h2>Secure Payment</h2>
+            <p>We use Stripe to process all payments securely. Your payment information is never stored on our servers.</p>
+            
+            <div class="payment-methods">
+                <div class="payment-method visa">
+                    <i class="fab fa-cc-visa"></i>
+                </div>
+                <div class="payment-method mastercard">
+                    <i class="fab fa-cc-mastercard"></i>
+                </div>
+                <div class="payment-method amex">
+                    <i class="fab fa-cc-amex"></i>
+                </div>
+                <div class="payment-method discover">
+                    <i class="fab fa-cc-discover"></i>
+                </div>
+                <div class="payment-method stripe">
+                    <i class="fab fa-stripe"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for the cart-particles container
+        const particlesContainer = document.getElementById('cart-particles');
+        if (particlesContainer) {
+            const particleCount = window.innerWidth < 768 ? 20 : 40;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Quantity Buttons
+        const minusBtns = document.querySelectorAll('.quantity-btn.minus');
+        const plusBtns = document.querySelectorAll('.quantity-btn.plus');
+        
+        minusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.nextElementSibling;
+                const currentValue = parseInt(input.value);
+                if (currentValue > parseInt(input.min)) {
+                    input.value = currentValue - 1;
+                }
+            });
+        });
+        
+        plusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const currentValue = parseInt(input.value);
+                const maxValue = parseInt(input.max);
+                if (!maxValue || currentValue < maxValue) {
+                    input.value = currentValue + 1;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
