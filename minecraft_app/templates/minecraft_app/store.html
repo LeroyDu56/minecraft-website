@@ -42,7 +42,7 @@
 
 <!-- Store Products Section -->
 <section class="store-products-section">
-    <!-- Last Purchases Sidebar -->
+<!-- Last Purchases Sidebar -->
     <div class="last-purchases-sidebar">
         <h3 class="last-purchases-title">Derniers Achats</h3>
         <div class="last-purchases-list">
@@ -50,16 +50,18 @@
                 <div class="last-purchase-item">
                     <div class="player-head">
                         {% if purchase.minecraft_uuid %}
-                            <img src="https://crafatar.com/avatars/{{ purchase.minecraft_uuid }}?size=40&overlay" alt="{{ purchase.minecraft_username }}'s head">
+                            <img src="https://mc-heads.net/avatar/{{ purchase.minecraft_uuid }}/40" alt="{{ purchase.minecraft_username }}'s head" 
+                                 onerror="this.onerror=null; this.src='https://mc-heads.net/avatar/steve/40';">
+                        {% elif purchase.minecraft_username %}
+                            <img src="https://mc-heads.net/avatar/{{ purchase.minecraft_username }}/40" alt="{{ purchase.minecraft_username }}'s head"
+                                 onerror="this.onerror=null; this.src='https://mc-heads.net/avatar/steve/40';">
                         {% else %}
-                            <div class="placeholder-head">
-                                <i class="fas fa-user"></i>
-                            </div>
+                            <img src="https://mc-heads.net/avatar/steve/40" alt="Default head">
                         {% endif %}
                     </div>
                     <div class="purchase-info">
-                        <span class="player-username">{{ purchase.minecraft_username }}</span>
-                        <span class="purchase-amount">€{{ purchase.amount|floatformat:2 }}</span>
+                        <span class="player-username">{{ purchase.minecraft_username|default:"Anonymous" }}</span>
+                        <span class="purchase-amount">€{{ purchase.amount|default:0|floatformat:2 }}</span>
                     </div>
                 </div>
             {% empty %}

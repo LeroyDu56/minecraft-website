@@ -26,21 +26,25 @@ def apply_rank_to_player(username, rank_name):
         # Ajouter les logs de débogage
         logger.info(f"Connexion RCON à {settings.MINECRAFT_RCON_HOST}:{settings.MINECRAFT_RCON_PORT}")
         
-        # Se connecter au serveur Minecraft via RCON
-        with MCRcon(
+        # Se connecter au serveur Minecraft via RCON sans utiliser de signal
+        mcr = MCRcon(
             settings.MINECRAFT_RCON_HOST, 
             settings.MINECRAFT_RCON_PASSWORD, 
             settings.MINECRAFT_RCON_PORT,
-            timeout=60  # Augmentez à une minute
-        ) as mcr:
+            tlsmode=0  # Désactive TLS pour éviter les problèmes de signal
+        )
+        
+        try:
+            mcr.connect()
             # La commande dépend de votre plugin de permissions
             # Pour LuckPerms:
             lp_command = f"lp user {username} parent add {clean_rank}"
             logger.info(f"Envoi de la commande: {lp_command}")
             resp = mcr.command(lp_command)
             logger.info(f"Réponse reçue: {resp}")
-            
-        return True
+            return True
+        finally:
+            mcr.disconnect()
         
     except Exception as e:
         logger.error(f"Erreur RCON détaillée: {str(e)}", exc_info=True)

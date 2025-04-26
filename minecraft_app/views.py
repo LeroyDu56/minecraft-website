@@ -115,29 +115,41 @@ def store(request):
         available_ranks = all_ranks
         show_new_ranks_notice = False
     
-    # Récupérer les 10 derniers achats (UserPurchase et StoreItemPurchase)
+# Récupérer les 10 derniers achats (UserPurchase et StoreItemPurchase)
     last_purchases = []
-    user_purchases = UserPurchase.objects.filter(
-        payment_status='completed'
-    ).select_related('user__profile', 'rank').order_by('-created_at')[:10]
+    try:
+        user_purchases = UserPurchase.objects.filter(
+            payment_status='completed'
+        ).select_related('user__profile', 'rank').order_by('-created_at')[:10]
+        
+        logger.debug(f"Found {user_purchases.count()} completed purchases")
+        
+        # Formatter les données pour l'affichage
+        for purchase in user_purchases:
+            try:
+                # Vérifier que l'utilisateur a un profil
+                if hasattr(purchase.user, 'profile'):
+                    minecraft_username = purchase.user.profile.minecraft_username or purchase.user.username
+                    minecraft_uuid = purchase.user.profile.minecraft_uuid
+                else:
+                    minecraft_username = purchase.user.username
+                    minecraft_uuid = None
+                
+                # Même si le montant est 0, on l'affiche
+                purchase_info = {
+                    'minecraft_username': minecraft_username,
+                    'minecraft_uuid': minecraft_uuid,
+                    'amount': float(purchase.amount) if purchase.amount else 0.00,
+                    'purchase_date': purchase.created_at
+                }
+                last_purchases.append(purchase_info)
+                logger.debug(f"Added purchase: {minecraft_username}, amount: {purchase.amount}")
+            except Exception as e:
+                logger.error(f"Error processing purchase {purchase.id}: {str(e)}")
+    except Exception as e:
+        logger.error(f"Error fetching purchases: {str(e)}")
     
-    store_item_purchases = StoreItemPurchase.objects.filter(
-        payment_status='completed'
-    ).select_related('user__profile', 'store_item').order_by('-created_at')[:10]
-    
-    # Combiner et trier les achats par date
-    combined_purchases = list(user_purchases) + list(store_item_purchases)
-    combined_purchases.sort(key=lambda x: x.created_at, reverse=True)
-    
-    # Formatter les données pour l'affichage
-    for purchase in combined_purchases[:10]:
-        purchase_info = {
-            'minecraft_username': purchase.user.profile.minecraft_username or purchase.user.username,
-            'minecraft_uuid': purchase.user.profile.minecraft_uuid or '',
-            'amount': purchase.amount,
-            'purchase_date': purchase.created_at  # Utiliser created_at ici
-        }
-        last_purchases.append(purchase_info)
+    logger.debug(f"Total last purchases to display: {len(last_purchases)}")
     
     # Récupérer les données du panier si l'utilisateur est authentifié
     cart_count = 0
