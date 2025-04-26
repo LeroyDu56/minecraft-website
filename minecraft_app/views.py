@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, UserProfile, UserPurchase, StoreItemPurchase, StoreItem, CartItem
+from .models import TownyServer, Nation, Town, StaffMember, Rank, ServerRule, DynamicMapPoint, UserProfile, UserPurchase, StoreItemPurchase, StoreItem, CartItem, WebhookError
 from django.db.models import Count, Sum, F
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
@@ -389,70 +389,141 @@ def payment_success(request):
 
 @csrf_exempt
 def stripe_webhook(request):
-    payload = request.body
+    logger.debug("Webhook received with payload: %s", request.body)
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
-
+    
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
+            request.body, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except ValueError:
+        logger.info("Webhook event received: %s", event['type'])
+    except ValueError as e:
+        logger.error("Invalid webhook payload: %s", str(e))
         return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError:
+    except stripe.error.SignatureVerificationError as e:
+        logger.error("Webhook signature verification failed: %s", str(e))
         return HttpResponse(status=400)
 
-    # Handle different event types
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        process_successful_payment(session)
+        logger.info("Processing checkout.session.completed for session: %s", session['id'])
+        try:
+            process_successful_payment(session)
+            logger.info("Successfully processed session: %s", session['id'])
+        except Exception as e:
+            logger.error("Error processing session %s: %s", session['id'], str(e))
     elif event['type'] == 'payment_intent.payment_failed':
-        session = event['data']['object']
-        process_failed_payment(session)
+        logger.warning("Payment failed for session: %s", event['data']['object']['id'])
+        process_failed_payment(event['data']['object'])
     elif event['type'] == 'checkout.session.expired':
-        session = event['data']['object']
-        process_expired_session(session)
+        logger.info("Checkout session expired: %s", event['data']['object']['id'])
+        process_expired_session(event['data']['object'])
 
     return HttpResponse(status=200)
 
 def process_successful_payment(session):
-    # Get information from metadata
+    logger.debug("Processing session with metadata: %s", session.get('metadata', {}))
     user_id = session.get('metadata', {}).get('user_id')
-    rank_id = session.get('metadata', {}).get('rank_id')
-    
-    if user_id and rank_id:
-        try:
-            user = User.objects.get(id=user_id)
-            rank = Rank.objects.get(id=rank_id)
-            
-            # Record the purchase
-            purchase = UserPurchase.objects.create(
-                user=user,
-                rank=rank,
-                amount=rank.price,
-                payment_id=session.id,
-                payment_status='completed'
-            )
-            
-            # Appliquer le rang sur le serveur Minecraft
-            minecraft_username = user.profile.minecraft_username
-            if minecraft_username:
-                success = apply_rank_to_player(minecraft_username, rank.name)
-                if success:
-                    logging.info(f"Rank {rank.name} successfully applied to Minecraft player {minecraft_username}")
-                else:
-                    logging.error(f"Failed to apply rank {rank.name} to player {minecraft_username}")
-            else:
-                logging.warning(f"User {user.username} doesn't have a Minecraft username set; rank not applied")
-            
-            logging.info(f"Payment successful for {rank.name} by {user.username}")
-        except User.DoesNotExist:
-            logging.error(f"User with ID {user_id} not found")
-        except Rank.DoesNotExist:
-            logging.error(f"Rank with ID {rank_id} not found")
-    else:
-        logging.error("User or rank metadata missing in Stripe session")
+    cart_items_ids = session.get('metadata', {}).get('cart_items', '').split(',')
 
+    if not user_id or not cart_items_ids or not cart_items_ids[0]:
+        error_msg = f"Missing or invalid metadata in session {session.get('id')}: user_id={user_id}, cart_items={cart_items_ids}"
+        logger.error(error_msg)
+        WebhookError.objects.create(
+            event_type='checkout.session.completed',
+            session_id=session.get('id'),
+            error_message=error_msg
+        )
+        return
+
+    try:
+        user = User.objects.get(id=user_id)
+        logger.info("Found user: %s", user.username)
+        with transaction.atomic():
+            for item_id in cart_items_ids:
+                if not item_id:
+                    logger.debug("Skipping empty item_id")
+                    continue
+                try:
+                    cart_item = CartItem.objects.select_related('rank', 'store_item').get(id=item_id, user=user)
+                    logger.debug("Processing cart item %s: rank=%s, store_item=%s", 
+                                 item_id, cart_item.rank, cart_item.store_item)
+                    if cart_item.rank:
+                        # Vérifier si l'utilisateur a déjà ce grade
+                        if UserPurchase.objects.filter(user=user, rank=cart_item.rank, payment_status='completed').exists():
+                            logger.warning("User %s already has rank %s, skipping", user.username, cart_item.rank.name)
+                            cart_item.delete()
+                            continue
+                        purchase = UserPurchase.objects.create(
+                            user=user,
+                            rank=cart_item.rank,
+                            amount=cart_item.rank.price,
+                            payment_id=session.id,
+                            payment_status='completed'
+                        )
+                        logger.info("Created UserPurchase %s for rank %s (user: %s)", 
+                                    purchase.id, cart_item.rank.name, user.username)
+                        minecraft_username = user.profile.minecraft_username
+                        if minecraft_username:
+                            success = apply_rank_to_player(minecraft_username, cart_item.rank.name)
+                            logger.info("Rank %s application for %s: %s", 
+                                        cart_item.rank.name, minecraft_username, 
+                                        "Success" if success else "Failed")
+                        else:
+                            logger.warning("No Minecraft username for user %s, rank %s not applied", 
+                                           user.username, cart_item.rank.name)
+                        cart_item.delete()
+                        logger.debug("Deleted cart item %s", item_id)
+                    elif cart_item.store_item:
+                        purchase = StoreItemPurchase.objects.create(
+                            user=user,
+                            store_item=cart_item.store_item,
+                            quantity=cart_item.quantity,
+                            amount=cart_item.store_item.price * cart_item.quantity,
+                            payment_id=session.id,
+                            payment_status='completed'
+                        )
+                        logger.info("Created StoreItemPurchase %s for %s (x%s)", 
+                                    purchase.id, cart_item.store_item.name, cart_item.quantity)
+                        if cart_item.store_item.quantity > 0:
+                            cart_item.store_item.quantity -= cart_item.quantity
+                            cart_item.store_item.quantity = max(0, cart_item.store_item.quantity)
+                            cart_item.store_item.save()
+                        cart_item.delete()
+                    else:
+                        logger.warning("Cart item %s has no rank or store item", item_id)
+                except CartItem.DoesNotExist:
+                    error_msg = f"CartItem {item_id} not found for user {user_id}"
+                    logger.error(error_msg)
+                    WebhookError.objects.create(
+                        event_type='checkout.session.completed',
+                        session_id=session.get('id'),
+                        error_message=error_msg
+                    )
+                except Exception as e:
+                    error_msg = f"Error processing cart item {item_id}: {str(e)}"
+                    logger.error(error_msg)
+                    WebhookError.objects.create(
+                        event_type='checkout.session.completed',
+                        session_id=session.get('id'),
+                        error_message=error_msg
+                    )
+    except User.DoesNotExist:
+        error_msg = f"User {user_id} not found for session {session.get('id')}"
+        logger.error(error_msg)
+        WebhookError.objects.create(
+            event_type='checkout.session.completed',
+            session_id=session.get('id'),
+            error_message=error_msg
+        )
+    except Exception as e:
+        error_msg = f"Unexpected error in process_successful_payment for session {session.get('id')}: {str(e)}"
+        logger.error(error_msg)
+        WebhookError.objects.create(
+            event_type='checkout.session.completed',
+            session_id=session.get('id'),
+            error_message=error_msg
+        )
 def process_failed_payment(session):
     # Log failed payment
     user_id = session.get('metadata', {}).get('user_id')

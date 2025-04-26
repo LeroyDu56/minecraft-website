@@ -197,3 +197,11 @@ class StoreItemPurchase(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.store_item.name if self.store_item else 'Deleted item'} x{self.quantity}"
 
+class WebhookError(models.Model):
+    event_type = models.CharField(max_length=100)
+    session_id = models.CharField(max_length=100)
+    error_message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.event_type} - {self.session_id} - {self.error_message[:50]}"
