@@ -222,6 +222,12 @@ section {
     gap: 30px;
 }
 
+.social-link.tiktok:hover {
+    background-color: #000000;
+    color: #ff0050;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
 /* Server Status */
 .server-status {
     display: flex;

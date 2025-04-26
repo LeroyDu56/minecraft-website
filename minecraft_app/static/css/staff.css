@@ -432,7 +432,7 @@
     margin-top: 30px;
     padding: 12px 30px;
     background: linear-gradient(135deg, #7289da, #5e77c9);
-    color: white;
+    color: white !important;
     border-radius: 30px;
     font-size: 1.1rem;
     font-weight: 600;
@@ -441,12 +441,18 @@
     transition: all 0.3s;
     width: 100%;
     border: none;
+    text-decoration: none !important;
+    cursor: pointer;
+    z-index: 2;
+    position: relative;
 }
 
 .apply-btn:hover {
-    transform: translateY(-5px);
+    transform: translateY(-0px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    color: white;
+    color: white !important;
+    text-decoration: none !important;
+    background: linear-gradient(135deg, #8299ea, #6e87d9);
 }
 
 .apply-btn i {
@@ -461,9 +467,9 @@
 
 @keyframes floatAnimation {
     0% { transform: translateY(0) translateX(0); opacity: 0.3; }
-    25% { transform: translateY(-50px) translateX(30px); opacity: 0.7; }
-    50% { transform: translateY(-100px) translateX(-30px); opacity: 0.5; }
-    75% { transform: translateY(-50px) translateX(-50px); opacity: 0.7; }
+    25% { transform: translateY(-20px) translateX(30px); opacity: 0.7; }
+    50% { transform: translateY(-50px) translateX(-30px); opacity: 0.5; }
+    75% { transform: translateY(-20px) translateX(-50px); opacity: 0.7; }
     100% { transform: translateY(0) translateX(0); opacity: 0.3; }
 }
 
