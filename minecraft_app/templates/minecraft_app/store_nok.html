@@ -1,0 +1,129 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Access Restricted - Novania Store{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/store_nok.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Store Access Hero Section -->
+<section class="store-access-hero">
+    <div class="store-access-particles" id="store-access-particles"></div>
+    <div class="store-access-hero-content">
+        <h1 class="store-access-title">Login Required</h1>
+        <p class="store-access-subtitle">To access our store, please sign in or create an account</p>
+    </div>
+</section>
+
+<!-- Store Access Main Section -->
+<section class="store-access-main">
+    <div class="container">
+        <div class="store-access-container">
+            <div class="store-access-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            
+            <h2 class="store-access-heading">Join Novania to Access the Store</h2>
+            <p class="store-access-description">Our store features exclusive ranks and items to enhance your gameplay experience. Create an account or sign in to discover our premium offerings and support the server!</p>
+            
+            <div class="store-access-benefits">
+                <h3>Why Create an Account?</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h4>Exclusive Access</h4>
+                        <p>Browse our full selection of ranks and items</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-crown"></i>
+                        <h4>Premium Ranks</h4>
+                        <p>Purchase ranks to get special perks and privileges</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-gift"></i>
+                        <h4>Unique Items</h4>
+                        <p>Discover exclusive treasures and collectibles</p>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-headset"></i>
+                        <h4>Support the Server</h4>
+                        <p>Help maintain and improve our community</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="store-access-actions">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-large">
+                    <i class="fas fa-user-plus"></i>
+                    Create Account
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-secondary btn-large">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </a>
+            </div>
+            
+            <div class="store-preview">
+                <h3>Store Preview</h3>
+                <div class="preview-images">
+                    <div class="preview-item rank-preview">
+                        <div class="preview-image">
+                            <i class="fas fa-crown" style="color: #ffd700;"></i>
+                        </div>
+                        <h4>Premium Ranks</h4>
+                        <p>VIP, Premium, Elite, Legend</p>
+                    </div>
+                    <div class="preview-item treasure-preview">
+                        <div class="preview-image">
+                            <i class="fas fa-gem" style="color: #e91e63;"></i>
+                        </div>
+                        <h4>Exclusive Treasures</h4>
+                        <p>Collectibles, Cosmetics, Utilities</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for store access hero
+        createParticles('store-access-particles', 40);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+    });
+</script>
+{% endblock %}

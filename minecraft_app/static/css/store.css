@@ -63,6 +63,87 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* New Ranks Notice */
+.new-ranks-notice {
+    background: linear-gradient(135deg, rgba(26, 37, 48, 0.8), rgba(52, 152, 219, 0.2));
+    border-radius: 15px;
+    padding: 50px 30px;
+    text-align: center;
+    margin: 40px auto;
+    max-width: 600px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.new-ranks-notice::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../images/grid-overlay.png') repeat;
+    opacity: 0.1;
+    z-index: 0;
+}
+
+.notice-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #ffd700, #ff9800);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 25px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+    animation: pulseIcon 2s infinite;
+}
+
+.notice-icon i {
+    font-size: 3rem;
+    color: white;
+}
+
+.new-ranks-notice h3 {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.new-ranks-notice p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    position: relative;
+    z-index: 1;
+    line-height: 1.6;
+}
+
+.no-ranks-available {
+    text-align: center;
+    padding: 40px;
+    background-color: var(--darker);
+    border-radius: 10px;
+    margin: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2rem;
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(1); box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5); }
+    100% { transform: scale(1); box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3); }
+}
+
+
+
 /* New Store Navigation Section */
 .store-navigation {
     background-color: var(--darker);
@@ -214,6 +295,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 30px;
+    align-items: stretch; /* This ensures all cards stretch to the same height */
+}
+
+.store-grid .product-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 
 /* Keep existing product cards (updated) */
@@ -228,6 +316,8 @@
     z-index: 1;
     height: 100%;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-card:after {
@@ -336,7 +426,7 @@
 
 .product-features {
     margin: 20px 0;
-    flex-grow: 1;
+    flex-grow: 1; 
 }
 
 .feature-list {
@@ -375,6 +465,7 @@
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 0 0 10px 10px;
     text-align: center;
+    margin-top: auto; 
 }
 
 .btn-purchase {
@@ -434,6 +525,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .treasure-card:hover {
@@ -518,9 +610,10 @@
 
 .treasure-footer {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     margin-top: auto;
+    padding: 0 25px 25px;
+    gap: 20px;
 }
 
 .treasure-price {
@@ -528,6 +621,12 @@
     font-weight: 700;
     color: #ffd700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.treasure-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .treasure-quantity {
@@ -542,10 +641,23 @@
 .quantity-control {
     display: flex;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
     overflow: hidden;
-    margin-right: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 40px;
+}
+
+.quantity-input {
+    width: 50px;
+    height: 34px;
+    border: none;
+    background: none;
+    text-align: center;
+    color: var(--light);
+    font-weight: 600;
+    font-size: 1.1rem;
+    -moz-appearance: textfield;
 }
 
 .quantity-input::-webkit-outer-spin-button,
@@ -554,11 +666,16 @@
     margin: 0;
 }
 
+.quantity-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
 .quantity-btn {
     background: none;
     border: none;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -566,17 +683,35 @@
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    z-index: 10;
+    z-index: 2;
     user-select: none;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .quantity-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
+    color: #ffd700;
 }
 
 .quantity-btn:active {
+    background-color: rgba(255, 255, 255, 0.2);
     transform: scale(0.95);
+}
+
+.quantity-btn.minus {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quantity-btn.plus {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.treasure-cart-form {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 5px;
 }
 
 .treasure-quantity input {
@@ -609,11 +744,11 @@
     transition: all 0.3s ease;
     font-size: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
 }
 
-.add-to-cart-btn:hover {
-    transform: translateY(-3px) scale(1.1);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+.add-to-cart-btn:active {
+    transform: translateY(-1px) scale(1.05);
 }
 
 /* Product color themes (same as before) */

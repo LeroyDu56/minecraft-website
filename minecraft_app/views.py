@@ -154,12 +154,37 @@ def staff(request):
 
 # Custom registration form
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField()
-    minecraft_username = forms.CharField(max_length=100, required=False, help_text="Your Minecraft username")
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'})
+    )
+    minecraft_username = forms.CharField(
+        max_length=100, 
+        required=False, 
+        help_text="Your Minecraft username",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'Enter your Minecraft username (optional)',
+            'autocomplete': 'off'
+        })
+    )
     
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2', 'minecraft_username']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Choose a username'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter your password'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm your password'})
+    
+    def clean_minecraft_username(self):
+        minecraft_username = self.cleaned_data.get('minecraft_username')
+        if minecraft_username and not is_minecraft_username_unique(minecraft_username):
+            raise forms.ValidationError("This Minecraft username is already taken by another user.")
+        return minecraft_username
 
 # Modify register_view to retrieve UUID
 def register_view(request):
@@ -239,6 +264,12 @@ def profile_view(request):
         discord_username = request.POST.get('discord_username')
         bio = request.POST.get('bio')
         
+        # Vérifier si le pseudo Minecraft est unique avant de mettre à jour
+        if minecraft_username and minecraft_username != profile.minecraft_username:
+            if not is_minecraft_username_unique(minecraft_username, user):
+                messages.error(request, "This Minecraft username is already taken by another user.")
+                return redirect('profile')
+        
         # Update profile
         old_minecraft_username = profile.minecraft_username
         
@@ -271,6 +302,21 @@ def profile_view(request):
     }
         
     return render(request, 'minecraft_app/profile.html', context)
+
+def check_minecraft_username(request):
+    """Vue API pour vérifier la disponibilité d'un pseudo Minecraft via AJAX"""
+    if request.method == 'GET':
+        username = request.GET.get('username', '')
+        current_user = request.user if request.user.is_authenticated else None
+        
+        is_available = is_minecraft_username_unique(username, current_user)
+        
+        return JsonResponse({
+            'available': is_available,
+            'message': 'Username is available' if is_available else 'This Minecraft username is already taken'
+        })
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @login_required
 def checkout(request, rank_id):
@@ -527,8 +573,37 @@ def contact(request):
 
 # Update your store view
 def store(request):
-    ranks_list = Rank.objects.all().order_by('price')
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return redirect('store_nok')
+    
+    # Get all ranks ordered by price
+    all_ranks = Rank.objects.all().order_by('price')
     store_items = StoreItem.objects.all().order_by('category', 'price')
+    
+    # Get user's purchased ranks
+    user_purchased_ranks = UserPurchase.objects.filter(
+        user=request.user,
+        payment_status='completed'
+    ).select_related('rank')
+    
+    # Get the highest rank the user owns (based on price)
+    highest_owned_rank = None
+    if user_purchased_ranks.exists():
+        highest_owned_rank = max(
+            [purchase.rank for purchase in user_purchased_ranks],
+            key=lambda rank: rank.price
+        )
+    
+    # Filter ranks to show
+    if highest_owned_rank:
+        # Show only ranks that are more expensive than the highest owned rank
+        available_ranks = all_ranks.filter(price__gt=highest_owned_rank.price)
+        show_new_ranks_notice = not available_ranks.exists()
+    else:
+        # User hasn't purchased any ranks, show all
+        available_ranks = all_ranks
+        show_new_ranks_notice = False
     
     # Get cart data if user is authenticated
     cart_count = 0
@@ -544,14 +619,29 @@ def store(request):
             cart_total += item.get_subtotal()
     
     context = {
-        'ranks': ranks_list,
+        'ranks': available_ranks,
         'store_items': store_items,
         'cart_count': cart_count,
         'cart_total': cart_total,
+        'show_new_ranks_notice': show_new_ranks_notice,
+        'user_has_any_rank': user_purchased_ranks.exists(),
+        'highest_owned_rank': highest_owned_rank,
     }
     
     return render(request, 'minecraft_app/store.html', context)
 
+def store_nok(request):
+    # If user is already authenticated, redirect to the actual store
+    if request.user.is_authenticated:
+        return redirect('store')
+    
+    server = TownyServer.objects.first()
+    
+    context = {
+        'server': server,
+    }
+    
+    return render(request, 'minecraft_app/store_nok.html', context)
 # Modifié le fichier views.py pour supporter AJAX dans la fonction add_to_cart
 
 @login_required
@@ -912,3 +1002,18 @@ def process_successful_payment(session):
         
     except User.DoesNotExist:
         logging.error(f"User with ID {user_id} not found")
+
+
+def is_minecraft_username_unique(username, current_user=None):
+    """
+    Vérifie si un pseudo Minecraft est unique dans la base de données
+    Exclut l'utilisateur actuel si fourni (pour la mise à jour du profil)
+    """
+    if not username:
+        return True
+    
+    existing_profiles = UserProfile.objects.filter(minecraft_username=username)
+    if current_user:
+        existing_profiles = existing_profiles.exclude(user=current_user)
+    
+    return not existing_profiles.exists()

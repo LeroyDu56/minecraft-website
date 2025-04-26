@@ -71,6 +71,24 @@
                     {% endif %}
                 </div>
                 
+                <!-- Minecraft Username -->
+                <div class="form-group">
+                    <label for="{{ form.minecraft_username.id_for_label }}" class="form-label">
+                        <i class="fas fa-cube"></i> Minecraft Username (optional)
+                    </label>
+                    {{ form.minecraft_username }}
+                    {% if form.minecraft_username.help_text %}
+                        <div class="form-help-text">{{ form.minecraft_username.help_text }}</div>
+                    {% endif %}
+                    {% if form.minecraft_username.errors %}
+                        <div class="form-error-container">
+                            {% for error in form.minecraft_username.errors %}
+                                <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
                 <!-- Password -->
                 <div class="form-group">
                     <label for="{{ form.password1.id_for_label }}" class="form-label">
@@ -179,6 +197,56 @@
             submitBtn.addEventListener('mouseleave', function() {
                 this.classList.remove('btn-hover');
             });
+        }
+        
+        // Minecraft username real-time validation
+        const minecraftUsernameInput = document.getElementById('id_minecraft_username');
+        
+        if (minecraftUsernameInput) {
+            // Créer un élément pour afficher les messages d'erreur
+            const errorElement = document.createElement('div');
+            errorElement.className = 'form-help-text error-text';
+            errorElement.style.color = 'var(--danger)';
+            errorElement.style.display = 'none';
+            errorElement.style.marginTop = '5px';
+            minecraftUsernameInput.parentNode.insertBefore(errorElement, minecraftUsernameInput.nextSibling);
+            
+            // Fonction de validation avec délai (debounce)
+            let timeoutId;
+            minecraftUsernameInput.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                
+                const username = this.value.trim();
+                if (!username) {
+                    errorElement.style.display = 'none';
+                    this.style.borderColor = '';
+                    return;
+                }
+                
+                // Attendre 500ms après que l'utilisateur ait arrêté de taper
+                timeoutId = setTimeout(() => {
+                    checkUsernameAvailability(username);
+                }, 500);
+            });
+            
+            function checkUsernameAvailability(username) {
+                // Faire la requête AJAX
+                fetch(`/check-minecraft-username/?username=${encodeURIComponent(username)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.available) {
+                            errorElement.style.display = 'none';
+                            minecraftUsernameInput.style.borderColor = '';
+                        } else {
+                            errorElement.textContent = data.message;
+                            errorElement.style.display = 'block';
+                            minecraftUsernameInput.style.borderColor = 'var(--danger)';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking username:', error);
+                    });
+            }
         }
     });
 </script>

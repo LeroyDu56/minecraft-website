@@ -1,14 +1,15 @@
+# Dans urls.py, ajouter la nouvelle URL pour store_nok
+
 from django.urls import path
 from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('nations/', views.nations, name='nations'),
-    path('nations/<int:nation_id>/', views.nation_detail, name='nation_detail'),
-    path('carte/', views.dynmap, name='dynmap'),
-    path('equipe/', views.staff, name='staff'),
-    path('boutique/', views.store, name='store'),
-    path('regles/', views.rules, name='rules'),
+    path('map/', views.dynmap, name='dynmap'),
+    path('staff/', views.staff, name='staff'),
+    path('store/', views.store, name='store'),
+    path('store/require_access/', views.store_nok, name='store_nok'),  # AJOUTER CETTE LIGNE
+    path('rules/', views.rules, name='rules'),
     path('contact/', views.contact, name='contact'),
     path('faq/', views.faq, name='faq'),
     path('login/', views.login_view, name='login'),
@@ -25,4 +26,5 @@ urlpatterns = [
     path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/update/', views.update_cart_quantity, name='update_cart_quantity'),
     path('cart/checkout/', views.checkout_cart, name='checkout_cart'),
+    path('check-minecraft-username/', views.check_minecraft_username, name='check_minecraft_username'),
 ]
