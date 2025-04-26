@@ -27,4 +27,6 @@ urlpatterns = [
     path('cart/update/', views.update_cart_quantity, name='update_cart_quantity'),
     path('cart/checkout/', views.checkout_cart, name='checkout_cart'),
     path('check-minecraft-username/', views.check_minecraft_username, name='check_minecraft_username'),
+    path('store/gift/<int:rank_id>/', views.gift_rank, name='gift_rank'),
+    path('verify-minecraft-username/', views.verify_minecraft_username, name='verify_minecraft_username'),
 ]

@@ -119,6 +119,10 @@
                                         <i class="fas fa-cart-plus"></i> Add to Cart
                                     </button>
                                 </form>
+                                
+                                <a href="{% url 'gift_rank' rank.id %}" class="btn-purchase gift-btn">
+                                    <i class="fas fa-gift"></i> Gift This Rank
+                                </a>
                             </div>
                         </div>
                     {% empty %}
@@ -382,6 +386,19 @@
             </div>
         </div>
     </div>
+
+    <div class="summary-container">
+        <div class="summary-content">
+            <h3>Shop Summary</h3>
+            <ul>
+                <li><strong>Items in Cart :</strong> <span id="cart-count">{{ cart_count|default:"0" }}</span></li>
+                <li><strong>Cart Total :</strong> <span id="cart-total">€{{ cart_total|default:"0.00" }}</span></li>
+            </ul>
+            <a href="{% url 'cart' %}" class="btn-cart">
+                <i class="fas fa-shopping-cart"></i> View Cart
+            </a>
+        </div>
+    </div>
 </section>
 {% endblock %}
 
@@ -416,6 +433,24 @@ document.addEventListener('DOMContentLoaded', function() {
             
             particlesContainer.appendChild(particle);
         }
+    }
+    
+    // Show/hide summary container on scroll
+    window.addEventListener('scroll', function() {
+        const summaryContainer = document.querySelector('.summary-container');
+        if (summaryContainer) {
+            if (window.scrollY > 200) {
+                summaryContainer.classList.add('visible');
+            } else {
+                summaryContainer.classList.remove('visible');
+            }
+        }
+    });
+
+    // Initialize summary visibility on page load
+    const summaryContainer = document.querySelector('.summary-container');
+    if (summaryContainer && window.scrollY > 200) {
+        summaryContainer.classList.add('visible');
     }
     
     // Store Tabs
@@ -453,7 +488,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Improved Quantity Buttons
     document.addEventListener('click', function(e) {
-        // Direct click on button or click on icon inside button
         if (e.target.classList.contains('quantity-btn') || e.target.closest('.quantity-btn')) {
             e.preventDefault();
             e.stopPropagation();
@@ -472,13 +506,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (button.classList.contains('minus')) {
                 if (currentValue > minValue) {
                     input.value = currentValue - 1;
-                    // Trigger change event for form handling
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             } else if (button.classList.contains('plus')) {
                 if (currentValue < maxValue) {
                     input.value = currentValue + 1;
-                    // Trigger change event for form handling
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                 } else {
                     showMessage('Maximum quantity is ' + maxValue, 'error');
@@ -497,7 +529,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const icon = this.querySelector('.faq-icon i');
             const isActive = faqItem.classList.contains('active');
             
-            // Close all FAQ items
             document.querySelectorAll('.faq-item').forEach(item => {
                 if (item !== faqItem) {
                     item.classList.remove('active');
@@ -508,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Toggle clicked item
             if (!isActive) {
                 faqItem.classList.add('active');
                 answer.style.maxHeight = answer.scrollHeight + 'px';
@@ -521,6 +551,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Update summary container with cart data
+    function updateSummary(cartCount, cartTotal) {
+        const cartCountElement = document.querySelector('#cart-count');
+        const cartTotalElement = document.querySelector('#cart-total');
+        
+        if (cartCountElement) {
+            cartCountElement.textContent = cartCount || 0;
+        }
+        if (cartTotalElement) {
+            cartTotalElement.textContent = cartTotal ? `€${parseFloat(cartTotal).toFixed(2)}` : '€0.00';
+        }
+    }
+    
+    // Update cart indicator and summary
+    function updateCartIndicator(count, total) {
+        const cartCount = document.querySelector('.cart-count');
+        const cartTotal = document.querySelector('.cart-total');
+        
+        if (cartCount) {
+            cartCount.textContent = count || 0;
+            cartCount.classList.add('pulse');
+            setTimeout(() => {
+                cartCount.classList.remove('pulse');
+            }, 500);
+        }
+        
+        if (cartTotal && total !== undefined) {
+            cartTotal.textContent = `€${parseFloat(total).toFixed(2)}`;
+        }
+        
+        // Update summary container
+        updateSummary(count, total);
+    }
+    
     // Convertir tous les formulaires d'ajout au panier en AJAX
     const addToCartForms = document.querySelectorAll(`form[action="${addToCartUrl}"]`);
     
@@ -531,7 +595,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const itemType = form.querySelector('input[name="item_type"]').value;
             const itemId = form.querySelector('input[name="item_id"]').value;
             
-            // Vérifier si le grade est déjà dans le panier
             if (itemType === 'rank' && addedRanks.has(itemId)) {
                 showMessage('Ce grade est déjà dans votre panier.', 'error');
                 return;
@@ -556,11 +619,10 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     showMessage(data.message, data.status);
+                    // Update both cart indicator and summary
                     updateCartIndicator(data.cart_count, data.cart_total);
-                    // Ajouter le grade à l'ensemble des grades ajoutés
                     if (itemType === 'rank') {
                         addedRanks.add(itemId);
-                        // Désactiver visuellement le bouton
                         const submitButton = form.querySelector('button[type="submit"]');
                         if (submitButton) {
                             submitButton.disabled = true;
@@ -568,7 +630,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             submitButton.style.cursor = 'not-allowed';
                         }
                     }
-                    // Réinitialiser l'input à 1 pour les trésors
                     if (itemType === 'store_item') {
                         const input = form.querySelector('input[name="quantity"]');
                         if (input) {
@@ -623,24 +684,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageElement.remove();
             }, 300);
         }, 4000);
-    }
-    
-    // Fonction pour mettre à jour l'indicateur du panier
-    function updateCartIndicator(count, total) {
-        const cartCount = document.querySelector('.cart-count');
-        const cartTotal = document.querySelector('.cart-total');
-        
-        if (cartCount) {
-            cartCount.textContent = count;
-            cartCount.classList.add('pulse');
-            setTimeout(() => {
-                cartCount.classList.remove('pulse');
-            }, 500);
-        }
-        
-        if (cartTotal && total !== undefined) {
-            cartTotal.textContent = `€${total}`;
-        }
     }
 });
 </script>

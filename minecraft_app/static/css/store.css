@@ -336,7 +336,7 @@
 }
 
 .product-card:hover {
-    transform: perspective(1000px) rotateY(3deg) translateY(-20px);
+    transform: perspective(1000px) rotateY(0deg) translateY(-5px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
     z-index: 2;
 }
@@ -460,33 +460,137 @@
 }
 
 .product-footer {
-    padding: 25px;
+    padding: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 0 0 10px 10px;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* Increased for better spacing */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.summary-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 280px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s ease;
+}
+
+.summary-container.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.summary-content {
+    background: linear-gradient(135deg, rgba(26, 37, 48, 0.9), rgba(52, 152, 219, 0.2));
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--light);
+}
+
+.summary-content h3 {
+    font-size: 1.5rem;
+    color: #ffd700;
+    margin-bottom: 15px;
     text-align: center;
-    margin-top: auto; 
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.summary-content ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.summary-content ul li {
+    padding: 8px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-content ul li:last-child {
+    border-bottom: none;
+}
+
+.summary-content ul li strong {
+    color: #74b9ff;
+}
+
+.btn-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #3498db, #2980b9);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cart:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(to right, #2980b9, #3498db);
+}
+
+.btn-cart i {
+    font-size: 1.2rem;
 }
 
 .btn-purchase {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 15px 20px;
-    border-radius: 30px;
+    gap: 8px;
+    width: 160px; /* Fixed width for consistency */
+    height: 45px; /* Fixed height for consistency */
+    padding: 0 15px;
+    border-radius: 25px;
+    font-size: 0.9rem; /* Smaller font to prevent wrapping */
     font-weight: 600;
-    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
     overflow: hidden;
-    color: #1a1a2e;
+    color: #fff; /* White text for better contrast */
     border: none;
     text-decoration: none;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.btn-purchase i {
+    font-size: 1rem;
+}
+
+.btn-purchase.add-to-cart-btn {
+    background: linear-gradient(to right, #3498db, #2980b9); /* Blue gradient for Add to Cart */
+}
+
+.btn-purchase.gift-btn {
+    background: linear-gradient(to right, #e74c3c, #c0392b); /* Red gradient for Gift This Rank */
+}
+
+.btn-purchase.gift-btn:hover {
+    color: white !important; /* Garde le texte blanc au hover */
 }
 
 .btn-purchase:before {
@@ -496,19 +600,23 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
     transform: translateX(-100%);
     transition: transform 0.6s;
 }
 
 .btn-purchase:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    color: #1a1a2e;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-purchase:hover:before {
     transform: translateX(100%);
+}
+
+.btn-purchase:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Treasure Cards (new) */

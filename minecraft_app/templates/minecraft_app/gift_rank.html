@@ -1,0 +1,145 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Gift {{ rank.name }} Rank - Novania{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/store.css' %}">
+<link rel="stylesheet" href="{% static 'css/gift_rank.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="store-hero">
+    <div class="store-particles" id="store-particles"></div>
+    <div class="store-hero-content">
+        <h1 class="store-title">Gift a Rank</h1>
+        <p class="store-subtitle">Give the gift of {{ rank.name }} to another player</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="gift-container">
+            <div class="gift-header">
+                <div class="gift-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h2>Gift {{ rank.name }} Rank</h2>
+                <p class="price" style="color: {{ rank.color_code }}">€{{ rank.price }}</p>
+            </div>
+            
+            <div class="rank-description">
+                <p>{{ rank.description }}</p>
+            </div>
+            
+            <form method="POST" id="gift-form" class="gift-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="minecraft_username" class="form-label">
+                        <i class="fas fa-cube"></i> Recipient's Minecraft Username
+                    </label>
+                    <input type="text" 
+                           id="minecraft_username" 
+                           name="minecraft_username" 
+                           class="form-control" 
+                           required
+                           placeholder="Enter the exact Minecraft username">
+                    <div id="username-verification" class="username-verification"></div>
+                    <small class="form-text text-muted">
+                        The recipient must have an account on our website first.
+                    </small>
+                </div>
+                
+                <button type="submit" class="form-submit" id="gift-submit" disabled>
+                    <i class="fas fa-gift"></i> Gift This Rank
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create particles for store hero
+    createParticles('store-particles', 80);
+
+    // Function to create particles
+    function createParticles(containerId, count) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Random size
+            const size = Math.random() * 4 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            // Random horizontal position
+            particle.style.left = Math.random() * 100 + '%';
+            
+            // Start at bottom
+            particle.style.transform = 'translateY(100vh)';
+            
+            // Random animation duration between 5s and 15s
+            const duration = Math.random() * 10 + 5;
+            particle.style.animationDuration = duration + 's';
+            
+            // Random opacity
+            particle.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            container.appendChild(particle);
+        }
+        
+        // Force reflow to trigger animations immediately
+        container.offsetHeight;
+    }
+
+    // Username verification logic
+    const usernameInput = document.getElementById('minecraft_username');
+    const verificationDiv = document.getElementById('username-verification');
+    const submitButton = document.getElementById('gift-submit');
+    let timeoutId;
+    
+    usernameInput.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        const username = this.value.trim();
+        
+        if (!username) {
+            verificationDiv.innerHTML = '';
+            submitButton.disabled = true;
+            return;
+        }
+        
+        timeoutId = setTimeout(() => {
+            fetch(`/verify-minecraft-username/?username=${encodeURIComponent(username)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        if (data.is_self) {
+                            verificationDiv.className = 'username-verification verification-error';
+                            verificationDiv.innerHTML = '<i class="fas fa-times-circle"></i> You cannot gift a rank to yourself';
+                            submitButton.disabled = true;
+                        } else {
+                            verificationDiv.className = 'username-verification verification-success';
+                            verificationDiv.innerHTML = '<i class="fas fa-check-circle"></i> Player found! You can gift this rank';
+                            submitButton.disabled = false;
+                        }
+                    } else {
+                        verificationDiv.className = 'username-verification verification-error';
+                        verificationDiv.innerHTML = '<i class="fas fa-times-circle"></i> ' + (data.message || 'Player not found');
+                        submitButton.disabled = true;
+                    }
+                });
+        }, 500);
+    });
+});
+</script>
+{% endblock %}

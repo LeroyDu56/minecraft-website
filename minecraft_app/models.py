@@ -128,9 +128,13 @@ class UserPurchase(models.Model):
     payment_id = models.CharField(max_length=100, unique=True)
     payment_status = models.CharField(max_length=20, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    is_gift = models.BooleanField(default=False)
+    gifted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='gifts_given')
     
     def __str__(self):
-        return f"{self.user.username} - {self.rank.name if self.rank else 'Rang supprimé'}"
+        if self.is_gift and self.gifted_by:
+            return f"{self.user.username} - {self.rank.name if self.rank else 'Rank supprimé'} (Gift from {self.gifted_by.username})"
+        return f"{self.user.username} - {self.rank.name if self.rank else 'Rank supprimé'}"
     
 class StoreItem(models.Model):
     CATEGORY_CHOICES = [

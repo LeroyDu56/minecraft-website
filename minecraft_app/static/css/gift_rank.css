@@ -1,0 +1,69 @@
+.gift-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--darker);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.gift-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.gift-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.gift-form {
+    margin-top: 30px;
+}
+
+.username-verification {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.verification-success {
+    color: var(--success);
+}
+
+.verification-error {
+    color: var(--danger);
+}
+
+.store-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: float linear infinite;
+    animation-play-state: running; /* Ensure animation starts immediately */
+    will-change: transform, opacity; /* Optimize animation performance */
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh);
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-100vh);
+        opacity: 0.5;
+    }
+}
