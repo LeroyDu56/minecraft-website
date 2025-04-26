@@ -124,7 +124,7 @@ class UserProfile(models.Model):
 class UserPurchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='purchases')
     rank = models.ForeignKey(Rank, on_delete=models.SET_NULL, null=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     payment_id = models.CharField(max_length=100, unique=True)
     payment_status = models.CharField(max_length=20, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)

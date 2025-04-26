@@ -82,97 +82,11 @@ def dynmap(request):
     
     return render(request, 'minecraft_app/dynmap.html', context)
 
-def store(request):
-    # Vérifier si l'utilisateur est authentifié
-    if not request.user.is_authenticated:
-        return redirect('store_nok')
-    
-    # Récupérer tous les grades triés par prix
-    all_ranks = Rank.objects.all().order_by('price')
-    store_items = StoreItem.objects.all().order_by('category', 'price')
-    
-    # Récupérer les grades achetés par l'utilisateur
-    user_purchased_ranks = UserPurchase.objects.filter(
-        user=request.user,
-        payment_status='completed'
-    ).select_related('rank')
-    
-    # Déterminer le grade le plus élevé possédé par l'utilisateur (basé sur le prix)
-    highest_owned_rank = None
-    if user_purchased_ranks.exists():
-        highest_owned_rank = max(
-            [purchase.rank for purchase in user_purchased_ranks],
-            key=lambda rank: rank.price
-        )
-    
-    # Filtrer les grades à afficher
-    if highest_owned_rank:
-        # Afficher uniquement les grades plus chers que le grade le plus élevé possédé
-        available_ranks = all_ranks.filter(price__gt=highest_owned_rank.price)
-        show_new_ranks_notice = not available_ranks.exists()
-    else:
-        # L'utilisateur n'a acheté aucun grade, afficher tous les grades
-        available_ranks = all_ranks
-        show_new_ranks_notice = False
-    
-# Récupérer les 10 derniers achats (UserPurchase et StoreItemPurchase)
-    last_purchases = []
-    try:
-        user_purchases = UserPurchase.objects.filter(
-            payment_status='completed'
-        ).select_related('user__profile', 'rank').order_by('-created_at')[:10]
-        
-        logger.debug(f"Found {user_purchases.count()} completed purchases")
-        
-        # Formatter les données pour l'affichage
-        for purchase in user_purchases:
-            try:
-                # Vérifier que l'utilisateur a un profil
-                if hasattr(purchase.user, 'profile'):
-                    minecraft_username = purchase.user.profile.minecraft_username or purchase.user.username
-                    minecraft_uuid = purchase.user.profile.minecraft_uuid
-                else:
-                    minecraft_username = purchase.user.username
-                    minecraft_uuid = None
-                
-                # Même si le montant est 0, on l'affiche
-                purchase_info = {
-                    'minecraft_username': minecraft_username,
-                    'minecraft_uuid': minecraft_uuid,
-                    'amount': float(purchase.amount) if purchase.amount else 0.00,
-                    'purchase_date': purchase.created_at
-                }
-                last_purchases.append(purchase_info)
-                logger.debug(f"Added purchase: {minecraft_username}, amount: {purchase.amount}")
-            except Exception as e:
-                logger.error(f"Error processing purchase {purchase.id}: {str(e)}")
-    except Exception as e:
-        logger.error(f"Error fetching purchases: {str(e)}")
-    
-    logger.debug(f"Total last purchases to display: {len(last_purchases)}")
-    
-    # Récupérer les données du panier si l'utilisateur est authentifié
-    cart_count = 0
-    cart_total = 0
-    
-    if request.user.is_authenticated:
-        cart_items = CartItem.objects.filter(user=request.user)
-        cart_count = cart_items.count()
-        
-        # Calculer le total du panier
-        cart_total = 0
-        for item in cart_items:
-            cart_total += item.get_subtotal()
+def store(request):  # Replace ranks
+    ranks_list = Rank.objects.all().order_by('price')
     
     context = {
-        'ranks': available_ranks,
-        'store_items': store_items,
-        'cart_count': cart_count,
-        'cart_total': cart_total,
-        'show_new_ranks_notice': show_new_ranks_notice,
-        'user_has_any_rank': user_purchased_ranks.exists(),
-        'highest_owned_rank': highest_owned_rank,
-        'last_purchases': last_purchases,  # Ajouter les derniers achats au contexte
+        'ranks': ranks_list,
     }
     
     return render(request, 'minecraft_app/store.html', context)
