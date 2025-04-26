@@ -560,83 +560,101 @@ def add_to_cart(request):
         item_type = request.POST.get('item_type')
         item_id = request.POST.get('item_id')
         quantity = int(request.POST.get('quantity', 1))
-        message = ""
-        status = "success"
-        
-        if item_type == 'rank':
-            try:
-                rank = Rank.objects.get(id=item_id)
-                
-                # Check if already in cart
-                cart_item, created = CartItem.objects.get_or_create(
-                    user=request.user,
-                    rank=rank,
-                    defaults={'quantity': 1} # Ranks always have quantity 1
-                )
-                
-                if not created:
-                    # Rank already in cart
-                    message = f"Rank '{rank.name}' is already in your cart."
-                    status = "info"
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+        try:
+            # Ensure quantity is within bounds
+            max_available = 99
+            if quantity < 1:
+                quantity = 1
+                error_msg = "Quantity must be at least 1."
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg})
                 else:
-                    message = f"Rank '{rank.name}' added to your cart."
-                
-            except Rank.DoesNotExist:
-                message = "The selected rank does not exist."
-                status = "error"
-                
-        elif item_type == 'store_item':
-            try:
+                    messages.warning(request, error_msg)
+
+            if item_type == 'store_item':
                 store_item = StoreItem.objects.get(id=item_id)
-                
-                # Check if already in cart
                 cart_item, created = CartItem.objects.get_or_create(
                     user=request.user,
                     store_item=store_item,
                     defaults={'quantity': quantity}
                 )
-                
                 if not created:
-                    # Update quantity if already in cart
-                    cart_item.quantity = F('quantity') + quantity
+                    # Incrémenter la quantité au lieu de la remplacer
+                    cart_item.quantity += quantity
+                    if cart_item.quantity > max_available:
+                        cart_item.quantity = max_available
+                        error_msg = f"Quantity adjusted to maximum available ({max_available})."
+                        if is_ajax:
+                            return JsonResponse({
+                                'success': False,
+                                'error': error_msg,
+                                'cart_count': CartItem.objects.filter(user=request.user).count(),
+                                'cart_total': f"{sum(item.get_subtotal() for item in CartItem.objects.filter(user=request.user)):.2f}",
+                                'current_quantity': cart_item.quantity
+                            })
+                        else:
+                            messages.warning(request, error_msg)
                     cart_item.save()
-                    cart_item.refresh_from_db()  # Important pour obtenir la nouvelle valeur
-                    message = f"Updated quantity of '{store_item.name}' in your cart."
+                    logger.debug("DEBUG: Saving CartItem %s: quantity=%s", cart_item.id, cart_item.quantity)
+                logger.debug("Added store_item %s to cart with quantity %s", item_id, quantity)
+            elif item_type == 'rank':
+                rank = Rank.objects.get(id=item_id)
+                cart_item, created = CartItem.objects.get_or_create(
+                    user=request.user,
+                    rank=rank,
+                    defaults={'quantity': 1}
+                )
+                if not created:
+                    error_msg = "Rank already in cart."
+                    if is_ajax:
+                        return JsonResponse({'success': False, 'error': error_msg})
+                    else:
+                        messages.warning(request, error_msg)
+                        return redirect('cart')
+                logger.debug("Added rank %s to cart", item_id)
+            else:
+                error_msg = "Invalid item type."
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg})
                 else:
-                    message = f"'{store_item.name}' added to your cart."
-                
-            except StoreItem.DoesNotExist:
-                message = "The selected item does not exist."
-                status = "error"
-        
-        else:
-            message = "Invalid item type."
-            status = "error"
-        
-        # Calculer le nouveau total du panier
-        cart_items = CartItem.objects.filter(user=request.user)
-        cart_count = cart_items.count()
-        cart_total = sum(item.get_subtotal() for item in cart_items)
-        
-        # Si c'est une requête AJAX, renvoyer une réponse JSON
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'status': status,
-                'message': message,
-                'cart_count': cart_count,
-                'cart_total': cart_total
-            })
-        
-        # Sinon, ajouter le message flash et rediriger
-        if status == "success":
-            messages.success(request, message)
-        elif status == "info":
-            messages.info(request, message)
-        else:
-            messages.error(request, message)
-            
-        return redirect('store')
-    
+                    messages.error(request, error_msg)
+                    return redirect('store')
+
+            # Calculate cart totals
+            cart_items = CartItem.objects.filter(user=request.user)
+            cart_count = cart_items.count()
+            cart_total = sum(item.get_subtotal() for item in cart_items)
+
+            success_msg = "Item added to cart successfully."
+            if is_ajax:
+                return JsonResponse({
+                    'success': True,
+                    'message': success_msg,
+                    'status': 'success',
+                    'cart_count': cart_count,
+                    'cart_total': f"{cart_total:.2f}",
+                    'current_quantity': cart_item.quantity
+                })
+            else:
+                messages.success(request, success_msg)
+                return redirect('cart')
+
+        except (StoreItem.DoesNotExist, Rank.DoesNotExist):
+            error_msg = "Item not found."
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': error_msg})
+            else:
+                messages.error(request, error_msg)
+        except Exception as e:
+            error_msg = f"Error adding item to cart: {str(e)}"
+            logger.error(error_msg)
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': error_msg})
+            else:
+                messages.error(request, error_msg)
+
     return redirect('store')
 
 # View cart page

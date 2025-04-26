@@ -102,7 +102,7 @@
                         </div>
                         
                         <div class="product-footer">
-                            <form action="{% url 'add_to_cart' %}" method="POST">
+                            <form action="{% url 'add_to_cart' %}" method="POST" class="quantity-form">
                                 {% csrf_token %}
                                 <input type="hidden" name="item_type" value="rank">
                                 <input type="hidden" name="item_id" value="{{ rank.id }}">
@@ -270,14 +270,14 @@
                             <div class="treasure-footer">
                                 <div class="treasure-price">€{{ item.price }}</div>
                                 
-                                <form action="{% url 'add_to_cart' %}" method="POST" class="treasure-cart-form">
+                                <form action="{% url 'add_to_cart' %}" method="POST" class="treasure-cart-form quantity-form">
                                     {% csrf_token %}
                                     <input type="hidden" name="item_type" value="store_item">
                                     <input type="hidden" name="item_id" value="{{ item.id }}">
                                     
-                                    <div class="treasure-quantity">
+                                    <div class="quantity-control">
                                         <button type="button" class="quantity-btn minus">-</button>
-                                        <input type="number" name="quantity" value="1" min="1" max="{% if item.quantity > 0 %}{{ item.quantity }}{% else %}99{% endif %}">
+                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
                                         <button type="button" class="quantity-btn plus">+</button>
                                     </div>
                                     
@@ -305,15 +305,17 @@
                             <div class="treasure-footer">
                                 <div class="treasure-price">€2.50</div>
                                 
-                                <div class="treasure-quantity">
-                                    <button class="quantity-btn minus">-</button>
-                                    <input type="number" value="1" min="1" max="10">
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                                
-                                <button class="add-to-cart-btn" style="background-color: #ff9800;">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
+                                <form class="treasure-cart-form quantity-form">
+                                    <div class="quantity-control">
+                                        <button type="button" class="quantity-btn minus">-</button>
+                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                        <button type="button" class="quantity-btn plus">+</button>
+                                    </div>
+                                    
+                                    <button type="submit" class="add-to-cart-btn" style="background-color: #ff9800;">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -333,15 +335,17 @@
                             <div class="treasure-footer">
                                 <div class="treasure-price">€3.99</div>
                                 
-                                <div class="treasure-quantity">
-                                    <button class="quantity-btn minus">-</button>
-                                    <input type="number" value="1" min="1" max="1">
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                                
-                                <button class="add-to-cart-btn" style="background-color: #e91e63;">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
+                                <form class="treasure-cart-form quantity-form">
+                                    <div class="quantity-control">
+                                        <button type="button" class="quantity-btn minus">-</button>
+                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                        <button type="button" class="quantity-btn plus">+</button>
+                                    </div>
+                                    
+                                    <button type="submit" class="add-to-cart-btn" style="background-color: #e91e63;">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -361,15 +365,17 @@
                             <div class="treasure-footer">
                                 <div class="treasure-price">€1.99</div>
                                 
-                                <div class="treasure-quantity">
-                                    <button class="quantity-btn minus">-</button>
-                                    <input type="number" value="1" min="1" max="5">
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                                
-                                <button class="add-to-cart-btn" style="background-color: #4caf50;">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
+                                <form class="treasure-cart-form quantity-form">
+                                    <div class="quantity-control">
+                                        <button type="button" class="quantity-btn minus">-</button>
+                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                        <button type="button" class="quantity-btn plus">+</button>
+                                    </div>
+                                    
+                                    <button type="submit" class="add-to-cart-btn" style="background-color: #4caf50;">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -389,15 +395,17 @@
                             <div class="treasure-footer">
                                 <div class="treasure-price">€15.00</div>
                                 
-                                <div class="treasure-quantity">
-                                    <button class="quantity-btn minus">-</button>
-                                    <input type="number" value="1" min="1" max="1">
-                                    <button class="quantity-btn plus">+</button>
-                                </div>
-                                
-                                <button class="add-to-cart-btn" style="background-color: #9c27b0;">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
+                                <form class="treasure-cart-form quantity-form">
+                                    <div class="quantity-control">
+                                        <button type="button" class="quantity-btn minus">-</button>
+                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                                        <button type="button" class="quantity-btn plus">+</button>
+                                    </div>
+                                    
+                                    <button type="submit" class="add-to-cart-btn" style="background-color: #9c27b0;">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -475,201 +483,236 @@
 </section>
 {% endblock %}
 
-
 {% block extra_js %}
 <script>
-    // Define the add_to_cart URL as a JavaScript variable
-    const addToCartUrl = "{% url 'add_to_cart' %}";
+// Define the add_to_cart URL as a JavaScript variable
+const addToCartUrl = "{% url 'add_to_cart' %}";
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Create particles for the store-particles container
-        const particlesContainer = document.getElementById('store-particles');
-        if (particlesContainer) {
-            const particleCount = window.innerWidth < 768 ? 20 : 40;
+// Ensemble pour suivre les grades ajoutés au panier
+const addedRanks = new Set();
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Create particles for the store-particles container
+    const particlesContainer = document.getElementById('store-particles');
+    if (particlesContainer) {
+        const particleCount = window.innerWidth < 768 ? 20 : 40;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 4 + 2;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.left = Math.random() * 100 + '%';
-                
-                particle.style.opacity = Math.random() * 0.5 + 0.3;
-                
-                particle.style.animationDelay = Math.random() * 5 + 's';
-                
-                particlesContainer.appendChild(particle);
-            }
+            const size = Math.random() * 4 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.left = Math.random() * 100 + '%';
+            
+            particle.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            
+            particlesContainer.appendChild(particle);
         }
-        
-        // Store Tabs
-        const storeTabs = document.querySelectorAll('.store-tab');
-        const storeContents = document.querySelectorAll('.store-tab-content');
-        
-        storeTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                storeTabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                storeContents.forEach(content => content.classList.remove('active'));
-                const tabId = this.getAttribute('data-tab');
-                document.getElementById(tabId + '-content').classList.add('active');
+    }
+    
+    // Store Tabs
+    const storeTabs = document.querySelectorAll('.store-tab');
+    const storeContents = document.querySelectorAll('.store-tab-content');
+    
+    storeTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            storeTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            storeContents.forEach(content => content.classList.remove('active'));
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId + '-content').classList.add('active');
+        });
+    });
+    
+    // Category Filter
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const treasureCards = document.querySelectorAll('.treasure-card');
+    
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const category = this.getAttribute('data-category');
+            treasureCards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
             });
         });
+    });
+    
+    // Quantity Buttons
+    document.addEventListener('click', function(e) {
+        let button, input, form, quantity;
         
-        // Category Filter
-        const categoryBtns = document.querySelectorAll('.category-btn');
-        const treasureCards = document.querySelectorAll('.treasure-card');
-        
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const category = this.getAttribute('data-category');
-                treasureCards.forEach(card => {
-                    if (category === 'all' || card.getAttribute('data-category') === category) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        });
-        
-        // Quantity Buttons with Event Delegation
-        document.addEventListener('click', function(e) {
-            // Handle minus button
-            if (e.target.classList.contains('minus')) {
-                e.preventDefault();
-                const input = e.target.nextElementSibling;
-                if (input && input.type === 'number') {
-                    const currentValue = parseInt(input.value) || 1;
-                    const minValue = parseInt(input.min) || 1;
-                    if (currentValue > minValue) {
-                        input.value = currentValue - 1;
-                    }
-                }
-            } 
-            // Handle plus button
-            else if (e.target.classList.contains('plus')) {
-                e.preventDefault();
-                const input = e.target.previousElementSibling;
-                if (input && input.type === 'number') {
-                    const currentValue = parseInt(input.value) || 1;
-                    const maxValue = parseInt(input.max) || Infinity;
-                    if (currentValue < maxValue) {
-                        input.value = currentValue + 1;
-                    }
-                }
+        // Handle minus button
+        if (e.target.classList.contains('minus')) {
+            e.preventDefault();
+            button = e.target;
+            input = button.nextElementSibling;
+            form = button.closest('.quantity-form');
+            if (!form || !input || input.type !== 'number') return;
+            
+            const currentValue = parseInt(input.value) || 1;
+            const minValue = parseInt(input.min) || 1;
+            
+            if (currentValue > minValue) {
+                quantity = currentValue - 1;
+                input.value = quantity;
+                console.log("Quantity decreased to:", quantity);
             }
-        });
-        
-        // FAQ Toggle
-        const faqQuestions = document.querySelectorAll('.faq-question');
-        
-        faqQuestions.forEach(question => {
-            question.addEventListener('click', function() {
-                const faqItem = this.parentElement;
-                const answer = this.nextElementSibling;
-                const icon = this.querySelector('.faq-icon i');
-                
-                const isActive = faqItem.classList.contains('active');
-                document.querySelectorAll('.faq-item').forEach(item => {
-                    item.classList.remove('active');
-                    item.querySelector('.faq-answer').style.maxHeight = '0';
-                    item.querySelector('.faq-icon i').classList.replace('fa-chevron-up', 'fa-chevron-down');
-                });
-                
-                if (!isActive) {
-                    faqItem.classList.add('active');
-                    answer.style.maxHeight = answer.scrollHeight + 'px';
-                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
-                }
-            });
-        });
-        
-        // Convertir tous les formulaires d'ajout au panier en AJAX
-        const addToCartForms = document.querySelectorAll(`form[action="${addToCartUrl}"]`);
-        
-        addToCartForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                
-                fetch(addToCartUrl, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    showMessage(data.message, data.status);
-                    updateCartIndicator(data.cart_count, data.cart_total);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showMessage('An error occurred while adding to cart.', 'error');
-                });
-            });
-        });
-        
-        // Fonction pour afficher un message temporaire
-        function showMessage(message, status) {
-            const messageElement = document.createElement('div');
-            messageElement.className = `ajax-message ajax-message-${status}`;
-            messageElement.innerHTML = `
-                <div class="ajax-message-content">
-                    <span>${message}</span>
-                    <button class="ajax-message-close">×</button>
-                </div>
-            `;
+        } 
+        // Handle plus button
+        else if (e.target.classList.contains('plus')) {
+            e.preventDefault();
+            button = e.target;
+            input = button.previousElementSibling;
+            form = button.closest('.quantity-form');
+            if (!form || !input || input.type !== 'number') return;
             
-            document.body.appendChild(messageElement);
+            const currentValue = parseInt(input.value) || 1;
+            const maxValue = parseInt(input.max) || 99;
             
-            setTimeout(() => {
-                messageElement.classList.add('show');
-            }, 10);
-            
-            const closeButton = messageElement.querySelector('.ajax-message-close');
-            closeButton.addEventListener('click', () => {
-                messageElement.classList.remove('show');
-                setTimeout(() => {
-                    messageElement.remove();
-                }, 300);
-            });
-            
-            setTimeout(() => {
-                messageElement.classList.remove('show');
-                setTimeout(() => {
-                    messageElement.remove();
-                }, 300);
-            }, 4000);
-        }
-        
-        // Fonction pour mettre à jour l'indicateur du panier
-        function updateCartIndicator(count, total) {
-            const cartCount = document.querySelector('.cart-count');
-            const cartTotal = document.querySelector('.cart-total');
-            
-            if (cartCount) {
-                cartCount.textContent = count;
-                cartCount.classList.add('pulse');
-                setTimeout(() => {
-                    cartCount.classList.remove('pulse');
-                }, 500);
-            }
-            
-            if (cartTotal) {
-                cartTotal.textContent = `€${total}`;
+            if (currentValue < maxValue) {
+                quantity = currentValue + 1;
+                input.value = quantity;
+                console.log("Quantity increased to:", quantity);
+            } else {
+                alert('Maximum quantity is 99.');
             }
         }
     });
+    
+    // Convertir tous les formulaires d'ajout au panier en AJAX
+    const addToCartForms = document.querySelectorAll(`form[action="${addToCartUrl}"]`);
+    
+    addToCartForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const itemType = form.querySelector('input[name="item_type"]').value;
+            const itemId = form.querySelector('input[name="item_id"]').value;
+            
+            // Vérifier si le grade est déjà dans le panier
+            if (itemType === 'rank' && addedRanks.has(itemId)) {
+                showMessage('Ce grade est déjà dans votre panier.', 'error');
+                return;
+            }
+            
+            const formData = new FormData(form);
+            
+            const treasureCard = form.closest('.treasure-card') || form.closest('.product-card');
+            if (treasureCard) {
+                treasureCard.style.opacity = '0.7';
+            }
+            
+            fetch(addToCartUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, data.status);
+                    updateCartIndicator(data.cart_count, data.cart_total);
+                    // Ajouter le grade à l'ensemble des grades ajoutés
+                    if (itemType === 'rank') {
+                        addedRanks.add(itemId);
+                        // Désactiver visuellement le bouton
+                        const submitButton = form.querySelector('button[type="submit"]');
+                        if (submitButton) {
+                            submitButton.disabled = true;
+                            submitButton.style.opacity = '0.5';
+                            submitButton.style.cursor = 'not-allowed';
+                        }
+                    }
+                    // Réinitialiser l'input à 1 pour les trésors
+                    if (itemType === 'store_item') {
+                        const input = form.querySelector('input[name="quantity"]');
+                        if (input) {
+                            input.value = 1;
+                        }
+                    }
+                } else {
+                    showMessage(data.error, 'error');
+                    // Ne pas mettre à jour l'indicateur de panier en cas d'erreur
+                    console.error('Error adding to cart:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('AJAX error:', error);
+                showMessage('Une erreur est survenue lors de l\'ajout au panier.', 'error');
+            })
+            .finally(() => {
+                if (treasureCard) {
+                    treasureCard.style.opacity = '1';
+                }
+            });
+        });
+    });
+    
+    // Fonction pour afficher un message temporaire
+    function showMessage(message, status) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `ajax-message ajax-message-${status}`;
+        messageElement.innerHTML = `
+            <div class="ajax-message-content">
+                <span>${message}</span>
+                <button class="ajax-message-close">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(messageElement);
+        
+        setTimeout(() => {
+            messageElement.classList.add('show');
+        }, 10);
+        
+        const closeButton = messageElement.querySelector('.ajax-message-close');
+        closeButton.addEventListener('click', () => {
+            messageElement.classList.remove('show');
+            setTimeout(() => {
+                messageElement.remove();
+            }, 300);
+        });
+        
+        setTimeout(() => {
+            messageElement.classList.remove('show');
+            setTimeout(() => {
+                messageElement.remove();
+            }, 300);
+        }, 4000);
+    }
+    
+    // Fonction pour mettre à jour l'indicateur du panier
+    function updateCartIndicator(count, total) {
+        const cartCount = document.querySelector('.cart-count');
+        const cartTotal = document.querySelector('.cart-total');
+        
+        if (cartCount) {
+            cartCount.textContent = count;
+            cartCount.classList.add('pulse');
+            setTimeout(() => {
+                cartCount.classList.remove('pulse');
+            }, 500);
+        }
+        
+        if (cartTotal && total !== undefined) {
+            cartTotal.textContent = `€${total}`;
+        }
+    }
+});
 </script>
 {% endblock %}
