@@ -42,6 +42,32 @@
 
 <!-- Store Products Section -->
 <section class="store-products-section">
+    <!-- Last Purchases Sidebar -->
+    <div class="last-purchases-sidebar">
+        <h3 class="last-purchases-title">Derniers Achats</h3>
+        <div class="last-purchases-list">
+            {% for purchase in last_purchases %}
+                <div class="last-purchase-item">
+                    <div class="player-head">
+                        {% if purchase.minecraft_uuid %}
+                            <img src="https://crafatar.com/avatars/{{ purchase.minecraft_uuid }}?size=40&overlay" alt="{{ purchase.minecraft_username }}'s head">
+                        {% else %}
+                            <div class="placeholder-head">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="purchase-info">
+                        <span class="player-username">{{ purchase.minecraft_username }}</span>
+                        <span class="purchase-amount">€{{ purchase.amount|floatformat:2 }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="no-purchases">Aucun achat récent.</p>
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="container">
         <!-- Ranks Tab Content -->
         <div class="store-tab-content active" id="ranks-content">
