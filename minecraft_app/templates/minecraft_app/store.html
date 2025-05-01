@@ -75,37 +75,11 @@
                                 
                                 <div class="product-features">
                                     <ul class="feature-list">
-                                        {% if rank.name == "VIP" %}
-                                            <li><i class="fas fa-check-circle"></i> Colored chat and name tag</li>
-                                            <li><i class="fas fa-check-circle"></i> Access to /fly in the lobby</li>
-                                            <li><i class="fas fa-check-circle"></i> Set 2 homes</li>
-                                            <li><i class="fas fa-check-circle"></i> Special VIP Discord role</li>
-                                        {% elif rank.name == "Premium" %}
-                                            <li><i class="fas fa-check-circle"></i> All VIP features</li>
-                                            <li><i class="fas fa-check-circle"></i> Access to /enderchest</li>
-                                            <li><i class="fas fa-check-circle"></i> Set 5 homes</li>
-                                            <li><i class="fas fa-check-circle"></i> 20% shop discount</li>
-                                            <li><i class="fas fa-check-circle"></i> Premium Discord role</li>
-                                        {% elif rank.name == "Elite" %}
-                                            <li><i class="fas fa-check-circle"></i> All Premium features</li>
-                                            <li><i class="fas fa-check-circle"></i> Access to /workbench</li>
-                                            <li><i class="fas fa-check-circle"></i> Set 10 homes</li>
-                                            <li><i class="fas fa-check-circle"></i> 30% shop discount</li>
-                                            <li><i class="fas fa-check-circle"></i> Elite Discord role</li>
-                                            <li><i class="fas fa-check-circle"></i> Custom particle effects</li>
-                                        {% elif rank.name == "Legend" %}
-                                            <li><i class="fas fa-check-circle"></i> All Elite features</li>
-                                            <li><i class="fas fa-check-circle"></i> Set unlimited homes</li>
-                                            <li><i class="fas fa-check-circle"></i> 50% shop discount</li>
-                                            <li><i class="fas fa-check-circle"></i> Legend Discord role</li>
-                                            <li><i class="fas fa-check-circle"></i> Custom join messages</li>
-                                            <li><i class="fas fa-check-circle"></i> Monthly title customization</li>
-                                            <li><i class="fas fa-check-circle"></i> Priority server access</li>
-                                        {% else %}
-                                            <li><i class="fas fa-check-circle"></i> Feature 1</li>
-                                            <li><i class="fas fa-check-circle"></i> Feature 2</li>
-                                            <li><i class="fas fa-check-circle"></i> Feature 3</li>
-                                        {% endif %}
+                                        {% for feature in rank.get_features_list %}
+                                            <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
+                                        {% empty %}
+                                            <li><i class="fas fa-check-circle"></i> No features specified</li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>
@@ -194,127 +168,6 @@
                         </div>
                     </div>
                 </div>
-                {% empty %}
-                    <!-- Example store items if none are available in database -->
-                    <div class="treasure-card" data-category="collectible">
-                        <div class="treasure-image">
-                            <div class="treasure-placeholder" style="background-color: #ff9800">
-                                <i class="fas fa-user"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="treasure-content">
-                            <div class="treasure-category">Collectible</div>
-                            <h3 class="treasure-name" style="color: #ff9800">Custom Player Head</h3>
-                            <p class="treasure-description">Get a custom decorative player head of your choice for your builds and collections.</p>
-                            
-                            <div class="treasure-footer">
-                                <div class="treasure-price">€2.50</div>
-                                
-                                <form class="treasure-cart-form quantity-form">
-                                    <div class="quantity-control">
-                                        <button type="button" class="quantity-btn minus">-</button>
-                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                                        <button type="button" class="quantity-btn plus">+</button>
-                                    </div>
-                                    
-                                    <button type="submit" class="add-to-cart-btn" style="background-color: #ff9800;">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="treasure-card" data-category="cosmetic">
-                        <div class="treasure-image">
-                            <div class="treasure-placeholder" style="background-color: #e91e63">
-                                <i class="fas fa-magic"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="treasure-content">
-                            <div class="treasure-category">Cosmetic</div>
-                            <h3 class="treasure-name" style="color: #e91e63">Special Particle Effect</h3>
-                            <p class="treasure-description">Get a unique particle effect that follows you around as you explore the world.</p>
-                            
-                            <div class="treasure-footer">
-                                <div class="treasure-price">€3.99</div>
-                                
-                                <form class="treasure-cart-form quantity-form">
-                                    <div class="quantity-control">
-                                        <button type="button" class="quantity-btn minus">-</button>
-                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                                        <button type="button" class="quantity-btn plus">+</button>
-                                    </div>
-                                    
-                                    <button type="submit" class="add-to-cart-btn" style="background-color: #e91e63;">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="treasure-card" data-category="utility">
-                        <div class="treasure-image">
-                            <div class="treasure-placeholder" style="background-color: #4caf50">
-                                <i class="fas fa-home"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="treasure-content">
-                            <div class="treasure-category">Utility</div>
-                            <h3 class="treasure-name" style="color: #4caf50">Additional Home Slot</h3>
-                            <p class="treasure-description">Add an extra home teleport location to your existing limit.</p>
-                            
-                            <div class="treasure-footer">
-                                <div class="treasure-price">€1.99</div>
-                                
-                                <form class="treasure-cart-form quantity-form">
-                                    <div class="quantity-control">
-                                        <button type="button" class="quantity-btn minus">-</button>
-                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                                        <button type="button" class="quantity-btn plus">+</button>
-                                    </div>
-                                    
-                                    <button type="submit" class="add-to-cart-btn" style="background-color: #4caf50;">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="treasure-card" data-category="special">
-                        <div class="treasure-image">
-                            <div class="treasure-placeholder" style="background-color: #9c27b0">
-                                <i class="fas fa-crown"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="treasure-content">
-                            <div class="treasure-category">Special</div>
-                            <h3 class="treasure-name" style="color: #9c27b0">Town Customization</h3>
-                            <p class="treasure-description">Get assistance from our builders to customize your town with unique structures.</p>
-                            
-                            <div class="treasure-footer">
-                                <div class="treasure-price">€15.00</div>
-                                
-                                <form class="treasure-cart-form quantity-form">
-                                    <div class="quantity-control">
-                                        <button type="button" class="quantity-btn minus">-</button>
-                                        <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
-                                        <button type="button" class="quantity-btn plus">+</button>
-                                    </div>
-                                    
-                                    <button type="submit" class="add-to-cart-btn" style="background-color: #9c27b0;">
-                                        <i class="fas fa-cart-plus"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 {% endfor %}
             </div>
         </div>

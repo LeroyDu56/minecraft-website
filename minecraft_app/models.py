@@ -67,9 +67,16 @@ class Rank(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     color_code = models.CharField(max_length=7, help_text="HEX color code (e.g.: #FF0000)")
     is_donation = models.BooleanField(default=True)
+    features = models.TextField(blank=True, help_text="Enter features, one per line. These will be displayed as bullet points.")
     
     def __str__(self):
         return self.name
+    
+    def get_features_list(self):
+        """Return features as a list, separated by newlines"""
+        if self.features:
+            return [feature.strip() for feature in self.features.split('\n') if feature.strip()]
+        return []
 
 class ServerRule(models.Model):
     title = models.CharField(max_length=100)
