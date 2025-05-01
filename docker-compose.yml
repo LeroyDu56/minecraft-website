@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  minecraft_network:
+    driver: bridge
+
 services:
   web:
     build:

@@ -100,6 +100,15 @@ def rules(request):
     
     return render(request, 'minecraft_app/rules.html', context)
 
+def map_view(request):
+    server = TownyServer.objects.first()
+    
+    context = {
+        'server': server,
+    }
+    
+    return render(request, 'minecraft_app/map.html', context)
+
 def contact(request):
     server = TownyServer.objects.first()
     

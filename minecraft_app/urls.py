@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('map/', views.dynmap, name='dynmap'),
+    path('map/', views.map_view, name='dynmap'),
     path('staff/', views.staff, name='staff'),
     path('store/', views.store, name='store'),
     path('store/require_access/', views.store_nok, name='store_nok'),  # AJOUTER CETTE LIGNE

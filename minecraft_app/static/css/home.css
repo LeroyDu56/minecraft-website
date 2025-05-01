@@ -306,7 +306,33 @@
 
 .server-ip:hover {
     transform: scale(1.02);
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 215, 0, 0.4);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.5);
+    border-color: rgba(255, 215, 0, 0.5);
+}
+
+.server-ip::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.2) 50%, transparent 60%);
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: all 0.3s;
+}
+
+.server-ip:hover::before {
+    opacity: 1;
+    transform: translateX(100%);
+}
+
+.server-ip.copied {
+    animation: copy-success 0.6s ease;
+    background: rgba(0, 158, 0, 0.2);
+    border-color: rgba(46, 204, 113, 0.5);
+    box-shadow: 0 0 25px rgba(46, 204, 113, 0.5);
 }
 
 .server-ip::after {
@@ -316,7 +342,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.95);
     color: #fff;
     display: flex;
     align-items: center;
@@ -325,6 +351,38 @@
     font-size: 1rem;
     opacity: 0;
     transition: opacity 0.3s;
+    backdrop-filter: blur(3px);
+}
+
+.copy-notification {
+    position: fixed;
+    background: rgba(46, 204, 113, 0.95);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transform: translate(-50%, 0);
+    animation: notification-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+}
+
+.copy-notification i {
+    font-size: 1rem;
+}
+
+.copy-notification.fade-out {
+    animation: notification-fade 0.3s ease-out forwards;
+}
+
+@keyframes copy-success {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 .server-ip:hover::after {
@@ -368,6 +426,28 @@
 @keyframes copied {
     0% { background: linear-gradient(to right, #4CAF50, #2E7D32); }
     100% { background: linear-gradient(to right, #ffc107, #ff9800); }
+}
+
+@keyframes notification-pop {
+    0% { 
+        opacity: 0;
+        transform: translate(-50%, 10px) scale(0.8);
+    }
+    100% { 
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+    }
+}
+
+@keyframes notification-fade {
+    0% { 
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+    }
+    100% { 
+        opacity: 0;
+        transform: translate(-50%, -10px) scale(0.8);
+    }
 }
 
 .copied {
@@ -949,8 +1029,22 @@
     }
     
     .server-ip {
-        font-size: 1.2rem;
-        padding: 12px 20px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-family: 'Courier New', monospace;
+        text-align: center;
+        margin: 30px 0;
+        font-size: 1.4rem;
+        color: #ffd700;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        user-select: none;
     }
     
     .join-now .btn {

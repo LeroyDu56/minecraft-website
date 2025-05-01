@@ -89,24 +89,52 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     }
     
+
     // Copy server IP functionality
     const copyIpButton = document.getElementById('copy-ip');
     const serverIpElement = document.getElementById('server-ip');
     
-    if (copyIpButton) {
-        copyIpButton.addEventListener('click', function() {
+    if (serverIpElement) {
+        serverIpElement.addEventListener('click', function(e) {
             const serverIP = 'play.novania.fr';
             navigator.clipboard.writeText(serverIP).then(function() {
-                // Change button text temporarily
-                const originalText = copyIpButton.textContent;
-                copyIpButton.textContent = 'IP Copied!';
-                copyIpButton.classList.add('copied');
+                // Créer un élément de notification
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.innerHTML = '<i class="fas fa-check"></i> Copied!';
                 
-                setTimeout(function() {
-                    copyIpButton.textContent = originalText;
-                    copyIpButton.classList.remove('copied');
+                // Positionner la notification
+                const rect = serverIpElement.getBoundingClientRect();
+                notification.style.top = `${rect.top - 40}px`;
+                notification.style.left = `${rect.left + rect.width / 2}px`;
+                
+                document.body.appendChild(notification);
+                
+                // Animer l'élément IP
+                serverIpElement.classList.add('copied');
+                
+                // Supprimer la notification après l'animation
+                setTimeout(() => {
+                    notification.classList.add('fade-out');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 1500);
+                
+                // Réinitialiser l'état de l'élément IP
+                setTimeout(() => {
+                    serverIpElement.classList.remove('copied');
                 }, 2000);
             });
+        });
+        
+        // Effet de surbrillance au hover
+        serverIpElement.addEventListener('mouseenter', function() {
+            this.classList.add('hover');
+        });
+        
+        serverIpElement.addEventListener('mouseleave', function() {
+            this.classList.remove('hover');
         });
     }
     

@@ -1,0 +1,96 @@
+{% extends 'minecraft_app/base.html' %}
+{% load static %}
+
+{% block title %}Map - Novania Towny Earth Server{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/map.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Map Hero Section -->
+<section class="map-hero">
+    <div class="map-particles" id="map-particles"></div>
+    <div class="map-hero-content">
+        <h1 class="map-hero-title">Server Map</h1>
+        <p class="map-hero-subtitle">Explore our 1:1000 Earth Scale World</p>
+    </div>
+</section>
+
+<!-- Map Main Section -->
+<section class="map-main-section">
+    <div class="container">
+        <div class="map-coming-soon">
+            <div class="coming-soon-icon">
+                <i class="fas fa-globe-europe"></i>
+            </div>
+            <h2 class="coming-soon-title">Coming with Server Opening</h2>
+            <p class="coming-soon-text">Our dynamic map will be available when the server officially opens. You'll be able to explore towns, nations, and navigate our 1:1000 scale Earth map in real-time.</p>
+            
+            <div class="coming-soon-features">
+                <div class="feature-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Live Town Positions</h3>
+                    <p>See all towns and nations in real-time</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <h3>Player Locations</h3>
+                    <p>Track active players on the map</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-landmark"></i>
+                    <h3>Nation Territories</h3>
+                    <p>View claimed territories and borders</p>
+                </div>
+            </div>
+            
+            <div class="coming-soon-cta">
+                <a href="{% url 'home' %}#join" class="btn btn-primary">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Join the Server</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create particles for map hero
+        createParticles('map-particles', 40);
+        
+        // Function to create particles
+        function createParticles(containerId, count) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const particleCount = window.innerWidth < 768 ? Math.floor(count / 2) : count;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random size
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random position
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                
+                // Animation delay
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(particle);
+            }
+        }
+    });
+</script>
+{% endblock %}
