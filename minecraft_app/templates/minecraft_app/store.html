@@ -78,10 +78,10 @@
                                 <button class="toggle-features" style="background: linear-gradient(to right, {{ rank.color_code }}99, {{ rank.color_code }})" data-rank="{{ rank.name|lower }}">
                                     <span>View Features</span>
                                     <span class="features-count">{{ rank.get_features_list|length }}</span>
-                                    <i class="fas fa-chevron-down"></i>
+                                    <i class="fas fa-search"></i>
                                 </button>
                                 
-                                <div class="product-features" id="features-{{ rank.name|lower }}">
+                                <div class="product-features" id="features-{{ rank.name|lower }}" style="display: none;">
                                     <ul class="feature-list">
                                         {% for feature in rank.get_features_list %}
                                             <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
@@ -265,12 +265,6 @@
 
 {% block extra_js %}
 <script>
-// Define the add_to_cart URL as a JavaScript variable
-const addToCartUrl = "{% url 'add_to_cart' %}";
-
-// Ensemble pour suivre les grades ajoutés au panier
-const addedRanks = new Set();
-
 document.addEventListener('DOMContentLoaded', function() {
     // Create particles for the store-particles container
     const particlesContainer = document.getElementById('store-particles');
@@ -296,32 +290,108 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Toggle Features Functionality
+    // Features Popup Functionality
     const toggleFeaturesBtns = document.querySelectorAll('.toggle-features');
     
     toggleFeaturesBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const rankName = this.getAttribute('data-rank');
+            const rankTitle = this.closest('.product-card').querySelector('.product-name').textContent;
             const featuresElement = document.getElementById(`features-${rankName}`);
+            const featuresItems = featuresElement.querySelectorAll('li');
             
-            // Toggle expanded class
-            featuresElement.classList.toggle('expanded');
-            this.classList.toggle('expanded');
+            // Create popup
+            createFeaturesPopup(rankTitle, featuresItems, this.style.background);
             
-            // Change button text
-            const buttonText = this.querySelector('span');
-            if (featuresElement.classList.contains('expanded')) {
-                buttonText.textContent = 'Hide Features';
-                // Ajout d'une classe pour l'animation du contour
-                this.classList.add('pulsing');
-                setTimeout(() => {
-                    this.classList.remove('pulsing');
-                }, 1000);
-            } else {
-                buttonText.textContent = 'View Features';
-            }
+            // Add animation class to button
+            this.classList.add('pulsing');
+            setTimeout(() => {
+                this.classList.remove('pulsing');
+            }, 1000);
         });
     });
+    
+    // Function to create and display the features popup
+    function createFeaturesPopup(rankTitle, featuresItems, btnBackground) {
+        // Remove any existing popup
+        const existingPopup = document.getElementById('features-popup');
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+        
+        // Create popup elements
+        const popup = document.createElement('div');
+        popup.id = 'features-popup';
+        popup.className = 'features-popup';
+        
+        // Create popup content
+        const popupContent = document.createElement('div');
+        popupContent.className = 'popup-content';
+        
+        // Create header
+        const popupHeader = document.createElement('div');
+        popupHeader.className = 'popup-header';
+        popupHeader.style.background = btnBackground;
+        
+        const popupTitle = document.createElement('h3');
+        popupTitle.textContent = rankTitle + ' Features';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'popup-close';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.addEventListener('click', () => {
+            popup.classList.remove('active');
+            setTimeout(() => {
+                popup.remove();
+            }, 300);
+        });
+        
+        popupHeader.appendChild(popupTitle);
+        popupHeader.appendChild(closeBtn);
+        
+        // Create features list
+        const featuresList = document.createElement('ul');
+        featuresList.className = 'popup-features-list';
+        
+        featuresItems.forEach(item => {
+            const li = document.createElement('li');
+            li.innerHTML = item.innerHTML;
+            featuresList.appendChild(li);
+        });
+        
+        // Assemble popup
+        popupContent.appendChild(popupHeader);
+        popupContent.appendChild(featuresList);
+        popup.appendChild(popupContent);
+        
+        // Add to DOM
+        document.body.appendChild(popup);
+        
+        // Trigger animation
+        setTimeout(() => {
+            popup.classList.add('active');
+        }, 10);
+        
+        // Close when clicking outside
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.classList.remove('active');
+                setTimeout(() => {
+                    popup.remove();
+                }, 300);
+            }
+        });
+        
+        // Close on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('features-popup')) {
+                popup.classList.remove('active');
+                setTimeout(() => {
+                    popup.remove();
+                }, 300);
+            }
+        });
+    }
     
     // Show/hide summary container on scroll
     window.addEventListener('scroll', function() {
@@ -472,6 +542,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update summary container
         updateSummary(count, total);
     }
+    
+    // Define the add_to_cart URL as a JavaScript variable
+    const addToCartUrl = "{% url 'add_to_cart' %}";
+
+    // Ensemble pour suivre les grades ajoutés au panier
+    const addedRanks = new Set();
     
     // Convertir tous les formulaires d'ajout au panier en AJAX
     const addToCartForms = document.querySelectorAll(`form[action="${addToCartUrl}"]`);
