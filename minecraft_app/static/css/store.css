@@ -338,6 +338,24 @@
         max-height: 70vh;
     }
 }
+
+/* Ajouter dans store.css */
+.kit-image-container {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.kit-image {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.kit-image:hover {
+    transform: scale(1.05);
+}
+
 /* Badge de nombre de features */
 .features-count {
     position: absolute;

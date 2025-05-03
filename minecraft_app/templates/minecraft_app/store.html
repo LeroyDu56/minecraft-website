@@ -82,6 +82,11 @@
                                 </button>
                                 
                                 <div class="product-features" id="features-{{ rank.name|lower }}" style="display: none;">
+                                    {% if rank.kit_image %}
+                                    <div class="kit-image-container">
+                                        <img src="{% static 'images/'|add:rank.kit_image %}" alt="{{ rank.name }} Kit" class="kit-image">
+                                    </div>
+                                    {% endif %}
                                     <ul class="feature-list">
                                         {% for feature in rank.get_features_list %}
                                             <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
