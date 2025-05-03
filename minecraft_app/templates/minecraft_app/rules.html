@@ -25,96 +25,122 @@
 <section class="rules-main-section">
     <div class="container">
         <div class="rules-container">
-            {% for rule in rules %}
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
-                    <div class="rule-number">{{ forloop.counter }}</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">{{ rule.title }}</h3>
-                        <p class="rule-description">{{ rule.description }}</p>
-                    </div>
+            <!-- Rule 1 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="rule-number">1</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">Respect Other Players</h3>
+                    <p class="rule-description">No Harassment or Bullying: Any form of harassment, bullying, or abusive behavior towards other players is strictly prohibited. Treat others with respect.</p>
                 </div>
-            {% empty %}
-                <!-- Sample rules if no data available -->
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="rule-number">1</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">Respect All Players</h3>
-                        <p class="rule-description">Treat all players with respect. Harassment, hate speech, discrimination, and excessive swearing are not tolerated. Keep chat friendly and inclusive for all ages.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 2 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="rule-number">2</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">No Offensive Language</h3>
+                    <p class="rule-description">Keep your language appropriate. Avoid using offensive, discriminatory, or explicit language in public chat or private messages.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="rule-number">2</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">No Griefing or Stealing</h3>
-                        <p class="rule-description">Do not destroy others' property, steal items, or modify builds without permission. Respect town boundaries and claims. All grief will be rolled back and offenders will be punished.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 3 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="rule-number">3</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">No Griefing</h3>
+                    <p class="rule-description">Do not grief the wilderness if not necessary. Stealing is allowed, everyone has to be careful to perms they give to others. No Exploiting: Do not use bugs or glitches to your advantage. Report them immediately to staff.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="rule-number">3</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">No Cheating or Exploits</h3>
-                        <p class="rule-description">Using mods that give unfair advantages, exploiting bugs, or using alternate accounts to circumvent rules is prohibited. This includes X-ray texture packs, fly hacks, speed hacks, auto-clickers, etc.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 4 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="rule-number">4</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">No Hacking or Cheating</h3>
+                    <p class="rule-description">No Mods or Cheats: Do not use any modifications, hacks, or cheats that give you an unfair advantage over other players. This includes flying, X-ray, or any form of aimbot. No Client-Side Exploits: Do not use any client-side software that can be used for unfair advantage (e.g., speed hacks, autoclickers, etc.).</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="400">
-                    <div class="rule-number">4</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">Keep Builds Appropriate</h3>
-                        <p class="rule-description">All builds must be appropriate for all ages. Offensive, obscene, or inappropriate builds will be removed without warning, and the builder may face penalties.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 5 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="rule-number">5</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">No Spamming or Advertising</h3>
+                    <p class="rule-description">No Spamming in Chat: Do not flood the chat with repetitive messages, capital letters, or irrelevant content. No Advertising: Do not advertise other servers, websites, or services in chat unless given explicit permission by staff.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="500">
-                    <div class="rule-number">5</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">No Spamming</h3>
-                        <p class="rule-description">Do not spam the chat with repeated messages, excessive capitalization, or meaningless content. Use the appropriate channels for different types of communication.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 6 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="rule-number">6</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">In-Game Behavior</h3>
+                    <p class="rule-description">PvP: PvP is allowed in designated areas (e.g., warzones, wilderness). No AFK Farming: Avoid using AFK farms that generate excessive amounts of resources without interaction. These can disrupt the server economy and performance. No Using Unfair Farming Methods: Avoid exploiting automated systems or exploiting farming to an extreme degree (e.g., item duplication).</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="600">
-                    <div class="rule-number">6</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">War and PvP Rules</h3>
-                        <p class="rule-description">PvP is only allowed in designated areas or between towns/nations at war. War declarations must follow the proper protocols. No combat logging or excessive spawn killing. Respect truces and peace treaties.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 7 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="700">
+                <div class="rule-number">7</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">Respect Nations and Cities' Builds</h3>
+                    <p class="rule-description">City/Town Territory: Respect the boundaries of other players' cities, towns, or nations. Do not build or mine in their territory without permission. Do Not Block Public Roads: Ensure that your build doesn't obstruct public roads, pathways, or towns unless it is explicitly allowed by the server or town leader.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="700">
-                    <div class="rule-number">7</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">Respect Staff Decisions</h3>
-                        <p class="rule-description">Staff members have the final say in disputes and rule interpretations. If you disagree with a decision, you may appeal it through proper channels, but do so respectfully and follow the process.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 8 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="800">
+                <div class="rule-number">8</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">No Multi-Accounting</h3>
+                    <p class="rule-description">One Account Per Person: Do not use multiple accounts to gain unfair advantages, such as extra resources or protection. Multi-accounting is prohibited. Family or Shared Devices: If multiple people use the same device, make sure to inform the staff to avoid misunderstandings regarding multiple accounts.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="800">
-                    <div class="rule-number">8</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">Lag Prevention</h3>
-                        <p class="rule-description">Do not build machines or farms that cause excessive lag. Redstone contraptions should be optimized, and animal/mob farms should be kept within reasonable limits. Staff may disable or remove lag-causing devices.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 9 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="900">
+                <div class="rule-number">9</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">Respect Staff and Moderators</h3>
+                    <p class="rule-description">Follow Staff Instructions: Always listen to the server staff and moderators. If you feel like you've been treated unfairly, contact an administrator or submit a support ticket. No Arguing with Staff: If you disagree with a decision made by staff, please handle it politely. Arguing in public chat will not resolve the issue.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="900">
-                    <div class="rule-number">9</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">No Advertising</h3>
-                        <p class="rule-description">Do not advertise other servers, websites, or services in chat or through direct messages to players. Relevant Discord servers for towns or nations are allowed with moderation approval.</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 10 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="1000">
+                <div class="rule-number">10</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">Building and Terrain Rules</h3>
+                    <p class="rule-description">No Spamming Structures: Do not create large, unnecessary structures or farms that disrupt the aesthetic or functionality of the server. Terraforming: Do not terraform large areas excessively unless it is a part of your town or nation plan, and be respectful of others' builds.</p>
                 </div>
-                
-                <div class="rule-card" data-aos="fade-up" data-aos-delay="1000">
-                    <div class="rule-number">10</div>
-                    <div class="rule-content">
-                        <h3 class="rule-title">Have Fun!</h3>
-                        <p class="rule-description">Remember that Minecraft is a game, and our server is a community. Have fun, be creative, make friends, and enjoy building your towns and nations in our Earth-scale world!</p>
-                    </div>
+            </div>
+            
+            <!-- Rule 11 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="1100">
+                <div class="rule-number">11</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">No Inappropriate Content</h3>
+                    <p class="rule-description">No Inappropriate Builds: Do not build or display content that is offensive, sexually explicit, or inappropriate for a Minecraft community. No NSFW (Not Safe For Work) Content: Avoid sharing or displaying any inappropriate or adult material, either in-game or in the Discord server.</p>
                 </div>
-            {% endfor %}
+            </div>
+            
+            <!-- Rule 12 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="1200">
+                <div class="rule-number">12</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">Discord Use</h3>
+                    <p class="rule-description">No Toxic Behavior: Just like in the game, we expect respectful behavior on the server's Discord. Treat others with kindness, and avoid toxic interactions. Follow Discord Rules: Ensure you follow both the Discord and Minecraft server rules. Discord is a place for community interaction, so be friendly and help others. No Spamming in Voice Channels: Do not spam voice channels with music bots or disruptive noise. Always respect the other players in the channel.</p>
+                </div>
+            </div>
+            
+            <!-- Rule 13 -->
+            <div class="rule-card" data-aos="fade-up" data-aos-delay="1300">
+                <div class="rule-number">13</div>
+                <div class="rule-content">
+                    <h3 class="rule-title">Responsibility for Actions</h3>
+                    <p class="rule-description">Your Account is Your Responsibility: You are responsible for all actions taken by your account, whether done by you or someone you've shared your account with. Report Violations: If you see any violations of the rules, please report them to a staff member. Help us maintain a positive and fun community!</p>
+                </div>
+            </div>
         </div>
         
         <div class="rules-note">

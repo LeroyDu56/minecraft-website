@@ -73,7 +73,15 @@
                                     {{ rank.description }}
                                 </div>
                                 
-                                <div class="product-features">
+                                <!-- Bouton pour afficher les features -->
+                                <div class="features-separator"></div>
+                                <button class="toggle-features" style="background: linear-gradient(to right, {{ rank.color_code }}99, {{ rank.color_code }})" data-rank="{{ rank.name|lower }}">
+                                    <span>View Features</span>
+                                    <span class="features-count">{{ rank.get_features_list|length }}</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                
+                                <div class="product-features" id="features-{{ rank.name|lower }}">
                                     <ul class="feature-list">
                                         {% for feature in rank.get_features_list %}
                                             <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
@@ -287,6 +295,33 @@ document.addEventListener('DOMContentLoaded', function() {
             particlesContainer.appendChild(particle);
         }
     }
+    
+    // Toggle Features Functionality
+    const toggleFeaturesBtns = document.querySelectorAll('.toggle-features');
+    
+    toggleFeaturesBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const rankName = this.getAttribute('data-rank');
+            const featuresElement = document.getElementById(`features-${rankName}`);
+            
+            // Toggle expanded class
+            featuresElement.classList.toggle('expanded');
+            this.classList.toggle('expanded');
+            
+            // Change button text
+            const buttonText = this.querySelector('span');
+            if (featuresElement.classList.contains('expanded')) {
+                buttonText.textContent = 'Hide Features';
+                // Ajout d'une classe pour l'animation du contour
+                this.classList.add('pulsing');
+                setTimeout(() => {
+                    this.classList.remove('pulsing');
+                }, 1000);
+            } else {
+                buttonText.textContent = 'View Features';
+            }
+        });
+    });
     
     // Show/hide summary container on scroll
     window.addEventListener('scroll', function() {

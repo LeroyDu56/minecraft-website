@@ -112,6 +112,42 @@ def map_view(request):
 def contact(request):
     server = TownyServer.objects.first()
     
+    if request.method == 'POST':
+        # Get form data
+        name = request.POST.get('name', '')
+        discord_username = request.POST.get('discord_username', '')
+        minecraft_username = request.POST.get('minecraft_username', '')
+        subject = request.POST.get('subject', '')
+        message = request.POST.get('message', '')
+        
+        # Log received data
+        logging.debug(f"Contact form received - Name: {name}, Subject: {subject}")
+        
+        # Validate required fields
+        if name and subject and message:
+            # Log webhook URL from settings
+            webhook_url = settings.DISCORD_WEBHOOK_URL
+            logging.debug(f"Using webhook URL: {webhook_url}")
+            
+            if not webhook_url or webhook_url == '':
+                logging.error("Discord webhook URL is empty or not set")
+                messages.error(request, "Server configuration error: Discord webhook not configured.")
+                return redirect('contact')
+                
+            # Send the message to Discord webhook
+            success = send_discord_webhook(name, discord_username, minecraft_username, subject, message)
+            
+            if success:
+                messages.success(request, "Your message has been sent successfully. We'll get back to you as soon as possible.")
+            else:
+                messages.error(request, "There was an error sending your message. Please try again later or contact us on Discord.")
+            
+            # Redirect to avoid form resubmission
+            return redirect('contact')
+        else:
+            # If required fields are missing
+            messages.error(request, "Please fill in all required fields.")
+    
     context = {
         'server': server,
     }
@@ -732,76 +768,39 @@ def payment_failed(request):
     return render(request, 'minecraft_app/payment_failed.html')
 
 
-def contact(request):
-    server = TownyServer.objects.first()
+def send_discord_webhook(name, discord_username, minecraft_username, subject, message):
+    webhook_url = settings.DISCORD_WEBHOOK_URL
     
-    if request.method == 'POST':
-        # Récupérer les données du formulaire
-        name = request.POST.get('name', '')
-        discord_username = request.POST.get('discord_username', '')
-        minecraft_username = request.POST.get('minecraft_username', '')
-        subject = request.POST.get('subject', '')
-        message = request.POST.get('message', '')
-        
-        # Valider les données (vérification simple)
-        if name and subject and message:
-            # Ici, tu peux implémenter ta logique pour enregistrer le message dans une base de données
-            # ou l'envoyer via un webhook Discord
-            
-            # Exemple de code pour enregistrer dans une base de données (tu pourrais créer un modèle ContactMessage)
-            # ContactMessage.objects.create(
-            #     name=name,
-            #     discord_username=discord_username,
-            #     minecraft_username=minecraft_username,
-            #     subject=subject,
-            #     message=message,
-            #     status='pending'
-            # )
-            
-            # Envoyer une notification à l'équipe (à implémenter selon tes besoins)
-            # Par exemple, via un webhook Discord
-            # send_discord_webhook(name, discord_username, minecraft_username, subject, message)
-            
-            # Afficher un message de succès
-            messages.success(request, "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.")
-            
-            # Rediriger pour éviter la resoumission du formulaire
-            return redirect('contact')
-        else:
-            # Si des champs obligatoires sont manquants
-            messages.error(request, "Veuillez remplir tous les champs obligatoires.")
+    # Debug log
+    logging.debug(f"Sending to Discord webhook: {webhook_url}")
     
-    context = {
-        'server': server,
+    data = {
+        "embeds": [{
+            "title": f"New Contact Message: {subject}",
+            "description": message,
+            "color": 3447003,  # Discord blue
+            "fields": [
+                {"name": "From", "value": name, "inline": True},
+                {"name": "Discord", "value": discord_username or "Not provided", "inline": True},
+                {"name": "Minecraft", "value": minecraft_username or "Not provided", "inline": True}
+            ],
+            "footer": {"text": "Message sent from the website contact form"}
+        }]
     }
     
-    return render(request, 'minecraft_app/contact.html', context)
-
-# Fonction à implémenter pour envoyer les messages via Discord webhook
-# def send_discord_webhook(name, discord_username, minecraft_username, subject, message):
-#     webhook_url = settings.DISCORD_WEBHOOK_URL
-#     
-#     data = {
-#         "embeds": [{
-#             "title": f"Nouveau message: {subject}",
-#             "description": message,
-#             "color": 3447003,  # Bleu Discord
-#             "fields": [
-#                 {"name": "De", "value": name, "inline": True},
-#                 {"name": "Discord", "value": discord_username or "Non fourni", "inline": True},
-#                 {"name": "Minecraft", "value": minecraft_username or "Non fourni", "inline": True}
-#             ],
-#             "footer": {"text": "Message envoyé depuis le site web"}
-#         }]
-#     }
-#     
-#     try:
-#         response = requests.post(webhook_url, json=data)
-#         return response.status_code == 204
-#     except Exception as e:
-#         logging.error(f"Erreur d'envoi au webhook Discord: {str(e)}")
-#         return False
-
+    # Debug log of data being sent
+    logging.debug(f"Webhook data: {json.dumps(data)}")
+    
+    try:
+        response = requests.post(webhook_url, json=data)
+        
+        # Debug log of response
+        logging.debug(f"Discord webhook response: Status {response.status_code}, Content: {response.text}")
+        
+        return response.status_code == 204 or response.status_code == 200
+    except Exception as e:
+        logging.error(f"Error sending to Discord webhook: {str(e)}")
+        return False
 
 # Update your store view
 def store(request):

@@ -1,5 +1,147 @@
 /* Updated Store Styles - Enhanced for Novania */
+.product-features {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+    opacity: 0;
+}
 
+.product-features.expanded {
+    max-height: 1000px; /* Hauteur max suffisante pour contenir toutes les features */
+    opacity: 1;
+    margin-top: 15px;
+}
+
+.toggle-features {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 15px auto 0;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    border: none;
+    font-size: 0.9rem;
+    color: white;
+    width: 85%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Effet de shine sur le bouton comme les autres boutons du site */
+.toggle-features:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+}
+
+.toggle-features:hover:before {
+    transform: translateX(100%);
+}
+
+.toggle-features:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-features:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-features i {
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.toggle-features.expanded i {
+    transform: rotate(180deg);
+}
+
+/* Animation pour les features quand elles apparaissent */
+.feature-list li {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-features.expanded .feature-list li {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Timing progressif pour chaque élément de la liste */
+.product-features.expanded .feature-list li:nth-child(1) { transition-delay: 0.05s; }
+.product-features.expanded .feature-list li:nth-child(2) { transition-delay: 0.1s; }
+.product-features.expanded .feature-list li:nth-child(3) { transition-delay: 0.15s; }
+.product-features.expanded .feature-list li:nth-child(4) { transition-delay: 0.2s; }
+.product-features.expanded .feature-list li:nth-child(5) { transition-delay: 0.25s; }
+.product-features.expanded .feature-list li:nth-child(6) { transition-delay: 0.3s; }
+.product-features.expanded .feature-list li:nth-child(7) { transition-delay: 0.35s; }
+.product-features.expanded .feature-list li:nth-child(8) { transition-delay: 0.4s; }
+.product-features.expanded .feature-list li:nth-child(9) { transition-delay: 0.45s; }
+.product-features.expanded .feature-list li:nth-child(10) { transition-delay: 0.5s; }
+
+/* Séparateur avant le bouton */
+.features-separator {
+    width: 80%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 15px auto 10px;
+}
+
+/* Badge de nombre de features */
+.features-count {
+    position: absolute;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animation de pulsation pour le bouton lors du clic */
+@keyframes togglePulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.toggle-features.pulsing {
+    animation: togglePulse 1s ease-out;
+}
+
+/* Styles spécifiques aux boutons de chaque grade pour correspondre aux couleurs */
+.product-vip .toggle-features {
+    background: linear-gradient(to right, rgba(85, 239, 196, 0.7), rgba(85, 239, 196, 0.9));
+}
+
+.product-premium .toggle-features {
+    background: linear-gradient(to right, rgba(116, 185, 255, 0.7), rgba(116, 185, 255, 0.9));
+}
+
+.product-elite .toggle-features {
+    background: linear-gradient(to right, rgba(162, 155, 254, 0.7), rgba(162, 155, 254, 0.9));
+}
+
+.product-legend .toggle-features {
+    background: linear-gradient(to right, rgba(255, 234, 167, 0.7), rgba(255, 234, 167, 0.9));
+}
 /* Hero Section (same as before) */
 .store-hero {
     position: relative;
