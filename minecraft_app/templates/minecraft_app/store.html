@@ -84,7 +84,8 @@
                                 <div class="product-features" id="features-{{ rank.name|lower }}" style="display: none;">
                                     {% if rank.kit_image %}
                                     <div class="kit-image-container">
-                                        <img src="{% static 'images/'|add:rank.kit_image %}" alt="{{ rank.name }} Kit" class="kit-image">
+                                        <p>Kit features:</p>
+                                       <img src="/static/images/ranks/vip_kit.png" alt="{{ rank.name }} Kit" class="kit-image">
                                     </div>
                                     {% endif %}
                                     <ul class="feature-list">
@@ -317,86 +318,114 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Function to create and display the features popup
+    // Function to create and display the features popup
     function createFeaturesPopup(rankTitle, featuresItems, btnBackground) {
-        // Remove any existing popup
-        const existingPopup = document.getElementById('features-popup');
-        if (existingPopup) {
-            existingPopup.remove();
+    console.log("Creating features popup for:", rankTitle);
+    
+    // Remove any existing popup
+    const existingPopup = document.getElementById('features-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create popup elements
+    const popup = document.createElement('div');
+    popup.id = 'features-popup';
+    popup.className = 'features-popup';
+    
+    // Create popup content
+    const popupContent = document.createElement('div');
+    popupContent.className = 'popup-content';
+    
+    // Create header
+    const popupHeader = document.createElement('div');
+    popupHeader.className = 'popup-header';
+    popupHeader.style.background = btnBackground;
+    
+    const popupTitle = document.createElement('h3');
+    popupTitle.textContent = rankTitle + ' Features';
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'popup-close';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.addEventListener('click', () => {
+        popup.classList.remove('active');
+        setTimeout(() => {
+            popup.remove();
+        }, 300);
+    });
+    
+    popupHeader.appendChild(popupTitle);
+    popupHeader.appendChild(closeBtn);
+    
+    // First add the header to the popup content
+    popupContent.appendChild(popupHeader);
+    
+    // Find the source featuresElement from DOM
+    const rankName = rankTitle.toLowerCase();
+    const featuresElement = document.getElementById(`features-${rankName}`);
+    console.log("Features element found:", featuresElement);
+    
+    // Add the kit image if it exists
+    if (featuresElement) {
+        const kitImageContainer = featuresElement.querySelector('.kit-image-container');
+        console.log("Kit image container found:", kitImageContainer);
+        
+        if (kitImageContainer) {
+            // Clone the image container
+            const imageContainerClone = kitImageContainer.cloneNode(true);
+            console.log("Adding image container to popup:", imageContainerClone);
+            
+            // Add the image container after the header
+            popupContent.appendChild(imageContainerClone);
         }
-        
-        // Create popup elements
-        const popup = document.createElement('div');
-        popup.id = 'features-popup';
-        popup.className = 'features-popup';
-        
-        // Create popup content
-        const popupContent = document.createElement('div');
-        popupContent.className = 'popup-content';
-        
-        // Create header
-        const popupHeader = document.createElement('div');
-        popupHeader.className = 'popup-header';
-        popupHeader.style.background = btnBackground;
-        
-        const popupTitle = document.createElement('h3');
-        popupTitle.textContent = rankTitle + ' Features';
-        
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'popup-close';
-        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
-        closeBtn.addEventListener('click', () => {
+    }
+    
+    // Create features list
+    const featuresList = document.createElement('ul');
+    featuresList.className = 'popup-features-list';
+    
+    // Add features list items
+    featuresItems.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = item.innerHTML;
+        featuresList.appendChild(li);
+    });
+    
+    // Add the features list to the popup content
+    popupContent.appendChild(featuresList);
+    
+    // Add the popup content to the popup
+    popup.appendChild(popupContent);
+    
+    // Add to DOM
+    document.body.appendChild(popup);
+    
+    // Trigger animation
+    setTimeout(() => {
+        popup.classList.add('active');
+    }, 10);
+    
+    // Close when clicking outside
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
             popup.classList.remove('active');
             setTimeout(() => {
                 popup.remove();
             }, 300);
-        });
-        
-        popupHeader.appendChild(popupTitle);
-        popupHeader.appendChild(closeBtn);
-        
-        // Create features list
-        const featuresList = document.createElement('ul');
-        featuresList.className = 'popup-features-list';
-        
-        featuresItems.forEach(item => {
-            const li = document.createElement('li');
-            li.innerHTML = item.innerHTML;
-            featuresList.appendChild(li);
-        });
-        
-        // Assemble popup
-        popupContent.appendChild(popupHeader);
-        popupContent.appendChild(featuresList);
-        popup.appendChild(popupContent);
-        
-        // Add to DOM
-        document.body.appendChild(popup);
-        
-        // Trigger animation
-        setTimeout(() => {
-            popup.classList.add('active');
-        }, 10);
-        
-        // Close when clicking outside
-        popup.addEventListener('click', (e) => {
-            if (e.target === popup) {
-                popup.classList.remove('active');
-                setTimeout(() => {
-                    popup.remove();
-                }, 300);
-            }
-        });
-        
-        // Close on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('features-popup')) {
-                popup.classList.remove('active');
-                setTimeout(() => {
-                    popup.remove();
-                }, 300);
-            }
-        });
-    }
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('features-popup')) {
+            popup.classList.remove('active');
+            setTimeout(() => {
+                popup.remove();
+            }, 300);
+        }
+    });
+}
     
     // Show/hide summary container on scroll
     window.addEventListener('scroll', function() {
