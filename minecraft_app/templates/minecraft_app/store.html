@@ -59,14 +59,18 @@
             {% else %}
                 <div class="store-grid">
                     {% for rank in ranks %}
-                        <div class="product-card product-{{ rank.name|lower }}">
-                            <div class="product-header">
-                                <h3 class="product-name" style="color: {{ rank.color_code }}">{{ rank.name }}</h3>
-                                <div class="product-price">€{{ rank.price }}<span class="price-unit">/lifetime</span></div>
-                                {% if rank.name == "Premium" %}
-                                    <div class="product-badge">Most Popular</div>
-                                {% endif %}
-                                </div>
+                    <div class="product-card product-{{ rank.name|lower }}">
+                        <div class="product-header">
+                            <h3 class="product-name" style="color: {{ rank.color_code }}">{{ rank.name }}</h3>
+                            <div class="product-price">€{{ rank.price }}<span class="price-unit">/lifetime</span></div>
+                            {% if rank.original_price and rank.price != rank.original_price %}
+                                <div class="product-original-price">€{{ rank.original_price }}</div>
+                                <div class="product-discount">{{ rank.discount_percentage }}% OFF</div>
+                            {% endif %}
+                            {% if rank.name == "Premium" %}
+                                <div class="product-badge">Most Popular</div>
+                            {% endif %}
+                        </div>
                             
                             <div class="product-content">
                                 <div class="product-description">

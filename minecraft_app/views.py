@@ -817,7 +817,7 @@ def send_discord_webhook(name, discord_username, minecraft_username, subject, me
         logging.error(f"Error sending to Discord webhook: {str(e)}")
         return False
 
-# Update your store view
+
 def store(request):
     # Check if user is authenticated
     if not request.user.is_authenticated:
@@ -836,10 +836,13 @@ def store(request):
     # Get the highest rank the user owns (based on price)
     highest_owned_rank = None
     if user_purchased_ranks.exists():
-        highest_owned_rank = max(
-            [purchase.rank for purchase in user_purchased_ranks if purchase.rank],
-            key=lambda rank: rank.price
-        )
+        try:
+            highest_owned_rank = max(
+                [purchase.rank for purchase in user_purchased_ranks if purchase.rank],
+                key=lambda rank: rank.price
+            )
+        except Exception as e:
+            print(f"Error determining highest rank: {str(e)}")
     
     # Filter ranks to show and apply discounts if user has a rank
     available_ranks = []
@@ -849,21 +852,10 @@ def store(request):
         
         # Apply discounts to higher ranks
         for rank in higher_ranks:
-            # Store original price
+            # Calculate discounted price
             rank.original_price = rank.price
-            
-            # Calculate discount amount (difference between ranks)
-            discount_amount = highest_owned_rank.price
-            rank.discounted_price = rank.price - discount_amount
-            
-            # Calculate discount percentage
-            if rank.price > 0:
-                rank.discount_percentage = round((discount_amount / rank.price) * 100)
-            else:
-                rank.discount_percentage = 0
-                
-            # Temporarily modify the price for display
-            rank.display_price = rank.discounted_price
+            rank.discounted_price = rank.price - highest_owned_rank.price
+            rank.price = rank.discounted_price  # Update the price attribute directly
             
             available_ranks.append(rank)
             
@@ -946,24 +938,7 @@ def add_to_cart(request):
                 else:
                     messages.warning(request, error_msg)
 
-            if item_type == 'store_item':
-                store_item = StoreItem.objects.get(id=item_id)
-                
-                # Apply any rank-based discount
-                discount_percentage = get_player_discount(request.user)
-                item_price = store_item.price
-                if discount_percentage > 0:
-                    discount_factor = Decimal(1 - discount_percentage / 100)
-                    item_price = round(item_price * discount_factor, 2)
-                
-                cart_item, created = CartItem.objects.get_or_create(
-                    user=request.user,
-                    store_item=store_item,
-                    defaults={'quantity': quantity}
-                )
-                # Rest of the code...
-                
-            elif item_type == 'rank':
+            if item_type == 'rank':
                 rank = Rank.objects.get(id=item_id)
                 
                 # Check if user already has a rank and calculate discount
@@ -973,14 +948,19 @@ def add_to_cart(request):
                     payment_status='completed'
                 ).select_related('rank')
                 
+                # DEBUGGING: Log user purchases
+                logger.debug(f"User {request.user.username} adding rank {rank.name} to cart. Existing purchases: {[p.rank.name if p.rank else 'None' for p in user_purchases]}")
+                
                 if user_purchases.exists():
                     try:
                         highest_owned_rank = max(
                             [purchase.rank for purchase in user_purchases if purchase.rank],
-                            key=lambda rank: rank.price
+                            key=lambda r: r.price
                         )
-                    except (ValueError, TypeError):
-                        highest_owned_rank = None
+                        # DEBUGGING: Log highest owned rank
+                        logger.debug(f"Highest owned rank for cart: {highest_owned_rank.name}, price: {highest_owned_rank.price}")
+                    except (ValueError, TypeError) as e:
+                        logger.error(f"Error determining highest rank for cart: {str(e)}")
                 
                 # Create cart item with the right price info
                 cart_item, created = CartItem.objects.get_or_create(
@@ -989,14 +969,23 @@ def add_to_cart(request):
                     defaults={'quantity': 1}
                 )
                 
-                # Add metadata about the discount to be used later
+                # DEBUGGING: Log cart item status
+                logger.debug(f"Cart item {'created' if created else 'already exists'}")
+                
+                # Calculate and add metadata about the discount
                 if created and highest_owned_rank and highest_owned_rank.price < rank.price:
+                    discounted_price = rank.price - highest_owned_rank.price
+                    # DEBUGGING: Log discount calculation
+                    logger.debug(f"Applying discount: {rank.price} - {highest_owned_rank.price} = {discounted_price}")
+                    
                     cart_item.metadata = {
                         'original_price': str(rank.price),
-                        'discounted_price': str(rank.price - highest_owned_rank.price),
+                        'discounted_price': str(discounted_price),
                         'previous_rank_id': str(highest_owned_rank.id)
                     }
                     cart_item.save()
+                    # DEBUGGING: Log saved metadata
+                    logger.debug(f"Saved metadata: {cart_item.metadata}")
                 
                 if not created:
                     error_msg = "Rank already in cart."
