@@ -59,7 +59,7 @@
                             </div>
                             
                             <div class="cart-item-price">
-                                €{% if item.rank %}{{ item.rank.price }}{% else %}{{ item.store_item.price }}{% endif %}
+                                €{% if item.store_item %}{{ item.get_subtotal|floatformat:2 }}{% else %}{{ item.rank.price }}{% endif %}
                             </div>
                             
                             <div class="cart-item-quantity">

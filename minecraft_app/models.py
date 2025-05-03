@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import logging
+from decimal import Decimal
 
 class TownyServer(models.Model):
     name = models.CharField(max_length=100, default="Novania - Earth Towny")
@@ -176,6 +177,7 @@ class CartItem(models.Model):
     store_item = models.ForeignKey(StoreItem, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
+    metadata = models.JSONField(default=dict, blank=True)  # Nouveau champ pour les métadonnées
     
     class Meta:
         unique_together = [
@@ -192,9 +194,18 @@ class CartItem(models.Model):
     
     def get_subtotal(self):
         if self.rank:
+            # Check if there's metadata with discounted price
+            if hasattr(self, 'metadata') and self.metadata and 'discounted_price' in self.metadata:
+                return Decimal(self.metadata['discounted_price'])
             return self.rank.price
         elif self.store_item:
-            return self.store_item.price * self.quantity
+            # Apply any rank-based discount
+            discount_percentage = get_player_discount(self.user)
+            item_price = self.store_item.price
+            if discount_percentage > 0:
+                discount_factor = Decimal(1 - discount_percentage / 100)
+                item_price = round(item_price * discount_factor, 2)
+            return item_price * self.quantity
         return 0
     
     def save(self, *args, **kwargs):
@@ -224,3 +235,35 @@ class WebhookError(models.Model):
 
     def __str__(self):
         return f"{self.event_type} - {self.session_id} - {self.error_message[:50]}"
+    
+
+def get_player_discount(user):
+    """
+    Returns the discount percentage a player should receive based on their highest rank
+    """
+    if not user or not user.is_authenticated:
+        return 0
+    
+    # Get user's purchased ranks
+    purchased_ranks = UserPurchase.objects.filter(
+        user=user,
+        payment_status='completed'
+    ).select_related('rank')
+    
+    if not purchased_ranks.exists():
+        return 0
+    
+    # Get names of all purchased ranks
+    rank_names = [purchase.rank.name.lower() for purchase in purchased_ranks if purchase.rank]
+    
+    # Define discount tiers
+    if 'deity' in rank_names:
+        return 20  # 20% discount
+    elif 'titan' in rank_names:
+        return 15  # 15% discount
+    elif 'champion' in rank_names:
+        return 10  # 10% discount
+    elif 'hero' in rank_names or 'role hero' in rank_names:
+        return 5   # 5% discount
+    else:
+        return 0   # No discount
