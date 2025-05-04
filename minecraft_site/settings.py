@@ -177,7 +177,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://d3c6-2a02-a03f-c99f-c501-d5f3-b0aa-abee-3ddd.ngrok-free.app',
+    'https://b642-2a01-cb08-911d-2a00-6d0a-dbf3-95b6-db00.ngrok-free.app',
     # Ajoutez d'autres origines si nécessaire
 ]
 

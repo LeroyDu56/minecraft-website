@@ -145,6 +145,15 @@
             <h2 class="section-title">Exclusive Treasures</h2>
             <p class="section-subtitle">Enhance your gameplay with unique items and services</p>
             
+            {% if discount_percentage > 0 %}
+            <div class="store-discount-notice">
+                <div class="discount-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <p>You're receiving a <strong>{{ discount_percentage }}%</strong> discount on all items thanks to your rank!</p>
+            </div>
+            {% endif %}
+            
             <div class="store-categories">
                 <button class="category-btn active" data-category="all">All</button>
                 <button class="category-btn" data-category="collectible">Collectibles</button>
@@ -174,7 +183,15 @@
                     
                     <div class="treasure-footer">
                         <div class="treasure-price-row">
-                            <div class="treasure-price">€{{ item.price }}</div>
+                            {% if discount_percentage > 0 %}
+                                <div class="treasure-price">
+                                    <span class="discounted-price">€{{ item.discounted_price }}</span>
+                                    <span class="original-price">€{{ item.original_price }}</span>
+                                    <span class="discount-badge">{{ discount_percentage }}% OFF</span>
+                                </div>
+                            {% else %}
+                                <div class="treasure-price">€{{ item.price }}</div>
+                            {% endif %}
                             
                             <form action="{% url 'add_to_cart' %}" method="POST" class="treasure-cart-form quantity-form">
                                 {% csrf_token %}
@@ -329,7 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Function to create and display the features popup
     // Function to create and display the features popup
     function createFeaturesPopup(rankTitle, featuresItems, btnBackground) {
     console.log("Creating features popup for:", rankTitle);
