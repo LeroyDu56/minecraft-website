@@ -948,6 +948,14 @@ def add_to_cart(request):
                     return JsonResponse({'success': False, 'error': error_msg})
                 else:
                     messages.warning(request, error_msg)
+            
+            if quantity > max_available:
+                quantity = max_available
+                warn_msg = f"Quantity limited to {max_available}."
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': warn_msg})
+                else:
+                    messages.warning(request, warn_msg)
 
             if item_type == 'rank':
                 rank = Rank.objects.get(id=item_id)
@@ -1004,6 +1012,26 @@ def add_to_cart(request):
                         messages.warning(request, error_msg)
                         return redirect('cart')
                 logger.debug("Added rank %s to cart", item_id)
+                
+            elif item_type == 'store_item':
+                store_item = StoreItem.objects.get(id=item_id)
+                
+                # Create or update cart item for store item
+                cart_item, created = CartItem.objects.get_or_create(
+                    user=request.user,
+                    store_item=store_item,
+                    defaults={'quantity': quantity}
+                )
+                
+                if not created:
+                    # If the item already exists, update the quantity
+                    cart_item.quantity += quantity
+                    if cart_item.quantity > max_available:
+                        cart_item.quantity = max_available
+                    cart_item.save()
+                
+                logger.debug("Added store item %s to cart with quantity %d", item_id, quantity)
+                
             else:
                 error_msg = "Invalid item type."
                 if is_ajax:
