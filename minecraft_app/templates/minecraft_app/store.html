@@ -62,11 +62,19 @@
                     <div class="product-card product-{{ rank.name|lower }}">
                         <div class="product-header">
                             <h3 class="product-name" style="color: {{ rank.color_code }}">{{ rank.name }}</h3>
-                            <div class="product-price">€{{ rank.price }}<span class="price-unit">/lifetime</span></div>
-                            {% if rank.original_price and rank.price != rank.original_price %}
-                                <div class="product-original-price">€{{ rank.original_price }}</div>
-                                <div class="product-discount">{{ rank.discount_percentage }}% OFF</div>
-                            {% endif %}
+                            <div class="product-price">
+                                {% if rank.discounted_price %}
+                                    <!-- Show discounted price with strikethrough original -->
+                                    <div class="price-wrapper">
+                                        <span class="current-price">€{{ rank.discounted_price }}</span>
+                                        <span class="original-price">€{{ rank.original_price }}</span>
+                                    </div>
+                                    <div class="discount-badge">{{ rank.discount_percentage }}% OFF</div>
+                                {% else %}
+                                    <!-- Just show normal price -->
+                                    €{{ rank.original_price }}<span class="price-unit">/lifetime</span>
+                                {% endif %}
+                            </div>
                             {% if rank.name == "Premium" %}
                                 <div class="product-badge">Most Popular</div>
                             {% endif %}

@@ -345,6 +345,38 @@
     text-align: center;
 }
 
+.price-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.current-price {
+    font-size: 3rem;
+    font-weight: bold;
+    animation: pulsePriceGlow 2s infinite alternate;
+}
+
+.original-price {
+    font-size: 1.5rem;
+    text-decoration: line-through;
+    opacity: 0.7;
+    margin-top: 5px;
+}
+
+.discount-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-top: 5px;
+}
+
 .kit-image {
     max-width: 100%;
     border-radius: 8px;

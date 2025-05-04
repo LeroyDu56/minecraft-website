@@ -852,31 +852,44 @@ def store(request):
         
         # Apply discounts to higher ranks
         for rank in higher_ranks:
-            # Calculate discounted price
-            rank.original_price = rank.price
-            rank.discounted_price = rank.price - highest_owned_rank.price
-            rank.price = rank.discounted_price  # Update the price attribute directly
+            # Create a copy of the rank object to avoid modifying the original
+            rank_copy = rank
             
-            available_ranks.append(rank)
+            # Set discount attributes
+            rank_copy.original_price = rank.price
+            rank_copy.discount_price = highest_owned_rank.price
+            rank_copy.discounted_price = rank.price - highest_owned_rank.price
+            
+            # Calculate discount percentage
+            if rank.price > 0:
+                rank_copy.discount_percentage = int((highest_owned_rank.price / rank.price) * 100)
+            else:
+                rank_copy.discount_percentage = 0
+                
+            available_ranks.append(rank_copy)
             
         show_new_ranks_notice = not available_ranks
     else:
-        # User hasn't purchased any ranks, show all
-        available_ranks = list(all_ranks)
+        # User hasn't purchased any ranks, show all ranks with no discount
+        for rank in all_ranks:
+            rank_copy = rank
+            rank_copy.original_price = rank.price
+            # Set discounted_price to None to indicate no discount
+            rank_copy.discounted_price = None
+            rank_copy.discount_percentage = 0
+            available_ranks.append(rank_copy)
         show_new_ranks_notice = False
     
-    # Get cart data if user is authenticated
+    # Get cart data
     cart_count = 0
     cart_total = 0
     
-    if request.user.is_authenticated:
-        cart_items = CartItem.objects.filter(user=request.user)
-        cart_count = cart_items.count()
-        
-        # Calculate cart total
-        cart_total = 0
-        for item in cart_items:
-            cart_total += item.get_subtotal()
+    cart_items = CartItem.objects.filter(user=request.user)
+    cart_count = cart_items.count()
+    
+    # Calculate cart total
+    for item in cart_items:
+        cart_total += item.get_subtotal()
     
     # Calculate discount for the user based on rank for store items
     discount_percentage = get_player_discount(request.user)
@@ -889,8 +902,6 @@ def store(request):
             discount_factor = Decimal(1 - discount_percentage / 100)
             item.discounted_price = round(item.price * discount_factor, 2)
             item.discount_percentage = discount_percentage
-            # Use the discounted price for further operations
-            item.price = item.discounted_price
     
     context = {
         'ranks': available_ranks,
@@ -975,12 +986,10 @@ def add_to_cart(request):
                 # Calculate and add metadata about the discount
                 if created and highest_owned_rank and highest_owned_rank.price < rank.price:
                     discounted_price = rank.price - highest_owned_rank.price
-                    # DEBUGGING: Log discount calculation
-                    logger.debug(f"Applying discount: {rank.price} - {highest_owned_rank.price} = {discounted_price}")
-                    
                     cart_item.metadata = {
                         'original_price': str(rank.price),
                         'discounted_price': str(discounted_price),
+                        'discount_percentage': str(int((highest_owned_rank.price / rank.price) * 100)),
                         'previous_rank_id': str(highest_owned_rank.id)
                     }
                     cart_item.save()

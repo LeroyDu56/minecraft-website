@@ -192,10 +192,11 @@ class CartItem(models.Model):
             return f"{self.user.username} - {self.store_item.name} (x{self.quantity})"
         return f"{self.user.username} - Unknown item"
     
+
     def get_subtotal(self):
         if self.rank:
             # Check if there's metadata with discounted price
-            if hasattr(self, 'metadata') and self.metadata and 'discounted_price' in self.metadata:
+            if self.metadata and 'discounted_price' in self.metadata:
                 return Decimal(self.metadata['discounted_price'])
             return self.rank.price
         elif self.store_item:
@@ -206,7 +207,7 @@ class CartItem(models.Model):
                 discount_factor = Decimal(1 - discount_percentage / 100)
                 item_price = round(item_price * discount_factor, 2)
             return item_price * self.quantity
-        return 0
+        return Decimal('0.00')
     
     def save(self, *args, **kwargs):
         logger = logging.getLogger(__name__)
